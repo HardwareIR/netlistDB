@@ -7,6 +7,7 @@ src = [
 	'operation_node.cpp',
 	'signal.cpp',
 	'statement_if.cpp',
+	'query.cpp',
 ]
 
 EXTRA_CXX_ARGS = []

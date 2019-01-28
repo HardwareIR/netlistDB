@@ -8,8 +8,10 @@ namespace netlistDB {
  *
  **/
 class Query: public Netlist {
+public:
 	size_t query_size;
 	std::unordered_map<Signal *, size_t> signal_to_index;
+	Query();
 
 	// signal from target graph
 	using CandidateSig = Signal;
@@ -18,17 +20,17 @@ class Query: public Netlist {
 
 	// size of results = number of signals in this query
 	// as it maps
-	using result_t = std::vector<CandidateSig*>;
+	using match_t = std::vector<CandidateSig*>;
 
 	/**
 	 * search isomorphic graphs with this query in netlist
 	 *
 	 */
-	std::vector<result_t> search(Netlist & netlist);
+	std::vector<match_t> search(Netlist & netlist);
 
-	void search_recurse(Signal & refSig, CandidateSig & sig);
-	void search_recurse(FunctionCall & refCall, CandidateFnCall & call);
-	void search_recurse(Statement & refCall, CandidateStm & call);
+	void search_recurse(Signal & refSig, CandidateSig & sig, match_t & match);
+	void search_recurse(FunctionCall & refCall, CandidateFnCall & call, match_t & match);
+	void search_recurse(Statement & refCall, CandidateStm & call, match_t & match);
 
 };
 
