@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE( query_result_of_add ) {
 		~a;
 	}
 
-	Query query_add("add");
+	Query query_add;
 	query_add.sig() + query_add.sig();
 
 
