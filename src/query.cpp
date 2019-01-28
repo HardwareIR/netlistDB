@@ -13,7 +13,7 @@ std::vector<Query::match_t> Query::search(Netlist & netlist) {
 	// as it represents only this query
 	std::vector<match_t> matches;
 
-	vector<Signal*> inputs(sig_cnt);
+	vector<Net*> inputs(sig_cnt);
 	inputs.resize(sig_cnt);
 	fill(inputs.begin(), inputs.end(), nullptr);
 	for (auto & sig : signals) {
@@ -42,15 +42,18 @@ std::vector<Query::match_t> Query::search(Netlist & netlist) {
 // https://stackoverflow.com/questions/8176298/vf2-algorithm-steps-with-example
 // https://stackoverflow.com/questions/17480142/is-there-any-simple-example-to-explain-ullmann-algorithm
 //https://stackoverflow.com/questions/13537716/how-to-partially-compare-two-graphs/13537776#13537776
-void Query::search_recurse(Signal & refSig, CandidateSig & sig,
+void Query::search_recurse(Net & refSig, CandidateSig & sig,
 		match_t & match) {
+	bool matches = false;
 	// order of endpoint or drivers does (as signal is hyperedge)
-	if (refSig.drivers.size() != 0) {
+		// test all combinations of paths (but with very high probability only single item
+		//  as majority of the nets has only one driver)
+	bool ignore_dirvers = refSig.drivers.size() == 0;
+	bool ignore_endpoints = refSig.endpoints.size() == 0;
+	for (auto ref: refSig.drivers) {
+		for(auto cand: sig.drivers) {
 
-	}
-
-	if (refSig.endpoints.size() != 0) {
-
+		}
 	}
 }
 

@@ -21,7 +21,7 @@
 namespace netlistDB {
 
 class Netlist;
-class Signal;
+class Net;
 class Statement;
 
 class Statement {
@@ -36,14 +36,14 @@ public:
 
 class Assignment: public Statement {
 public:
-	Signal & dst;
-	std::vector<Signal*> dst_index;
-	Signal & src;
+	Net & dst;
+	std::vector<Net*> dst_index;
+	Net & src;
 
 	Assignment(const Assignment & other) = delete;
-	Assignment(Signal & dst, Signal & src);
-	Assignment(Signal & dst, std::initializer_list<Signal*> dst_index,
-			Signal & src);
+	Assignment(Net & dst, Net & src);
+	Assignment(Net & dst, std::initializer_list<Net*> dst_index,
+			Net & src);
 };
 
 // definition of function (operator is also function)
@@ -55,8 +55,8 @@ public:
 	FunctionDef(const FunctionDef & other) = delete;
 	FunctionDef(const std::string & name, size_t arg_cnt);
 
-	Signal & apply(Signal & op0);
-	Signal & apply(Signal & op0, Signal & op1);
+	Net & apply(Net & op0);
+	Net & apply(Net & op0, Net & op1);
 };
 
 // Container of call of the function (operator is also function)
@@ -65,13 +65,13 @@ public:
 	// definition of the function
 	FunctionDef & fn;
 	// arguments specified in call
-	std::vector<Signal *> args;
+	std::vector<Net *> args;
 	// result of the function, operator result or return from function call
-	Signal & res;
+	Net & res;
 
 	FunctionCall(const FunctionCall& other) = delete;
-	FunctionCall(FunctionDef & fn, Signal & op0, Signal & res);
-	FunctionCall(FunctionDef & fn, Signal & op0, Signal & op1, Signal & res);
+	FunctionCall(FunctionDef & fn, Net & op0, Net & res);
+	FunctionCall(FunctionDef & fn, Net & op0, Net & op1, Net & res);
 };
 
 class OperationNode {
@@ -93,7 +93,7 @@ public:
 /**
  * Hyperedge which connects the
  * */
-class Signal {
+class Net {
 public:
 	// container of name and type
 	VarId id;
@@ -105,41 +105,41 @@ public:
 	// operators/ statements which are driving the value of this signal
 	OrderedSet<OperationNode> drivers;
 	OrderedSet<OperationNode> endpoints;
-	using UsageCacheKey = _UsageCacheKey<FunctionDef, Signal>;
-	std::unordered_map<UsageCacheKey, Signal*> usage_cache;
+	using UsageCacheKey = _UsageCacheKey<FunctionDef, Net>;
+	std::unordered_map<UsageCacheKey, Net*> usage_cache;
 	// index used for last priority ordering
 	// represent the sequential number of the signal generated in parent context
 	size_t index;
 
-	Signal(const Signal & other) = delete;
+	Net(const Net & other) = delete;
 	// use methods from Netlist
-	Signal(Netlist & ctx, size_t index, const std::string & name,
+	Net(Netlist & ctx, size_t index, const std::string & name,
 			Direction direction);
 
-	Signal & operator~();
-	Signal & operator|(Signal & other);
-	Signal & operator&(Signal & other);
-	Signal & operator^(Signal & other);
+	Net & operator~();
+	Net & operator|(Net & other);
+	Net & operator&(Net & other);
+	Net & operator^(Net & other);
 
-	Signal & operator<=(Signal & other);
-	Signal & operator<(Signal & other);
-	Signal & operator>=(Signal & other);
-	Signal & operator>(Signal & other);
-	Signal & operator==(Signal & other);
-	Signal & operator!=(Signal & other);
+	Net & operator<=(Net & other);
+	Net & operator<(Net & other);
+	Net & operator>=(Net & other);
+	Net & operator>(Net & other);
+	Net & operator==(Net & other);
+	Net & operator!=(Net & other);
 
-	Signal & operator-();
-	Signal & operator+(Signal & other);
-	Signal & operator-(Signal & other);
-	Signal & operator*(Signal & other);
-	Signal & operator/(Signal & other);
+	Net & operator-();
+	Net & operator+(Net & other);
+	Net & operator-(Net & other);
+	Net & operator*(Net & other);
+	Net & operator/(Net & other);
 
-	Signal & concat(Signal & other);
-	Signal & rising();
-	Signal & falling();
+	Net & concat(Net & other);
+	Net & rising();
+	Net & falling();
 
 	// as assignment
-	Assignment & operator()(Signal & other);
+	Assignment & operator()(Net & other);
 };
 
 /**
@@ -160,21 +160,21 @@ class Netlist {
 public:
 	// name for debugging purposes
 	std::string name;
-	std::set<Signal*> signals;
+	std::set<Net*> signals;
 	size_t signal_seq_num;
 
 	Netlist(const Netlist & other) = delete;
 	Netlist(const std::string & name);
 
 	// create input signal
-	Signal & sig_in(const std::string & name);
+	Net & sig_in(const std::string & name);
 	// create output signal
-	Signal & sig_out(const std::string & name);
+	Net & sig_out(const std::string & name);
 
 	// create internal signals without specified name
-	Signal & sig();
+	Net & sig();
 	// create internal signal with name specified
-	Signal & sig(const std::string & name);
+	Net & sig(const std::string & name);
 	~Netlist();
 };
 

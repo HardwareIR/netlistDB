@@ -3,8 +3,8 @@
 
 using namespace netlistDB;
 
-Signal & apply(FunctionDef & fn, Signal & a, Signal & b) {
-	Signal::UsageCacheKey k(fn, { &a, &b });
+Net & apply(FunctionDef & fn, Net & a, Net & b) {
+	Net::UsageCacheKey k(fn, { &a, &b });
 	auto prev = a.usage_cache.find(k);
 	if (prev != a.usage_cache.end())
 		return *prev->second;
@@ -15,8 +15,8 @@ Signal & apply(FunctionDef & fn, Signal & a, Signal & b) {
 	return res;
 }
 
-Signal & apply(FunctionDef & fn, Signal & a) {
-	Signal::UsageCacheKey k(fn, { &a });
+Net & apply(FunctionDef & fn, Net & a) {
+	Net::UsageCacheKey k(fn, { &a });
 	auto prev = a.usage_cache.find(k);
 	if (prev != a.usage_cache.end())
 		return *prev->second;
@@ -27,71 +27,71 @@ Signal & apply(FunctionDef & fn, Signal & a) {
 	return res;
 }
 
-Signal::Signal(Netlist & ctx, size_t index, const std::string & name,
+Net::Net(Netlist & ctx, size_t index, const std::string & name,
 		Direction direction) :
 		id(name), ctx(ctx), direction(direction), index(index) {
 }
 
-Signal & Signal::operator~() {
+Net & Net::operator~() {
 	return apply(OpNeg, *this);
 }
 
-Signal & Signal::operator|(Signal & other) {
+Net & Net::operator|(Net & other) {
 	return apply(OpOr, *this, other);
 }
-Signal & Signal::operator&(Signal & other) {
+Net & Net::operator&(Net & other) {
 	return apply(OpAnd, *this, other);
 }
-Signal & Signal::operator^(Signal & other) {
+Net & Net::operator^(Net & other) {
 	return apply(OpXor, *this, other);
 }
 
-Signal & Signal::operator<=(Signal & other) {
+Net & Net::operator<=(Net & other) {
 	return apply(OpLE, *this, other);
 }
-Signal & Signal::operator<(Signal & other) {
+Net & Net::operator<(Net & other) {
 	return apply(OpLt, *this, other);
 }
-Signal & Signal::operator>=(Signal & other) {
+Net & Net::operator>=(Net & other) {
 	return apply(OpGE, *this, other);
 }
-Signal & Signal::operator>(Signal & other) {
+Net & Net::operator>(Net & other) {
 	return apply(OpGt, *this, other);
 }
-Signal & Signal::operator==(Signal & other) {
+Net & Net::operator==(Net & other) {
 	return apply(OpEq, *this, other);
 }
-Signal & Signal::operator!=(Signal & other) {
+Net & Net::operator!=(Net & other) {
 	return apply(OpNeq, *this, other);
 }
 
-Signal & Signal::operator-() {
+Net & Net::operator-() {
 	return apply(OpUnMinus, *this);
 }
-Signal & Signal::operator+(Signal & other) {
+Net & Net::operator+(Net & other) {
 	return apply(OpAdd, *this, other);
 }
-Signal & Signal::operator-(Signal & other) {
+Net & Net::operator-(Net & other) {
 	return apply(OpSub, *this, other);
 }
-Signal & Signal::operator*(Signal & other) {
+Net & Net::operator*(Net & other) {
 	return apply(OpMul, *this, other);
 }
-Signal & Signal::operator/(Signal & other) {
+Net & Net::operator/(Net & other) {
 	return apply(OpDiv, *this, other);
 }
 
-Signal & Signal::concat(Signal & other) {
+Net & Net::concat(Net & other) {
 	return apply(OpConcat, *this, other);
 }
-Signal & Signal::rising() {
+Net & Net::rising() {
 	return apply(OpRising, *this);
 }
-Signal & Signal::falling() {
+Net & Net::falling() {
 	return apply(OpFalling, *this);
 }
 
 // used as assignment
-Assignment & Signal::operator()(Signal & other) {
+Assignment & Net::operator()(Net & other) {
 	return *(new Assignment(*this, other));
 }

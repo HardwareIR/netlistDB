@@ -7,24 +7,24 @@ Netlist::Netlist(const std::string & name) :
 		name(name), signal_seq_num(0) {
 }
 
-Signal & Netlist::sig_in(const std::string & name) {
-	auto s = new Signal(*this, signal_seq_num++, name, DIR_IN);
+Net & Netlist::sig_in(const std::string & name) {
+	auto s = new Net(*this, signal_seq_num++, name, DIR_IN);
 	signals.insert(s);
 	return *s;
 }
 
-Signal & Netlist::sig_out(const std::string & name) {
-	auto s = new Signal(*this, signal_seq_num++, name, DIR_OUT);
+Net & Netlist::sig_out(const std::string & name) {
+	auto s = new Net(*this, signal_seq_num++, name, DIR_OUT);
 	signals.insert(s);
 	return *s;
 }
 
-Signal & Netlist::sig() {
+Net & Netlist::sig() {
 	return sig("");
 }
 
-Signal & Netlist::sig(const std::string & name) {
-	auto s = new Signal(*this, signal_seq_num++, name, DIR_UNKNOWN);
+Net & Netlist::sig(const std::string & name) {
+	auto s = new Net(*this, signal_seq_num++, name, DIR_UNKNOWN);
 	signals.insert(s);
 	return *s;
 }

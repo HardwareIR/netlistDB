@@ -2,10 +2,10 @@ src = [
 	'assignment.cpp',
 	'function_call.cpp',
 	'function_def.cpp',
+	'net.cpp',
 	'netlist.cpp',
 	'operator_defs.cpp',
 	'operation_node.cpp',
-	'signal.cpp',
 	'statement_if.cpp',
 	'query.cpp',
 ]

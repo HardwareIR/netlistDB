@@ -18,9 +18,10 @@ BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
 
 BOOST_AUTO_TEST_CASE( query_result_of_add ) {
 	Netlist ctx("adder");
-	std::vector<std::tuple<Signal *, Signal *, Signal *>> expected;
+	std::vector<std::tuple<Net *, Net *, Net *>> expected;
+	size_t n = 20;
 
-	for (size_t i = 0; i < 20; i++) {
+	for (size_t i = 0; i < n; i++) {
 		auto &a = ctx.sig_in("a");
 		auto &b = ctx.sig_in("b");
 		auto &res = a + b;
@@ -34,6 +35,8 @@ BOOST_AUTO_TEST_CASE( query_result_of_add ) {
 	Query query_add;
 	query_add.sig() + query_add.sig();
 
+	auto qres = query_add.search(ctx);
+	BOOST_CHECK_EQUAL(qres.size(), n);
 
 }
 

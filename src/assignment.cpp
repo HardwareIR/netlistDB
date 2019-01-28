@@ -2,12 +2,12 @@
 
 using namespace netlistDB;
 
-Assignment::Assignment(Signal & dst, Signal & src) :
+Assignment::Assignment(Net & dst, Net & src) :
 		Statement(), dst(dst), src(src) {
 
 }
 
-Assignment::Assignment(Signal & dst, std::initializer_list<Signal*> dst_index,
-		Signal & src) :
+Assignment::Assignment(Net & dst, std::initializer_list<Net*> dst_index,
+		Net & src) :
 		dst(dst), dst_index(dst_index), src(src) {
 }
