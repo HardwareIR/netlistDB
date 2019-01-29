@@ -12,12 +12,6 @@ OperationNode::OperationNode(Statement * stm) :
 	assert(stm);
 }
 
-bool OperationNode::isStm() const {
-	return bool(stm);
-}
-bool OperationNode::isFn() const {
-	return bool(fnCall);
-}
 bool OperationNode::operator==(const OperationNode& other) const {
 	if (isStm()) {
 		return stm == other.stm;

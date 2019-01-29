@@ -89,11 +89,21 @@ public:
 
 	OperationNode(Statement * stm);
 
-	bool isStm() const;
-	bool isFn() const;
+	constexpr bool isStm() const {
+		return bool(stm);
+	}
+	constexpr bool isFn() const {
+		return bool(fnCall);
+	}
 	bool operator==(const OperationNode& other) const;
 	bool operator!=(const OperationNode& other) const;
 	size_t hash() const;
+	constexpr iNode& get_node() {
+		if (isStm())
+			return *stm;
+		else
+			return *fnCall;
+	}
 };
 
 }
