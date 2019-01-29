@@ -36,3 +36,4 @@ size_t OperationNode::hash() const {
 	else
 		return std::hash<Statement *> { }(stm);
 }
+

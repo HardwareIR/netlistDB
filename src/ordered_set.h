@@ -1,18 +1,18 @@
 #pragma once
 
 #include <vector>
-#include <set>
+#include <unordered_set>
 
 template<typename T>
 class OrderedSet: public std::vector<T> {
 	using vec_t = std::vector<T>;
 	using value_type = typename vec_t::value_type;
 
-	std::set<T> _set;
-
+	std::unordered_set<T> _set;
+public:
 	void push_back(const value_type& __x) {
 		if (_set.find(__x) == _set.end()) {
-			vec_t::push_bak(__x);
+			vec_t::push_back(__x);
 			_set.insert(__x);
 		}
 	}

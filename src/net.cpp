@@ -9,7 +9,9 @@ Net & apply(FunctionDef & fn, Net & a, Net & b) {
 	if (prev != a.usage_cache.end())
 		return *prev->second;
 
-	auto & res = fn.apply(a, b);
+	auto & res = a.ctx.sig();
+	new FunctionCall(fn, a, b, res);
+
 	a.usage_cache[k] = &res;
 	b.usage_cache[k] = &res;
 	return res;
@@ -21,9 +23,10 @@ Net & apply(FunctionDef & fn, Net & a) {
 	if (prev != a.usage_cache.end())
 		return *prev->second;
 
-	auto & res = fn.apply(a);
-	a.usage_cache[k] = &res;
+	auto & res = a.ctx.sig();
+	new FunctionCall(fn, a, res);
 
+	a.usage_cache[k] = &res;
 	return res;
 }
 
@@ -94,4 +97,25 @@ Net & Net::falling() {
 // used as assignment
 Assignment & Net::operator()(Net & other) {
 	return *(new Assignment(*this, other));
+}
+
+iNode::iterator Net::forward() {
+	iNode::iterator it;
+	for (auto & i : endpoints) {
+		if (i.isStm())
+			it.push_back(i.stm);
+		else
+			it.push_back(i.fnCall);
+	}
+	return it;
+}
+
+iNode::iterator Net::backward() {
+	iNode::iterator it;
+	for (auto & o : drivers)
+		if (o.isStm())
+			it.push_back(o.stm);
+		else
+			it.push_back(o.fnCall);
+	return it;
 }

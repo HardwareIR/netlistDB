@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE( simple_adder ) {
 }
 
 BOOST_AUTO_TEST_CASE( simple_mux ) {
-	Netlist ctx("adder");
+	Netlist ctx("mux");
 	auto &a = ctx.sig_in("a");
 	auto &b = ctx.sig_in("b");
 	auto &c = ctx.sig_in("c");

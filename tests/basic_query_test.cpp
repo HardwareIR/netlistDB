@@ -28,12 +28,28 @@ BOOST_AUTO_TEST_CASE( query_result_of_add ) {
 		expected.push_back( { &a, &b, &res });
 
 		// add some garbage
-		ctx.sig_in("c");
+		auto & c = ctx.sig_in("c");
 		~a;
+		res & c;
+
+		auto path = Query::find_path(a, res);
+		BOOST_CHECK_EQUAL(path.second, true);
+		BOOST_CHECK_EQUAL(path.first.size(), 3);
+		if (path.first.size() == 3) {
+			std::vector<iNode*> ref = {&a, res.drivers[0].fnCall, &res};
+			size_t i = 0;
+			for (auto p: path.first) {
+				BOOST_CHECK_EQUAL(p, ref[i]);
+				i++;
+			}
+		}
+
 	}
+
 
 	Query query_add;
 	query_add.sig() + query_add.sig();
+
 
 	auto qres = query_add.search(ctx);
 	BOOST_CHECK_EQUAL(qres.size(), n);

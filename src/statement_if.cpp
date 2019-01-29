@@ -2,7 +2,7 @@
 
 namespace netlistDB {
 
-IfStatement::IfStatement(Signal & condition) :
+IfStatement::IfStatement(Net & condition) :
 		condition(condition), ifTrue_specified(false), ifFalse_specified(false) {
 }
 
@@ -17,7 +17,7 @@ IfStatement & IfStatement::operator()(
 	return *this;
 }
 
-IfStatement & IfStatement::Elif(Signal & cond,
+IfStatement & IfStatement::Elif(Net & cond,
 		std::initializer_list<Statement*> statements) {
 	assert(not ifFalse_specified);
 	ifTrue_specified = true;
@@ -31,8 +31,18 @@ IfStatement & IfStatement::Else(std::initializer_list<Statement*> statements) {
 	return *this;
 }
 
-IfStatement & If(Signal & condition) {
-	return * new IfStatement(condition);
+iNode::iterator IfStatement::forward() {
+	iNode::iterator it;
+	throw std::runtime_error("not implemented");
+	return it;
+}
+
+iNode::iterator IfStatement::backward() {
+	throw std::runtime_error("not implemented");
+}
+
+IfStatement & If(Net & condition) {
+	return *new IfStatement(condition);
 }
 
 }

@@ -12,25 +12,41 @@
 #include <set>
 #include <assert.h>
 #include <vector>
+#include <unordered_map>
+
 #include "ordered_set.h"
 #include "varId.h"
 #include "constants.h"
 #include "pointer_container.h"
-#include <unordered_map>
+#include "function_def.h"
 
 namespace netlistDB {
 
-class Netlist;
 class Net;
+
+/**
+ * Inteface for nodes in database
+ *
+ **/
+class iNode {
+public:
+	using iterator = std::vector<iNode*>;
+	// iterate endpoints for Net or outputs for statement or result for expression
+	virtual iterator forward() = 0;
+	// iterate drivers for net or inputs for statement or args for expression
+	virtual iterator backward() = 0;
+	virtual ~iNode() {
+	}
+};
+
+class Netlist;
 class Statement;
 
-class Statement {
+class Statement: public iNode {
 public:
 	Statement * parent;
 	Statement() :
 			parent(nullptr) {
-	}
-	virtual ~Statement() {
 	}
 };
 
@@ -42,25 +58,13 @@ public:
 
 	Assignment(const Assignment & other) = delete;
 	Assignment(Net & dst, Net & src);
-	Assignment(Net & dst, std::initializer_list<Net*> dst_index,
-			Net & src);
-};
-
-// definition of function (operator is also function)
-class FunctionDef {
-public:
-	std::string name;
-	size_t arg_cnt;
-
-	FunctionDef(const FunctionDef & other) = delete;
-	FunctionDef(const std::string & name, size_t arg_cnt);
-
-	Net & apply(Net & op0);
-	Net & apply(Net & op0, Net & op1);
+	Assignment(Net & dst, std::initializer_list<Net*> dst_index, Net & src);
+	virtual iNode::iterator forward() override;
+	virtual iNode::iterator backward() override;
 };
 
 // Container of call of the function (operator is also function)
-class FunctionCall {
+class FunctionCall: public iNode {
 public:
 	// definition of the function
 	FunctionDef & fn;
@@ -72,13 +76,15 @@ public:
 	FunctionCall(const FunctionCall& other) = delete;
 	FunctionCall(FunctionDef & fn, Net & op0, Net & res);
 	FunctionCall(FunctionDef & fn, Net & op0, Net & op1, Net & res);
+
+	virtual iNode::iterator forward() override;
+	virtual iNode::iterator backward() override;
 };
 
 class OperationNode {
 public:
 	FunctionCall * fnCall;
 	Statement * stm;
-	OperationNode(const OperationNode& other) = delete;
 	OperationNode(FunctionCall * fnCall);
 
 	OperationNode(Statement * stm);
@@ -90,10 +96,28 @@ public:
 	size_t hash() const;
 };
 
+}
+///////////// hash functions ///////////////////////
+
+namespace std {
+
+template<>
+struct hash<netlistDB::OperationNode> {
+	typedef netlistDB::OperationNode argument_type;
+	typedef size_t result_type;
+	result_type operator()(argument_type const& v) const noexcept {
+		return v.hash();
+	}
+};
+
+}
+
+namespace netlistDB {
+
 /**
  * Hyperedge which connects the
  * */
-class Net {
+class Net: public iNode {
 public:
 	// container of name and type
 	VarId id;
@@ -140,6 +164,9 @@ public:
 
 	// as assignment
 	Assignment & operator()(Net & other);
+
+	virtual iNode::iterator forward() override;
+	virtual iNode::iterator backward() override;
 };
 
 /**
@@ -180,17 +207,3 @@ public:
 
 }
 
-///////////// hash functions ///////////////////////
-
-namespace std {
-
-template<>
-struct hash<netlistDB::OperationNode> {
-	typedef netlistDB::OperationNode argument_type;
-	typedef size_t result_type;
-	result_type operator()(argument_type const& v) const noexcept {
-		return v.hash();
-	}
-};
-
-}
