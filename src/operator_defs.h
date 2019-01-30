@@ -5,7 +5,8 @@
 namespace netlistDB {
 
 // bitwise
-extern FunctionDef OpNot;
+//extern FunctionDef OpNot;
+extern FunctionDef OpNeg;
 extern FunctionDef OpAnd;
 extern FunctionDef OpOr;
 extern FunctionDef OpXor;
@@ -22,7 +23,6 @@ extern FunctionDef OpNeq;
 
 // arithmetic
 extern FunctionDef OpUnMinus;
-extern FunctionDef OpNeg;
 extern FunctionDef OpAdd;
 extern FunctionDef OpSub;
 extern FunctionDef OpDiv;
