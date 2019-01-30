@@ -2,9 +2,17 @@
 
 #include <algorithm>
 #include <iostream>
-//#include "permutation.h"
 
 using namespace std;
+
+
+// http://www.scielo.br/scielo.php?script=sci_arttext&pid=S0101-74382005000300005
+// https://stackoverflow.com/questions/8176298/vf2-algorithm-steps-with-example
+// https://stackoverflow.com/questions/17480142/is-there-any-simple-example-to-explain-ullmann-algorithm
+// https://stackoverflow.com/questions/13537716/how-to-partially-compare-two-graphs/13537776#13537776
+// https://github.com/charlieegan3/graph_match
+// https://www.cs.cmu.edu/~scandal/nesl/algorithms.html#mis
+
 
 namespace netlistDB {
 namespace query {
@@ -71,13 +79,6 @@ std::vector<Query::match_t> Query::search(Netlist & netlist) {
 	}
 	return matches;
 }
-
-//http://www.scielo.br/scielo.php?script=sci_arttext&pid=S0101-74382005000300005
-// https://stackoverflow.com/questions/8176298/vf2-algorithm-steps-with-example
-// https://stackoverflow.com/questions/17480142/is-there-any-simple-example-to-explain-ullmann-algorithm
-//https://stackoverflow.com/questions/13537716/how-to-partially-compare-two-graphs/13537776#13537776
-// https://github.com/charlieegan3/graph_match
-
 /**
  * Find first matching combination
  * \note The match is stored in ctx.match and can be canceled by methods of ctx
