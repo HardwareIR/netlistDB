@@ -1,6 +1,6 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
-#define BOOST_TEST_MODULE netlistDB_test
+#define BOOST_TEST_MODULE netlistDB_basic_query_test
 
 #include <boost/test/unit_test.hpp>
 #include <functional>
@@ -10,9 +10,10 @@
 
 #include "../src/netlist.h"
 #include "../src/statemen_if.h"
-#include "../src/query.h"
+#include "../src/query/query.h"
 
 using namespace netlistDB;
+using namespace netlistDB::query;
 
 BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
 
@@ -43,12 +44,11 @@ BOOST_AUTO_TEST_CASE( query_result_of_add ) {
 				i++;
 			}
 		}
-
 	}
 
 
 	Query query_add;
-	query_add.sig() + query_add.sig();
+	query_add.sig("a") + query_add.sig("b");
 
 
 	auto qres = query_add.search(ctx);

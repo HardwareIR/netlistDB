@@ -7,7 +7,8 @@ src = [
 	'operator_defs.cpp',
 	'operation_node.cpp',
 	'statement_if.cpp',
-	'query.cpp',
+	'query/query.cpp',
+	'query/backtrack_context.cpp',
 ]
 
 EXTRA_CXX_ARGS = []
