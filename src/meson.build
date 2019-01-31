@@ -7,8 +7,14 @@ src = [
 	'operator_defs.cpp',
 	'operation_node.cpp',
 	'statement_if.cpp',
+	
 	'query/query.cpp',
 	'query/backtrack_context.cpp',
+	
+	'serializer/verilog.cpp',
+	'serializer/verilog.h',
+	'serializer/namescope.h',
+	'serializer/serializer.h',
 ]
 
 EXTRA_CXX_ARGS = []
