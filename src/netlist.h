@@ -150,7 +150,6 @@ public:
 	Net(Netlist & ctx, size_t index, const std::string & name,
 			Direction direction);
 
-
 	Net & operator!() = delete;
 	Net & operator~();
 	Net & operator|(Net & other);
