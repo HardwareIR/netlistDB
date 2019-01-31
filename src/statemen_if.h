@@ -11,7 +11,8 @@ public:
 	bool ifTrue_specified;
 	std::vector<Statement *> ifTrue;
 
-	std::vector<std::pair<Net *, Statement *>> elseIf;
+	using elseif_t = std::vector<std::pair<Net *, std::vector<Statement *> > >;
+	elseif_t elseIf;
 
 	bool ifFalse_specified;
 	std::vector<Statement *> ifFalse;

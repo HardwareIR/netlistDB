@@ -4,6 +4,7 @@ namespace netlistDB {
 
 IfStatement::IfStatement(Net & condition) :
 		condition(condition), ifTrue_specified(false), ifFalse_specified(false) {
+	condition.endpoints.push_back(OperationNode(this));
 }
 
 IfStatement & IfStatement::operator()(
@@ -19,8 +20,12 @@ IfStatement & IfStatement::operator()(
 
 IfStatement & IfStatement::Elif(Net & cond,
 		std::initializer_list<Statement*> statements) {
+	assert(ifTrue_specified);
 	assert(not ifFalse_specified);
-	ifTrue_specified = true;
+
+	cond.endpoints.push_back(OperationNode(this));
+	elseIf.push_back({&cond, statements});
+
 	return *this;
 }
 
