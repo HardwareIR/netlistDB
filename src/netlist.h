@@ -125,7 +125,7 @@ struct hash<netlistDB::OperationNode> {
 namespace netlistDB {
 
 /**
- * Hyperedge which connects the
+ * Hyperedge which connects the the statments, expessions, etc.
  * */
 class Net: public iNode {
 public:
