@@ -1,8 +1,7 @@
-#include "query.h"
-
 #include <algorithm>
 #include <iostream>
 
+#include "query_match.h"
 #include "statemen_if.h"
 
 using namespace std;
@@ -13,11 +12,13 @@ using namespace std;
 // https://stackoverflow.com/questions/13537716/how-to-partially-compare-two-graphs/13537776#13537776
 // https://github.com/charlieegan3/graph_match
 // https://www.cs.cmu.edu/~scandal/nesl/algorithms.html#mis
+// https://github.com/gbossi/Pagerank-DOBFS
+// https://github.com/narayanan2004/GraphMat
 
 namespace netlistDB {
 namespace query {
 
-bool Query::search_recurse(FunctionCall & ref, FunctionCall & call,
+bool QueryMatch::search_recurse(FunctionCall & ref, FunctionCall & call,
 		BackTrackingContext& ctx) {
 	switch (ctx.check_can_match(ref, call)) {
 	case BackTrackingContext::already_matches:
@@ -51,11 +52,11 @@ bool Query::search_recurse(FunctionCall & ref, FunctionCall & call,
 	return true;
 }
 
-Query::Query() :
+QueryMatch::QueryMatch() :
 		Netlist(""), query_size(0) {
 }
 
-std::vector<Query::match_t> Query::search(Netlist & netlist) {
+std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
 	std::vector<match_t> matches;
 	Net * root_sig = nullptr;
 	for (auto ref : signals) {
@@ -90,7 +91,7 @@ std::vector<Query::match_t> Query::search(Netlist & netlist) {
  * \param graphIo set of operations from the queried graph
  * \return true if match was found
  **/
-bool Query::find_matching_permutation(OrderedSet<OperationNode> & ref,
+bool QueryMatch::find_matching_permutation(OrderedSet<OperationNode> & ref,
 		OrderedSet<OperationNode> & graphIo, BackTrackingContext& ctx) {
 	if (ref.size() != graphIo.size())
 		return false;
@@ -129,7 +130,7 @@ bool Query::find_matching_permutation(OrderedSet<OperationNode> & ref,
  * \param net the net from the queried graph
  * \return true if match was found
  **/
-bool Query::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) {
+bool QueryMatch::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) {
 	switch (ctx.check_can_match(ref, net)) {
 	case BackTrackingContext::already_matches:
 		// this signal already matched this reference somewhere else
@@ -188,12 +189,12 @@ bool Query::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) {
 	}
 }
 
-bool Query::search_recurse(OperationNode & ref, OperationNode & n,
+bool QueryMatch::search_recurse(OperationNode & ref, OperationNode & n,
 		BackTrackingContext & ctx) {
 	return search_recurse(ref.get_node(), n.get_node(), ctx);
 }
 
-bool Query::search_recurse(iNode & ref, iNode & n, BackTrackingContext & ctx) {
+bool QueryMatch::search_recurse(iNode & ref, iNode & n, BackTrackingContext & ctx) {
 	auto fA = dynamic_cast<FunctionCall*>(&ref);
 	auto fB = dynamic_cast<FunctionCall*>(&n);
 	if (fA and fB) {
@@ -225,7 +226,7 @@ bool Query::search_recurse(iNode & ref, iNode & n, BackTrackingContext & ctx) {
 	return false;
 }
 
-bool Query::statements_matches(std::vector<Statement *> & ref,
+bool QueryMatch::statements_matches(std::vector<Statement *> & ref,
 		std::vector<Statement *> & n, BackTrackingContext & ctx) {
 	auto tStm = n.begin();
 	for (auto refTStm : ref) {
@@ -236,7 +237,7 @@ bool Query::statements_matches(std::vector<Statement *> & ref,
 	return true;
 }
 
-bool Query::search_recurse(IfStatement & ref, IfStatement & n,
+bool QueryMatch::search_recurse(IfStatement & ref, IfStatement & n,
 		BackTrackingContext & ctx) {
 	if (ref.elseIf.size() != n.elseIf.size())
 		return false;
@@ -268,7 +269,7 @@ bool Query::search_recurse(IfStatement & ref, IfStatement & n,
 	return true;
 }
 
-bool Query::search_recurse(Assignment & ref, Assignment & n,
+bool QueryMatch::search_recurse(Assignment & ref, Assignment & n,
 		BackTrackingContext & ctx) {
 	if (ref.dst_index.size() != n.dst_index.size())
 		return false;
@@ -289,29 +290,6 @@ bool Query::search_recurse(Assignment & ref, Assignment & n,
 	return true;
 }
 
-std::pair<Query::path_t, bool> Query::find_path(iNode & a, iNode & b) {
-	path_t path;
-	bool found = find_path(a, b, path);
-	return {path, found};
-}
-
-bool Query::find_path(iNode & a, iNode & b, path_t & path) {
-	path.push_back(&a);
-	if (&a == &b)
-		return true;
-
-	for (auto node : a.forward()) {
-		bool not_in_path = std::find(path.begin(), path.end(), node)
-				== path.end();
-		if (not_in_path) {
-			auto found = find_path(*node, b, path);
-			if (found)
-				return true;
-		}
-	}
-	path.pop_back();
-	return false;
-}
 
 }
 }

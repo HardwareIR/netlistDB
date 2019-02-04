@@ -1,3 +1,4 @@
+
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_MODULE netlistDB_large_query_test
@@ -11,7 +12,7 @@
 
 #include "../src/netlist.h"
 #include "../src/statemen_if.h"
-#include "../src/query/query.h"
+#include "../src/query/query_match.h"
 #include "../src/operator_defs.h"
 
 
@@ -137,7 +138,7 @@ BOOST_AUTO_TEST_CASE( query_add ) {
 	std::mt19937 rand(0);
 	build_random_circuit(ctx, 10, 10, 10, rand);
 
-	Query query_add;
+	QueryMatch query_add;
 	query_add.sig("a") + query_add.sig("b");
 	auto qres = query_add.search(ctx);
 
@@ -149,7 +150,7 @@ BOOST_AUTO_TEST_CASE( query_mac ) {
 	std::mt19937 rand(0);
 	build_random_circuit(ctx, 100, 100, 100, rand);
 
-	Query query_mac;
+	QueryMatch query_mac;
 	query_mac.sig("a") + (query_mac.sig("b") * query_mac.sig("c") );
 	auto qres = query_mac.search(ctx);
 
