@@ -12,7 +12,9 @@ using namespace std;
 // https://stackoverflow.com/questions/13537716/how-to-partially-compare-two-graphs/13537776#13537776
 // https://github.com/charlieegan3/graph_match
 // https://www.cs.cmu.edu/~scandal/nesl/algorithms.html#mis
-
+// https://github.com/chaihf/BFS-OpenMP
+// https://github.com/alex-87/HyperGraphLib
+// https://www.sanfoundry.com/cpp-programming-examples-graph-problems-algorithms/
 
 namespace netlistDB {
 namespace query {
