@@ -10,6 +10,10 @@ class OrderedSet: public std::vector<T> {
 
 	std::unordered_set<T> _set;
 public:
+	OrderedSet(): vec_t() {
+		vec_t::reserve(2);
+	}
+
 	void push_back(const value_type& __x) {
 		if (_set.find(__x) == _set.end()) {
 			vec_t::push_back(__x);

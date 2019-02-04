@@ -5,17 +5,16 @@ src = [
 	'net.cpp',
 	'netlist.cpp',
 	'operator_defs.cpp',
-	'operation_node.cpp',
 	'statement_if.cpp',
 	
 	'query/backtrack_context.cpp',
 	'query/backtrack_context.h',
 	'query/query_flooding.cpp',
 	'query/query_flooding.h',
-	'query/query_path.cpp',
-	'query/query_path.cpp',
 	'query/query_match.cpp',
 	'query/query_match.h',
+	'query/query_path.cpp',
+	'query/query_path.cpp',
 	
 	'serializer/verilog.cpp',
 	'serializer/verilog.h',
@@ -25,19 +24,20 @@ src = [
 
 EXTRA_CXX_ARGS = [
 	'-std=c++17',
- 	'-fopenmp',
+ 	#'-fopenmp',
 ]
 EXTRA_C_ARGS = []
 
 cc = meson.get_compiler('c')
-libgomp = cc.find_library('gomp')
+#libgomp = cc.find_library('gomp')
+thread_dep = dependency('threads')
 boost_thread = dependency('boost', modules: ['thread', 'system' ])
 
 netlistDB_incldir = include_directories('.')
 netlistDB_lib = shared_library('netlistDB',
                         src,
                         include_directories : [netlistDB_incldir, ],
-                        dependencies : [boost_thread],
+                        dependencies : [boost_thread, thread_dep],
                         install : true,
                         cpp_args: EXTRA_CXX_ARGS,
                         c_args: EXTRA_C_ARGS,

@@ -4,13 +4,14 @@
 using namespace netlistDB;
 
 Net & apply(FunctionDef & fn, Net & a, Net & b) {
+	assert(&(a.ctx) == &(b.ctx));
 	Net::UsageCacheKey k(fn, { &a, &b });
 	auto prev = a.usage_cache.find(k);
 	if (prev != a.usage_cache.end())
 		return *prev->second;
 
 	auto & res = a.ctx.sig();
-	new FunctionCall(fn, a, b, res);
+	new FunctionCall(a.ctx.obj_seq_num++, fn, a, b, res);
 
 	a.usage_cache[k] = &res;
 	b.usage_cache[k] = &res;
@@ -24,7 +25,7 @@ Net & apply(FunctionDef & fn, Net & a) {
 		return *prev->second;
 
 	auto & res = a.ctx.sig();
-	new FunctionCall(fn, a, res);
+	new FunctionCall(a.ctx.obj_seq_num++, fn, a, res);
 
 	a.usage_cache[k] = &res;
 	return res;
@@ -32,7 +33,7 @@ Net & apply(FunctionDef & fn, Net & a) {
 
 Net::Net(Netlist & ctx, size_t index, const std::string & name,
 		Direction direction) :
-		id(name), ctx(ctx), direction(direction), index(index) {
+		iNode(index), id(name), ctx(ctx), direction(direction) {
 }
 
 Net & Net::operator~() {
@@ -101,21 +102,15 @@ Assignment & Net::operator()(Net & other) {
 
 iNode::iterator Net::forward() {
 	iNode::iterator it;
-	for (auto & i : endpoints) {
-		if (i.isStm())
-			it.push_back(i.stm);
-		else
-			it.push_back(i.fnCall);
+	for (auto i : endpoints) {
+		it.push_back(i);
 	}
 	return it;
 }
 
 iNode::iterator Net::backward() {
 	iNode::iterator it;
-	for (auto & o : drivers)
-		if (o.isStm())
-			it.push_back(o.stm);
-		else
-			it.push_back(o.fnCall);
+	for (auto o : drivers)
+		it.push_back(o);
 	return it;
 }

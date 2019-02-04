@@ -2,9 +2,9 @@
 
 namespace netlistDB {
 
-IfStatement::IfStatement(Net & condition) :
+IfStatement::IfStatement(Net & condition): Statement(condition.ctx.obj_seq_num++),
 		condition(condition), ifTrue_specified(false), ifFalse_specified(false) {
-	condition.endpoints.push_back(OperationNode(this));
+	condition.endpoints.push_back(this);
 }
 
 IfStatement & IfStatement::operator()(
@@ -23,7 +23,7 @@ IfStatement & IfStatement::Elif(Net & cond,
 	assert(ifTrue_specified);
 	assert(not ifFalse_specified);
 
-	cond.endpoints.push_back(OperationNode(this));
+	cond.endpoints.push_back(this);
 	elseIf.push_back({&cond, statements});
 
 	return *this;

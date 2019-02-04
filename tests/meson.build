@@ -4,13 +4,20 @@ boost_deps = dependency('boost', modules: ['unit_test_framework', ])
 tests = [
 	  ['basic', 'test of the core'],
 	  ['basic_query_match', 'basic test for query engine'],
-	  ['large_query_match', 'benchmarks for query engine']
+	  ['large_query_match', 'benchmarks for query engine'],
+	  ['query_flooding', 'tests for flooding query engine'],
+	  ['taskflow', 'tests for taskflow functionality'],
+]
+
+test_common_src = [
+	'test_graphs.cpp',
+	'test_graphs.h',
 ]
 
 foreach t : tests
 	test_exe = executable(t[0]  + '_test',
-		[t[0] + '_test.cpp'],
-		dependencies: [ boost_deps],
+		[t[0] + '_test.cpp'] + test_common_src,
+		dependencies: [boost_deps, thread_dep],
 		link_with: [netlistDB_lib, ],
 		cpp_args: EXTRA_CXX_ARGS,
         c_args: EXTRA_C_ARGS)

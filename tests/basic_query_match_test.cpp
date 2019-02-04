@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE( query_result_of_add ) {
 		BOOST_CHECK_EQUAL(path.second, true);
 		BOOST_CHECK_EQUAL(path.first.size(), 3);
 		if (path.first.size() == 3) {
-			std::vector<iNode*> ref = { &a, res.drivers[0].fnCall, &res };
+			std::vector<iNode*> ref = { &a, res.drivers[0], &res };
 			size_t i = 0;
 			for (auto p : path.first) {
 				BOOST_CHECK_EQUAL(p, ref[i]);

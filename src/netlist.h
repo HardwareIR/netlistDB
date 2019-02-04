@@ -30,6 +30,13 @@ class Net;
  **/
 class iNode {
 public:
+	// sequential number used as a id during serialization
+	size_t index;
+
+	iNode(size_t index) :
+			index(index) {
+	}
+
 	using iterator = std::vector<iNode*>;
 	// iterate endpoints for Net or outputs for statement or result for expression
 	virtual iterator forward() = 0;
@@ -42,11 +49,19 @@ public:
 class Netlist;
 class Statement;
 
-class Statement: public iNode {
+class OperationNode: public iNode {
+public:
+	OperationNode(size_t index) :
+			iNode(index) {
+	}
+};
+
+class Statement: public OperationNode {
 public:
 	Statement * parent;
-	Statement() :
-			parent(nullptr) {
+
+	Statement(size_t index) :
+			OperationNode(index), parent(nullptr) {
 	}
 };
 
@@ -64,7 +79,7 @@ public:
 };
 
 // Container of call of the function (operator is also function)
-class FunctionCall: public iNode {
+class FunctionCall: public OperationNode {
 public:
 	// definition of the function
 	FunctionDef & fn;
@@ -74,58 +89,16 @@ public:
 	Net & res;
 
 	FunctionCall(const FunctionCall& other) = delete;
-	FunctionCall(FunctionDef & fn, Net & op0, Net & res);
-	FunctionCall(FunctionDef & fn, Net & op0, Net & op1, Net & res);
+	FunctionCall(size_t index, FunctionDef & fn, Net & op0, Net & res);
+	FunctionCall(size_t index, FunctionDef & fn, Net & op0, Net & op1,
+			Net & res);
 
 	virtual iNode::iterator forward() override;
 	virtual iNode::iterator backward() override;
 };
 
-class OperationNode {
-public:
-	FunctionCall * fnCall;
-	Statement * stm;
-	OperationNode(FunctionCall * fnCall);
-
-	OperationNode(Statement * stm);
-
-	constexpr bool isStm() const {
-		return bool(stm);
-	}
-	constexpr bool isFn() const {
-		return bool(fnCall);
-	}
-	bool operator==(const OperationNode& other) const;
-	bool operator!=(const OperationNode& other) const;
-	size_t hash() const;
-	constexpr iNode& get_node() {
-		if (isStm())
-			return *stm;
-		else
-			return *fnCall;
-	}
-};
-
-}
-///////////// hash functions ///////////////////////
-
-namespace std {
-
-template<>
-struct hash<netlistDB::OperationNode> {
-	typedef netlistDB::OperationNode argument_type;
-	typedef size_t result_type;
-	result_type operator()(argument_type const& v) const noexcept {
-		return v.hash();
-	}
-};
-
-}
-
-namespace netlistDB {
-
 /**
- * Hyperedge which connects the the statments, expessions, etc.
+ * Hyperedge which connects the the statements, expressions, etc.
  * */
 class Net: public iNode {
 public:
@@ -137,8 +110,8 @@ public:
 	// direction of the signal if signal is used in IO
 	Direction direction;
 	// operators/ statements which are driving the value of this signal
-	OrderedSet<OperationNode> drivers;
-	OrderedSet<OperationNode> endpoints;
+	OrderedSet<OperationNode*> drivers;
+	OrderedSet<OperationNode*> endpoints;
 	using UsageCacheKey = _UsageCacheKey<FunctionDef, Net>;
 	std::unordered_map<UsageCacheKey, Net*> usage_cache;
 	// index used for last priority ordering
@@ -198,8 +171,8 @@ class Netlist {
 public:
 	// name for debugging purposes
 	std::string name;
-	std::set<Net*> signals;
-	size_t signal_seq_num;
+	std::set<Net*> nets;
+	size_t obj_seq_num;
 
 	Netlist(const Netlist & other) = delete;
 	Netlist(const std::string & name);

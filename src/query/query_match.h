@@ -36,10 +36,8 @@ protected:
 			BackTrackingContext & match);
 	static bool search_recurse(IfStatement & ref, IfStatement & ifstm,
 			BackTrackingContext & match);
-	static bool search_recurse(OperationNode & ref, OperationNode & n,
-			BackTrackingContext & ctx);
-	static bool find_matching_permutation(OrderedSet<OperationNode> & ref,
-			OrderedSet<OperationNode> & graphIo, BackTrackingContext& ctx);
+	static bool find_matching_permutation(OrderedSet<OperationNode*> & ref,
+			OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx);
 	static bool statements_matches(std::vector<Statement *> & ref,
 			std::vector<Statement *> & n, BackTrackingContext & ctx);
 

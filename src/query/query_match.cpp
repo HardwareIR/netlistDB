@@ -17,7 +17,7 @@ using namespace std;
 // https://github.com/chaihf/BFS-OpenMP
 // https://github.com/alex-87/HyperGraphLib
 // https://www.sanfoundry.com/cpp-programming-examples-graph-problems-algorithms/
-
+// https://github.com/cpp-taskflow/cpp-taskflow
 
 namespace netlistDB {
 namespace query {
@@ -63,7 +63,7 @@ QueryMatch::QueryMatch() :
 std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
 	std::vector<match_t> matches;
 	Net * root_sig = nullptr;
-	for (auto ref : signals) {
+	for (auto ref : nets) {
 		if (root_sig == nullptr or root_sig->index > ref->index)
 			root_sig = ref;
 	}
@@ -73,7 +73,7 @@ std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
 	}
 
 	// it is expected that query size is much smaller than graph itself
-	for (auto net : netlist.signals) {
+	for (auto net : netlist.nets) {
 		// query graph has only single component
 		// if the signal matches whole matching graph is discovered
 
@@ -95,8 +95,8 @@ std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
  * \param graphIo set of operations from the queried graph
  * \return true if match was found
  **/
-bool QueryMatch::find_matching_permutation(OrderedSet<OperationNode> & ref,
-		OrderedSet<OperationNode> & graphIo, BackTrackingContext& ctx) {
+bool QueryMatch::find_matching_permutation(OrderedSet<OperationNode*> & ref,
+		OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx) {
 	if (ref.size() != graphIo.size())
 		return false;
 
@@ -107,7 +107,7 @@ bool QueryMatch::find_matching_permutation(OrderedSet<OperationNode> & ref,
 		match_found = false;
 		auto & ctx_for_endpoint = ctx.child();
 		for (auto _graph : graphIo) {
-			if (not search_recurse(_ref, _graph, ctx_for_endpoint)) {
+			if (not search_recurse(*_ref, *_graph, ctx_for_endpoint)) {
 				ctx_for_endpoint.discard();
 			} else {
 				match_found = true;
@@ -191,11 +191,6 @@ bool QueryMatch::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) 
 				or find_matching_permutation(ref.endpoints, net.endpoints,
 						child_ctx);
 	}
-}
-
-bool QueryMatch::search_recurse(OperationNode & ref, OperationNode & n,
-		BackTrackingContext & ctx) {
-	return search_recurse(ref.get_node(), n.get_node(), ctx);
 }
 
 bool QueryMatch::search_recurse(iNode & ref, iNode & n, BackTrackingContext & ctx) {
