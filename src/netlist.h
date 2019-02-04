@@ -125,7 +125,7 @@ struct hash<netlistDB::OperationNode> {
 namespace netlistDB {
 
 /**
- * Hyperedge which connects the
+ * Hyperedge which connects the the statments, expessions, etc.
  * */
 class Net: public iNode {
 public:
@@ -150,6 +150,7 @@ public:
 	Net(Netlist & ctx, size_t index, const std::string & name,
 			Direction direction);
 
+	Net & operator!() = delete;
 	Net & operator~();
 	Net & operator|(Net & other);
 	Net & operator&(Net & other);

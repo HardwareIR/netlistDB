@@ -1,10 +1,10 @@
-#include "query.h"
-
 #include <algorithm>
 #include <iostream>
 
-using namespace std;
+#include "query_match.h"
+#include "statemen_if.h"
 
+using namespace std;
 
 // http://www.scielo.br/scielo.php?script=sci_arttext&pid=S0101-74382005000300005
 // https://stackoverflow.com/questions/8176298/vf2-algorithm-steps-with-example
@@ -12,14 +12,17 @@ using namespace std;
 // https://stackoverflow.com/questions/13537716/how-to-partially-compare-two-graphs/13537776#13537776
 // https://github.com/charlieegan3/graph_match
 // https://www.cs.cmu.edu/~scandal/nesl/algorithms.html#mis
+// https://github.com/gbossi/Pagerank-DOBFS
+// https://github.com/narayanan2004/GraphMat
 // https://github.com/chaihf/BFS-OpenMP
 // https://github.com/alex-87/HyperGraphLib
 // https://www.sanfoundry.com/cpp-programming-examples-graph-problems-algorithms/
 
+
 namespace netlistDB {
 namespace query {
 
-bool Query::search_recurse(FunctionCall & ref, FunctionCall & call,
+bool QueryMatch::search_recurse(FunctionCall & ref, FunctionCall & call,
 		BackTrackingContext& ctx) {
 	switch (ctx.check_can_match(ref, call)) {
 	case BackTrackingContext::already_matches:
@@ -53,16 +56,20 @@ bool Query::search_recurse(FunctionCall & ref, FunctionCall & call,
 	return true;
 }
 
-Query::Query() :
+QueryMatch::QueryMatch() :
 		Netlist(""), query_size(0) {
 }
 
-std::vector<Query::match_t> Query::search(Netlist & netlist) {
+std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
 	std::vector<match_t> matches;
 	Net * root_sig = nullptr;
 	for (auto ref : signals) {
 		if (root_sig == nullptr or root_sig->index > ref->index)
 			root_sig = ref;
+	}
+	if (root_sig == nullptr) {
+		// empty query -> no match
+		return matches;
 	}
 
 	// it is expected that query size is much smaller than graph itself
@@ -88,7 +95,7 @@ std::vector<Query::match_t> Query::search(Netlist & netlist) {
  * \param graphIo set of operations from the queried graph
  * \return true if match was found
  **/
-bool Query::find_matching_permutation(OrderedSet<OperationNode> & ref,
+bool QueryMatch::find_matching_permutation(OrderedSet<OperationNode> & ref,
 		OrderedSet<OperationNode> & graphIo, BackTrackingContext& ctx) {
 	if (ref.size() != graphIo.size())
 		return false;
@@ -127,7 +134,7 @@ bool Query::find_matching_permutation(OrderedSet<OperationNode> & ref,
  * \param net the net from the queried graph
  * \return true if match was found
  **/
-bool Query::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) {
+bool QueryMatch::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) {
 	switch (ctx.check_can_match(ref, net)) {
 	case BackTrackingContext::already_matches:
 		// this signal already matched this reference somewhere else
@@ -186,56 +193,107 @@ bool Query::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) {
 	}
 }
 
-bool Query::search_recurse(OperationNode & ref, OperationNode & n,
+bool QueryMatch::search_recurse(OperationNode & ref, OperationNode & n,
 		BackTrackingContext & ctx) {
 	return search_recurse(ref.get_node(), n.get_node(), ctx);
 }
 
-bool Query::search_recurse(iNode & ref, iNode & n, BackTrackingContext & ctx) {
+bool QueryMatch::search_recurse(iNode & ref, iNode & n, BackTrackingContext & ctx) {
 	auto fA = dynamic_cast<FunctionCall*>(&ref);
 	auto fB = dynamic_cast<FunctionCall*>(&n);
 	if (fA and fB) {
 		return search_recurse(*fA, *fB, ctx);
+	} else if (fA or fB) {
+		return false;
 	}
 
 	auto nA = dynamic_cast<Net*>(&ref);
 	auto nB = dynamic_cast<Net*>(&n);
 	if (nA and nB) {
 		return search_recurse(*nA, *nB, ctx);
+	} else if (nA or nB) {
+		return false;
 	}
 
-	auto stmA = dynamic_cast<Statement*>(&ref);
-	auto stmB = dynamic_cast<Statement*>(&n);
-	if (stmA and stmB) {
-		return search_recurse(*stmA, *stmB, ctx);
+	auto aA = dynamic_cast<Assignment*>(&ref);
+	auto aB = dynamic_cast<Assignment*>(&n);
+	if (aA and aB) {
+		return search_recurse(*aA, *aB, ctx);
+	}
+
+	auto ifA = dynamic_cast<IfStatement*>(&ref);
+	auto ifB = dynamic_cast<IfStatement*>(&n);
+	if (ifA and ifB) {
+		return search_recurse(*ifA, *ifB, ctx);
 	}
 
 	return false;
 }
 
-std::pair<Query::path_t, bool> Query::find_path(iNode & a, iNode & b) {
-	path_t path;
-	bool found = find_path(a, b, path);
-	return {path, found};
-}
-
-bool Query::find_path(iNode & a, iNode & b, path_t & path) {
-	path.push_back(&a);
-	if (&a == &b)
-		return true;
-
-	for (auto node : a.forward()) {
-		bool not_in_path = std::find(path.begin(), path.end(), node)
-				== path.end();
-		if (not_in_path) {
-			auto found = find_path(*node, b, path);
-			if (found)
-				return true;
-		}
+bool QueryMatch::statements_matches(std::vector<Statement *> & ref,
+		std::vector<Statement *> & n, BackTrackingContext & ctx) {
+	auto tStm = n.begin();
+	for (auto refTStm : ref) {
+		if (not search_recurse(*refTStm, **tStm, ctx))
+			return false;
+		++tStm;
 	}
-	path.pop_back();
-	return false;
+	return true;
 }
+
+bool QueryMatch::search_recurse(IfStatement & ref, IfStatement & n,
+		BackTrackingContext & ctx) {
+	if (ref.elseIf.size() != n.elseIf.size())
+		return false;
+
+	if (ref.ifTrue_specified != n.ifTrue_specified
+			or ref.ifFalse_specified != n.ifFalse_specified)
+		return false;
+
+	if (not search_recurse(ref.condition, n.condition, ctx))
+		return false;
+
+	if (not statements_matches(ref.ifTrue, n.ifFalse, ctx))
+		return false;
+
+	auto elif = n.elseIf.begin();
+	for (auto refElif: ref.elseIf) {
+		if (not search_recurse(*refElif.first, *elif->first, ctx))
+			return false;
+
+		vector<Statement*> & r = refElif.second;
+		vector<Statement*> & g = elif->second;
+
+		if (not statements_matches(r, g, ctx))
+			return false;
+
+		++elif;
+	}
+
+	return true;
+}
+
+bool QueryMatch::search_recurse(Assignment & ref, Assignment & n,
+		BackTrackingContext & ctx) {
+	if (ref.dst_index.size() != n.dst_index.size())
+		return false;
+
+	if (not search_recurse(ref.dst, n.dst, ctx))
+		return false;
+
+	auto it = n.dst_index.begin();
+	for (auto refi : ref.dst_index) {
+		if (not search_recurse(*refi, **it, ctx))
+			return false;
+		++it;
+	}
+
+	if (not search_recurse(ref.src, n.src, ctx))
+		return false;
+
+	return true;
+}
+
 
 }
 }

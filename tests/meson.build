@@ -3,7 +3,8 @@ boost_deps = dependency('boost', modules: ['unit_test_framework', ])
 
 tests = [
 	  ['basic', 'test of the core'],
-	  ['basic_query', 'basic test for query engine']
+	  ['basic_query_match', 'basic test for query engine'],
+	  ['large_query_match', 'benchmarks for query engine']
 ]
 
 foreach t : tests
