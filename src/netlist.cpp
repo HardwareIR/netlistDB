@@ -30,34 +30,44 @@ Net & Netlist::sig(const std::string & name) {
 }
 
 Netlist::~Netlist() {
+	// [TODO] allocating the memory during the deallocation
+	// can deadlock when deallocating because we run out of the memory
 	std::set<void *> deleted;
 	for (auto sig : nets) {
 		for (auto & d : sig->drivers) {
-			auto fn = dynamic_cast<FunctionCall*>(d);
-			if (fn and &(fn->res) == sig) {
-				delete fn;
+			//auto fn = dynamic_cast<FunctionCall*>(d);
+			//if (fn and &(fn->res) == sig) {
+			//	delete fn;
+			//	continue;
+			//}
+			//auto asAssig = dynamic_cast<Assignment*>(d);
+			//if (asAssig and asAssig->parent == nullptr) {
+			//	if (&(asAssig->dst) == sig) {
+			//		deleted.insert(asAssig);
+			//		delete asAssig;
+			//	}
+			//	continue;
+			//}
+			if (deleted.find(d) != deleted.end())
 				continue;
-			}
-			auto asAssig = dynamic_cast<Assignment*>(d);
-			if (asAssig and asAssig->parent == nullptr) {
-				if (&(asAssig->dst) == sig) {
-					deleted.insert(asAssig);
-					delete asAssig;
-				}
-				continue;
-			}
+			delete d;
+			deleted.insert(d);
 		}
 
 		for (auto & ep : sig->endpoints) {
-			if (deleted.find(ep) == deleted.end())
+			if (deleted.find(ep) != deleted.end())
 				continue;
+			delete ep;
+			deleted.insert(ep);
 
-			auto asIf = dynamic_cast<IfStatement*>(ep);
-			if (asIf) {
-				if (&(asIf->condition) == sig) {
-					delete ep;
-				}
-			}
+			//auto asIf = dynamic_cast<IfStatement*>(ep);
+			//if (asIf) {
+			//	if (&(asIf->condition) == sig) {
+			//		delete ep;
+			//	}
+			//}
 		}
+
+		delete sig;
 	}
 }

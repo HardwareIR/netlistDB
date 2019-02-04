@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <vector>
 #include <unordered_map>
+#include <atomic>
 
 #include "ordered_set.h"
 #include "varId.h"
@@ -116,7 +117,6 @@ public:
 	std::unordered_map<UsageCacheKey, Net*> usage_cache;
 	// index used for last priority ordering
 	// represent the sequential number of the signal generated in parent context
-	size_t index;
 
 	Net(const Net & other) = delete;
 	// use methods from Netlist
@@ -172,7 +172,7 @@ public:
 	// name for debugging purposes
 	std::string name;
 	std::set<Net*> nets;
-	size_t obj_seq_num;
+	std::atomic<size_t> obj_seq_num;
 
 	Netlist(const Netlist & other) = delete;
 	Netlist(const std::string & name);
