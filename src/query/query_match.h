@@ -41,7 +41,6 @@ protected:
 			OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx);
 	static bool statements_matches(std::vector<Statement *> & ref,
 			std::vector<Statement *> & n, BackTrackingContext & ctx);
-
 };
 
 }
