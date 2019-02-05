@@ -55,7 +55,6 @@ BOOST_AUTO_TEST_CASE( query_result_of_add ) {
 
 	auto qres = query_add.search(ctx);
 	BOOST_CHECK_EQUAL(qres.size(), n);
-
 }
 
 BOOST_AUTO_TEST_CASE( simple_mux ) {
