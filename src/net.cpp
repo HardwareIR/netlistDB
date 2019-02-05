@@ -11,7 +11,7 @@ Net & apply(FunctionDef & fn, Net & a, Net & b) {
 		return *prev->second;
 
 	auto & res = a.ctx.sig();
-	new FunctionCall(a.ctx.obj_seq_num++, fn, a, b, res);
+	new FunctionCall(fn, a, b, res);
 
 	a.usage_cache[k] = &res;
 	b.usage_cache[k] = &res;
@@ -25,15 +25,15 @@ Net & apply(FunctionDef & fn, Net & a) {
 		return *prev->second;
 
 	auto & res = a.ctx.sig();
-	new FunctionCall(a.ctx.obj_seq_num++, fn, a, res);
+	new FunctionCall(fn, a, res);
 
 	a.usage_cache[k] = &res;
 	return res;
 }
 
-Net::Net(Netlist & ctx, size_t index, const std::string & name,
-		Direction direction) :
-		iNode(index), id(name), ctx(ctx), direction(direction) {
+Net::Net(Netlist & ctx, const std::string & name, Direction direction) :
+		id(name), ctx(ctx), direction(direction) {
+	ctx.register_node(*this);
 }
 
 Net & Net::operator~() {

@@ -2,14 +2,17 @@
 
 namespace netlistDB {
 
-FunctionCall::FunctionCall(size_t index, FunctionDef & fn, Net & arg0, Net & res) :
-		OperationNode(index), fn(fn), args( { &arg0 }), res(res) {
+FunctionCall::FunctionCall(FunctionDef & fn, Net & arg0,
+		Net & res) :
+		fn(fn), args( { &arg0 }), res(res) {
+	arg0.ctx.register_node(*this);
 	arg0.endpoints.push_back(this);
 	res.drivers.push_back(this);
 }
 
-FunctionCall::FunctionCall(size_t index, FunctionDef & fn, Net & arg0, Net & arg1, Net & res) :
-		OperationNode(index), fn(fn), args( { &arg0, &arg1 }), res(res) {
+FunctionCall::FunctionCall(FunctionDef & fn, Net & arg0,
+		Net & arg1, Net & res) : fn(fn), args( { &arg0, &arg1 }), res(res) {
+	arg0.ctx.register_node(*this);
 	arg0.endpoints.push_back(this);
 	arg1.endpoints.push_back(this);
 	res.drivers.push_back(this);

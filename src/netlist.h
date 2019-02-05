@@ -24,6 +24,8 @@
 namespace netlistDB {
 
 class Net;
+class Netlist;
+class Statement;
 
 /**
  * Inteface for nodes in database
@@ -34,10 +36,6 @@ public:
 	// sequential number used as a id during serialization
 	size_t index;
 
-	iNode(size_t index) :
-			index(index) {
-	}
-
 	using iterator = std::vector<iNode*>;
 	// iterate endpoints for Net or outputs for statement or result for expression
 	virtual iterator forward() = 0;
@@ -47,22 +45,15 @@ public:
 	}
 };
 
-class Netlist;
-class Statement;
-
 class OperationNode: public iNode {
-public:
-	OperationNode(size_t index) :
-			iNode(index) {
-	}
 };
 
 class Statement: public OperationNode {
 public:
 	Statement * parent;
 
-	Statement(size_t index) :
-			OperationNode(index), parent(nullptr) {
+	Statement() :
+			parent(nullptr) {
 	}
 };
 
@@ -90,8 +81,8 @@ public:
 	Net & res;
 
 	FunctionCall(const FunctionCall& other) = delete;
-	FunctionCall(size_t index, FunctionDef & fn, Net & op0, Net & res);
-	FunctionCall(size_t index, FunctionDef & fn, Net & op0, Net & op1,
+	FunctionCall(FunctionDef & fn, Net & op0, Net & res);
+	FunctionCall(FunctionDef & fn, Net & op0, Net & op1,
 			Net & res);
 
 	virtual iNode::iterator forward() override;
@@ -120,8 +111,7 @@ public:
 
 	Net(const Net & other) = delete;
 	// use methods from Netlist
-	Net(Netlist & ctx, size_t index, const std::string & name,
-			Direction direction);
+	Net(Netlist & ctx, const std::string & name, Direction direction);
 
 	Net & operator!() = delete;
 	Net & operator~();
@@ -169,9 +159,25 @@ public:
  **/
 class Netlist {
 public:
+	/*
+	 * Add node in to nodes on place specified by index and
+	 * optionally to nets as well
+	 **/
+	void register_node(iNode & n);
+	void register_node(Net & n);
+
+	/*
+	 * Remove node from nodes on place specified by index and
+	 * optionally from nets as well
+	 **/
+	void unregister_node(iNode & n);
+	void unregister_node(Net & n);
+
+public:
 	// name for debugging purposes
 	std::string name;
 	std::set<Net*> nets;
+	std::vector<iNode*> nodes;
 	std::atomic<size_t> obj_seq_num;
 
 	Netlist(const Netlist & other) = delete;
@@ -186,6 +192,7 @@ public:
 	Net & sig();
 	// create internal signal with name specified
 	Net & sig(const std::string & name);
+
 	~Netlist();
 };
 
