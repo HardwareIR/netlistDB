@@ -7,6 +7,7 @@ tests = [
 	  ['large_query_match', 'benchmarks for query engine'],
 	  ['query_flooding', 'tests for flooding query engine'],
 	  ['taskflow', 'tests for taskflow functionality'],
+	  ['transform_remove_useless', 'tests for TransformRemoveUseless functionality'],
 ]
 
 test_common_src = [

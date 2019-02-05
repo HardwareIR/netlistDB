@@ -20,6 +20,10 @@ src = [
 	'serializer/verilog.h',
 	'serializer/namescope.h',
 	'serializer/serializer.h',
+	
+	'transform/remove_useless.cpp',
+	'transform/remove_useless.h',
+	'transform/transformation.h',
 ]
 
 EXTRA_CXX_ARGS = [
