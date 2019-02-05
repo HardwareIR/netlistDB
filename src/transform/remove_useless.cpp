@@ -16,7 +16,7 @@ bool TransformRemoveUseless::apply(Netlist & ctx) {
 		}
 	}
 
-	query::QueryTraverse q(ctx.obj_seq_num);
+	query::QueryTraverse q(ctx.nodes.size());
 
 	auto walk_all_drivers = [](iNode &n) {
 		return n.backward();
@@ -34,7 +34,7 @@ bool TransformRemoveUseless::apply(Netlist & ctx) {
 			deleted.push_back(net);
 			for (auto e: net->endpoints) {
 			}
-			delete net;
+			//delete net;
 		}
 	}
 }

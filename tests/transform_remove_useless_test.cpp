@@ -31,15 +31,15 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 	build_random_circuit(ctx, N, N, N, N, rand);
 
 	TransformRemoveUseless t;
-	BOOST_CHECK_EQUAL(ctx.obj_seq_num, 20090);
+	BOOST_CHECK_EQUAL(ctx.nodes.size(), 20090);
 
 	t.apply(ctx);
 	size_t after_cleanup_cnt = 20090;
 
-	BOOST_CHECK_EQUAL(ctx.obj_seq_num, after_cleanup_cnt);
+	BOOST_CHECK_EQUAL(ctx.nodes.size(), after_cleanup_cnt);
 
 	t.apply(ctx);
-	BOOST_CHECK_EQUAL(ctx.obj_seq_num, after_cleanup_cnt);
+	BOOST_CHECK_EQUAL(ctx.nodes.size(), after_cleanup_cnt);
 }
 //____________________________________________________________________________//
 
