@@ -155,16 +155,16 @@ bool QueryMatch::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) 
 	// test all combinations of paths (but with very high probability only single item
 	//  as majority of the nets has only one driver)
 
-	bool ignore_dirvers = ref.direction == Direction::DIR_IN;
+	bool ignore_drivers = ref.direction == Direction::DIR_IN;
 	bool ignore_endpoints = ref.direction == Direction::DIR_OUT;
-	if (ignore_dirvers and ignore_endpoints) {
+	if (ignore_drivers and ignore_endpoints) {
 		// matching any signal
 		return true;
 	}
 
 	auto & child_ctx = ctx.child();
 
-	if (ignore_dirvers) {
+	if (ignore_drivers) {
 		// matching the input signal which can potentially have more endpoints,
 		// which we does not have to match
 
