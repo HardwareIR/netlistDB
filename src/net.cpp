@@ -1,7 +1,7 @@
 #include "netlist.h"
 #include "operator_defs.h"
 
-using namespace netlistDB;
+namespace netlistDB {
 
 Net & apply(FunctionDef & fn, Net & a, Net & b) {
 	assert(&(a.ctx) == &(b.ctx));
@@ -113,4 +113,6 @@ iNode::iterator Net::backward() {
 	for (auto o : drivers)
 		it.push_back(o);
 	return it;
+}
+
 }
