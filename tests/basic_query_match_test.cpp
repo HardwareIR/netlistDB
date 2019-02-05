@@ -50,7 +50,8 @@ BOOST_AUTO_TEST_CASE( query_result_of_add ) {
 	}
 
 	QueryMatch query_add;
-	query_add.sig("a") + query_add.sig("b");
+	auto &r = query_add.sig_in("a") + query_add.sig_in("b");
+	r.direction = Direction::DIR_OUT;
 
 	auto qres = query_add.search(ctx);
 	BOOST_CHECK_EQUAL(qres.size(), n);
