@@ -22,8 +22,6 @@ using namespace netlistDB::query;
 
 BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
 
-
-
 void tf_test(std::vector<iNode*> & outputs, QueryTraverse& q, size_t obj_cnt,
 		size_t thread_cnt) {
 	std::atomic<size_t> visited_cnt = 0;
