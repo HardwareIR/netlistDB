@@ -11,8 +11,6 @@ namespace query {
  **/
 class QueryMatch: public Netlist {
 public:
-	size_t query_size;
-	std::unordered_map<Net *, size_t> signal_to_index;
 	QueryMatch();
 
 	// size of results = number of signals in this query
@@ -21,9 +19,8 @@ public:
 
 	/**
 	 * search isomorphic graphs with this query in netlist
-	 * DFS
+	 * DFS based
 	 */
-
 	std::vector<match_t> search(Netlist & netlist);
 
 protected:

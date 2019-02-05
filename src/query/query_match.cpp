@@ -60,7 +60,7 @@ bool QueryMatch::search_recurse(FunctionCall & ref, FunctionCall & call,
 }
 
 QueryMatch::QueryMatch() :
-		Netlist(""), query_size(0) {
+		Netlist("") {
 }
 
 std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
@@ -84,7 +84,6 @@ std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
 		BackTrackingContext ctx(current_match);
 		if (search_recurse(*root_sig, *net, ctx)) {
 			matches.push_back(current_match);
-		} else {
 		}
 		ctx.discard();
 		current_match.clear();
@@ -93,10 +92,11 @@ std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
 }
 /**
  * Find first matching combination
- * \note The match is stored in ctx.match and can be canceled by methods of ctx
- * \param ref set of operations from query
- * \param graphIo set of operations from the queried graph
- * \return true if match was found
+ *
+ * @note The match is stored in ctx.match and can be canceled by methods of ctx
+ * @param ref set of operations from query
+ * @param graphIo set of operations from the queried graph
+ * @return true if match was found
  **/
 bool QueryMatch::find_matching_permutation(OrderedSet<OperationNode*> & ref,
 		OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx) {
