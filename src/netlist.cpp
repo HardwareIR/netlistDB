@@ -4,7 +4,7 @@
 using namespace netlistDB;
 
 Netlist::Netlist(const std::string & name) :
-		name(name), obj_seq_num(0) {
+		name(name) {
 }
 
 void Netlist::register_node(iNode & n) {
@@ -28,7 +28,6 @@ void Netlist::unregister_node(Net & n) {
 
 Net & Netlist::sig_in(const std::string & name) {
 	auto s = new Net(*this, name, DIR_IN);
-	nets.insert(s);
 	return *s;
 }
 
@@ -47,10 +46,10 @@ Net & Netlist::sig(const std::string & name) {
 }
 
 Netlist::~Netlist() {
-	// [TODO] allocating the memory during the deallocation
-	// can deadlock when deallocating because we run out of the memory
 	for (auto o : nodes) {
-		if (o != nullptr)
+		if (o != nullptr) {
 			delete o;
+		}
 	}
+	nodes.clear();
 }

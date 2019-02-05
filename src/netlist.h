@@ -178,7 +178,6 @@ public:
 	std::string name;
 	std::set<Net*> nets;
 	std::vector<iNode*> nodes;
-	std::atomic<size_t> obj_seq_num;
 
 	Netlist(const Netlist & other) = delete;
 	Netlist(const std::string & name);
