@@ -49,10 +49,13 @@ protected:
 	 * @note The match is stored in ctx.match and can be canceled by methods of ctx
 	 * @param ref set of operations from query
 	 * @param graphIo set of operations from the queried graph
+	 * @param allow_more_in_graph if true there can an extra items in the graph
 	 * @return true if match was found
 	 **/
 	static bool find_matching_permutation(OrderedSet<OperationNode*> & ref,
-			OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx);
+			OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx,
+			bool allow_more_in_graph);
+
 	static bool statements_matches(std::vector<Statement *> & ref,
 			std::vector<Statement *> & n, BackTrackingContext & ctx);
 };

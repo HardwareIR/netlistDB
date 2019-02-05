@@ -53,10 +53,10 @@ BOOST_AUTO_TEST_CASE( query_add ) {
 	r.direction = Direction::DIR_OUT;
 
 	auto qres = query_add.search(ctx);
-	BOOST_CHECK_EQUAL(qres.size(), 6);
+	BOOST_CHECK_EQUAL(qres.size(), 29);
 
 	auto adds = find_ops(ctx, OpAdd);
-	BOOST_CHECK_EQUAL(qres.size(), 6);
+	BOOST_CHECK_EQUAL(qres.size(), 29);
 
 }
 
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE( query_mac ) {
 	r.direction = Direction::DIR_OUT;
 	auto qres = query_mac.search(ctx);
 
-	BOOST_CHECK_EQUAL(qres.size(), 5);
+	BOOST_CHECK_EQUAL(qres.size(), 479);
 }
 
 //____________________________________________________________________________//

@@ -76,9 +76,16 @@ std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
 }
 
 bool QueryMatch::find_matching_permutation(OrderedSet<OperationNode*> & ref,
-		OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx) {
-	if (ref.size() != graphIo.size())
-		return false;
+		OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx,
+		bool allow_more_in_graph) {
+
+	if (allow_more_in_graph) {
+		if (graphIo.size() < ref.size())
+			return false;
+	} else {
+		if (ref.size() != graphIo.size())
+			return false;
+	}
 
 	bool match_found;
 	// we can not mask used items in "permutation" as they may appear
@@ -105,7 +112,8 @@ bool QueryMatch::find_matching_permutation(OrderedSet<OperationNode*> & ref,
 	return match_found;
 }
 
-bool QueryMatch::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) {
+bool QueryMatch::search_recurse(Net & ref, Net & net,
+		BackTrackingContext& ctx) {
 	switch (ctx.check_can_match(ref, net)) {
 	case BackTrackingContext::already_matches:
 		// this signal already matched this reference somewhere else
@@ -121,9 +129,11 @@ bool QueryMatch::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) 
 
 	// order of endpoint or drivers does not matter (as signal is hyperedge)
 	// test all combinations of paths (but with very high probability only single item
-	//  as majority of the nets has only one driver)
+	// as majority of the nets has only one driver)
 
+	// ignore drivers and the net can have more endpoints
 	bool ignore_drivers = ref.direction == Direction::DIR_IN;
+
 	bool ignore_endpoints = ref.direction == Direction::DIR_OUT;
 	if (ignore_drivers and ignore_endpoints) {
 		// matching any signal
@@ -137,7 +147,7 @@ bool QueryMatch::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) 
 		// which we does not have to match
 
 		return find_matching_permutation(ref.endpoints, net.endpoints,
-				child_ctx);
+				child_ctx, true);
 	} else {
 		// check if any permutation of drivers and endpoints matches
 		// we need to check if all IO matches
@@ -150,8 +160,8 @@ bool QueryMatch::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) 
 		// it in first run and the check of endpoints have to use it
 
 		// vast majority of nets has only one driver
-		if (not find_matching_permutation(ref.drivers, net.drivers,
-				child_ctx)) {
+		if (not find_matching_permutation(ref.drivers, net.drivers, child_ctx,
+				false)) {
 			return false;
 		}
 
@@ -160,11 +170,12 @@ bool QueryMatch::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) 
 		// both direction has to be checked as the circuit can contain the cycle
 		return ignore_endpoints
 				or find_matching_permutation(ref.endpoints, net.endpoints,
-						child_ctx);
+						child_ctx, false);
 	}
 }
 
-bool QueryMatch::search_recurse(iNode & ref, iNode & n, BackTrackingContext & ctx) {
+bool QueryMatch::search_recurse(iNode & ref, iNode & n,
+		BackTrackingContext & ctx) {
 	auto fA = dynamic_cast<FunctionCall*>(&ref);
 	auto fB = dynamic_cast<FunctionCall*>(&n);
 	if (fA and fB) {
@@ -223,7 +234,7 @@ bool QueryMatch::search_recurse(IfStatement & ref, IfStatement & n,
 		return false;
 
 	auto elif = n.elseIf.begin();
-	for (auto refElif: ref.elseIf) {
+	for (auto refElif : ref.elseIf) {
 		if (not search_recurse(*refElif.first, *elif->first, ctx))
 			return false;
 
@@ -259,7 +270,6 @@ bool QueryMatch::search_recurse(Assignment & ref, Assignment & n,
 
 	return true;
 }
-
 
 }
 }
