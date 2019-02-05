@@ -23,19 +23,22 @@ public:
 	}
 
 	static iNode::iterator dummy_callback(iNode &n);
-
-	void clean_visit_flags(size_t start, size_t stop);
+protected:
+	void clean_visit_flags(atomic_flag_t * start, atomic_flag_t * stop);
+public:
 	void clean_visit_flags(size_t thread_cnt);
 
 	/*
 	 * Traverse graph from starts and call callback on each node exactly once
 	 * @param starts the nodes where the search should start
 	 * @param callback the callback function called on each vistited node (exactly once)
-	 * @param thread_cnt the number of threads used for processing (1, 0 = processing on this core only)
+	 * @param thread_cnt the number of threads used for processing
+	 *        (0 = use maximum number for this machine, 1 = processing on this core only)
 	 * */
 	void traverse(std::vector<iNode*> starts, callback_t callback,
-			size_t thread_cnt = 1);
+			size_t thread_cnt = 0);
 
+protected:
 	/*
 	 * Traverse using limited DFS, if limit is exceeded the rest children are processed
 	 * new task

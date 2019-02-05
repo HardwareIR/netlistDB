@@ -21,22 +21,31 @@ iNode::iterator QueryTraverse::dummy_callback(iNode &n) {
 	return it;
 }
 
-void QueryTraverse::clean_visit_flags(size_t start, size_t stop) {
-	for (size_t i = 0; i < max_items; i++)
-		visited[i] = false;
+void QueryTraverse::clean_visit_flags(atomic_flag_t * start,
+		atomic_flag_t * stop) {
+	for (; start < stop; start++)
+		*start = false;
 }
+
 void QueryTraverse::clean_visit_flags(size_t thread_cnt) {
+	thread_cnt = std::min(thread_cnt, max_items);
 	if (thread_cnt > 1) {
 		tf::Taskflow tf(thread_cnt);
 		size_t step = max_items / thread_cnt;
-		for (size_t i = 0; i < max_items; i = std::min(i + step, max_items)) {
-			tf.silent_emplace([i, step, this](auto& subflow) {
-				clean_visit_flags(i, i+step);
+		for (size_t i = 0; i < max_items;) {
+			size_t next_i = std::min(i + step, max_items);
+			auto start = &visited[i];
+			auto stop = &visited[next_i];
+
+			tf.silent_emplace([start, stop, this](auto& subflow) {
+				clean_visit_flags(start, stop);
 			});
+
+			i = next_i;
 		}
 		tf.wait_for_all();
 	} else {
-		clean_visit_flags(0, max_items);
+		clean_visit_flags(visited, &visited[max_items]);
 	}
 	visited_clean = true;
 }
@@ -48,6 +57,9 @@ void QueryTraverse::traverse(std::vector<iNode*> starts, callback_t callback,
 		clean_visit_flags(thread_cnt);
 	}
 	visited_clean = false;
+	if (thread_cnt == 0) {
+		thread_cnt = std::thread::hardware_concurrency();
+	}
 
 	if (thread_cnt > 1) {
 		tf::Taskflow tf(thread_cnt);
