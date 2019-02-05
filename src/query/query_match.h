@@ -28,12 +28,29 @@ protected:
 			BackTrackingContext & match);
 	static bool search_recurse(iNode & ref, iNode & net,
 			BackTrackingContext & match);
+	/**
+	 * Signal matches if each of its connected nodes matches in any order
+	 * Node matches if it has same type and structure and all of its connected
+	 * signals matches in same order
+	 *
+	 * @param ref the net from the query
+	 * @param net the net from the queried graph
+	 * @return true if match was found
+	 **/
 	static bool search_recurse(Net & ref, Net & net,
 			BackTrackingContext & match);
 	static bool search_recurse(Assignment & ref, Assignment & assig,
 			BackTrackingContext & match);
 	static bool search_recurse(IfStatement & ref, IfStatement & ifstm,
 			BackTrackingContext & match);
+	/**
+	 * Find first matching combination
+	 *
+	 * @note The match is stored in ctx.match and can be canceled by methods of ctx
+	 * @param ref set of operations from query
+	 * @param graphIo set of operations from the queried graph
+	 * @return true if match was found
+	 **/
 	static bool find_matching_permutation(OrderedSet<OperationNode*> & ref,
 			OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx);
 	static bool statements_matches(std::vector<Statement *> & ref,

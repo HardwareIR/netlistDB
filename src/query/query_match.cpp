@@ -74,14 +74,7 @@ std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
 	}
 	return matches;
 }
-/**
- * Find first matching combination
- *
- * @note The match is stored in ctx.match and can be canceled by methods of ctx
- * @param ref set of operations from query
- * @param graphIo set of operations from the queried graph
- * @return true if match was found
- **/
+
 bool QueryMatch::find_matching_permutation(OrderedSet<OperationNode*> & ref,
 		OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx) {
 	if (ref.size() != graphIo.size())
@@ -112,15 +105,6 @@ bool QueryMatch::find_matching_permutation(OrderedSet<OperationNode*> & ref,
 	return match_found;
 }
 
-/**
- * Signal matches if each of its connected nodes matches in any order
- * Node matches if it has same type and structure and all of its connected
- * signals matches in same order
- *
- * \param ref the net from the query
- * \param net the net from the queried graph
- * \return true if match was found
- **/
 bool QueryMatch::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) {
 	switch (ctx.check_can_match(ref, net)) {
 	case BackTrackingContext::already_matches:
