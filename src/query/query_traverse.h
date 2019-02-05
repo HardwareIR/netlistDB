@@ -26,6 +26,9 @@ public:
 protected:
 	void clean_visit_flags(atomic_flag_t * start, atomic_flag_t * stop);
 public:
+	/*
+	 * Reset visit flags used in traversal
+	 * */
 	void clean_visit_flags(size_t thread_cnt);
 
 	/*
