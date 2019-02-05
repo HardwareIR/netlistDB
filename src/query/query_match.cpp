@@ -155,8 +155,8 @@ bool QueryMatch::search_recurse(Net & ref, Net & net, BackTrackingContext& ctx) 
 	// test all combinations of paths (but with very high probability only single item
 	//  as majority of the nets has only one driver)
 
-	bool ignore_dirvers = ref.drivers.size() == 0;
-	bool ignore_endpoints = ref.endpoints.size() == 0;
+	bool ignore_dirvers = ref.direction == Direction::DIR_IN;
+	bool ignore_endpoints = ref.direction == Direction::DIR_OUT;
 	if (ignore_dirvers and ignore_endpoints) {
 		// matching any signal
 		return true;
