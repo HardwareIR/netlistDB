@@ -9,8 +9,8 @@ src = [
 	
 	'query/backtrack_context.cpp',
 	'query/backtrack_context.h',
-	'query/query_flooding.cpp',
-	'query/query_flooding.h',
+	'query/query_traverse.cpp',
+	'query/query_traverse.h',
 	'query/query_match.cpp',
 	'query/query_match.h',
 	'query/query_path.cpp',
