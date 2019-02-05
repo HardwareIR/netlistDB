@@ -4,8 +4,9 @@
 
 namespace netlistDB {
 namespace query {
+
 /*
- * Query to netlist
+ * Graph pattern match query
  *
  **/
 class QueryMatch: public Netlist {
