@@ -118,7 +118,7 @@ iNode::iterator Net::backward() {
 }
 
 void Net::forward_disconnect(iNode::predicate_t pred) {
-	parallel_utils::errase_if<OperationNode*>(endpoints, pred);
+	parallel_utils::erase_if<OperationNode>(endpoints, pred);
 }
 
 }
