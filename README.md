@@ -1,8 +1,7 @@
 # NetlistDB
 
-NetlistDB is an experimental netlist database for hardware developement tools like hardware synthesis tools, simulators and code generators.
-
-It is designed to allow efficient parallel processing of complex task while not sacrifising single thread performance.
+NetlistDB is an experimental netlist database for hardware developement tools (hardware synthesis tools, simulators, code generators, ...).
+It is designed to allow efficient parallel processing of complex circut transofmation tasks while not sacrifising single thread performance.
 
 
 # Circuit representation in NetlistDB
@@ -24,6 +23,34 @@ It is designed to allow efficient parallel processing of complex task while not 
 [2] Each statement is self sufficient process with automatically managed sensitivity. (There is transformation class which transforms
     the statements to readable format so the serializae output is minimalized and readable.)
     
+
+# Installation
+
+Install dependencies
+```
+sudo apt-get install build-essentials meson cmake git
+
+git clone https://github.com/cpp-taskflow/cpp-taskflow
+cd cpp-taskflow
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+```
+
+build this library
+```
+meson build
+cd build
+ninja
+```
+
+run tests
+```
+cd build
+ninja test
+```
 
 
 # Structure of NetlistDB
