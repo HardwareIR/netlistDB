@@ -4,13 +4,14 @@
 namespace netlistDB {
 namespace utils {
 
+/* Iterator of chained vectors
+ **/
 template<class T>
 class ChaindedIter: public std::iterator<std::forward_iterator_tag, T> {
 	std::vector<std::vector<T>*> vectors;
 	typename std::vector<T>::iterator actual;
 	typename std::vector<T>::iterator actual_end;
 	typename std::vector<T>::iterator total_end;
-
 	size_t actual_vec_i;
 
 public:
