@@ -13,7 +13,8 @@ void Netlist::register_node(iNode & n) {
 }
 
 void Netlist::register_node(Net & n) {
-	nets.insert(&n);
+	n.net_index = nets.size();
+	nets.push_back(&n);
 	register_node(static_cast<iNode&>(n));
 }
 

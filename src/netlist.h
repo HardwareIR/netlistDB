@@ -37,10 +37,13 @@ public:
 	size_t index;
 
 	using iterator = std::vector<iNode*>;
+	using predicate_t = std::function<bool(iNode*)>;
+
 	// iterate endpoints for Net or outputs for statement or result for expression
 	virtual iterator forward() = 0;
 	// iterate drivers for net or inputs for statement or args for expression
 	virtual iterator backward() = 0;
+
 	virtual ~iNode() {
 	}
 };
@@ -57,18 +60,6 @@ public:
 	}
 };
 
-class Assignment: public Statement {
-public:
-	Net & dst;
-	std::vector<Net*> dst_index;
-	Net & src;
-
-	Assignment(const Assignment & other) = delete;
-	Assignment(Net & dst, Net & src);
-	Assignment(Net & dst, std::initializer_list<Net*> dst_index, Net & src);
-	virtual iNode::iterator forward() override;
-	virtual iNode::iterator backward() override;
-};
 
 // Container of call of the function (operator is also function)
 class FunctionCall: public OperationNode {
@@ -82,11 +73,11 @@ public:
 
 	FunctionCall(const FunctionCall& other) = delete;
 	FunctionCall(FunctionDef & fn, Net & op0, Net & res);
-	FunctionCall(FunctionDef & fn, Net & op0, Net & op1,
-			Net & res);
+	FunctionCall(FunctionDef & fn, Net & op0, Net & op1, Net & res);
 
 	virtual iNode::iterator forward() override;
 	virtual iNode::iterator backward() override;
+
 };
 
 /**
@@ -98,6 +89,9 @@ public:
 	VarId id;
 	// netlist which is the owner of this signal
 	Netlist & ctx;
+
+	// the index of this net in Netlist.nets
+	size_t net_index;
 
 	// direction of the signal if signal is used in IO
 	Direction direction;
@@ -137,10 +131,13 @@ public:
 	Net & falling();
 
 	// as assignment
-	Assignment & operator()(Net & other);
+	Statement & operator()(Net & other);
 
 	virtual iNode::iterator forward() override;
 	virtual iNode::iterator backward() override;
+
+	// disconnect the selected endpoints
+	void forward_disconnect(iNode::predicate_t pred);
 };
 
 /**
@@ -176,7 +173,7 @@ public:
 public:
 	// name for debugging purposes
 	std::string name;
-	std::set<Net*> nets;
+	std::vector<Net*> nets;
 	std::vector<iNode*> nodes;
 
 	Netlist(const Netlist & other) = delete;
