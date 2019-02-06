@@ -8,6 +8,7 @@ tests = [
 	  ['query_flooding', 'tests for flooding query engine'],
 	  ['taskflow', 'tests for taskflow functionality'],
 	  ['transform_remove_useless', 'tests for TransformRemoveUseless functionality'],
+	  ['chained_iter', 'tests for chained iterator'],
 ]
 
 test_common_src = [
