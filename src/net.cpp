@@ -1,6 +1,7 @@
 #include "netlist.h"
 #include "operator_defs.h"
 #include "statement_assignment.h"
+#include "parallel_utils/errase.h"
 
 namespace netlistDB {
 
@@ -33,7 +34,7 @@ Net & apply(FunctionDef & fn, Net & a) {
 }
 
 Net::Net(Netlist & ctx, const std::string & name, Direction direction) :
-		id(name), ctx(ctx), direction(direction) {
+		id(name), ctx(ctx), net_index(0), direction(direction) {
 	ctx.register_node(*this);
 }
 
@@ -116,9 +117,8 @@ iNode::iterator Net::backward() {
 	return it;
 }
 
-
 void Net::forward_disconnect(iNode::predicate_t pred) {
-	std::remove_if(endpoints.begin(), endpoints.end(), pred);
+	parallel_utils::errase_if<OperationNode*>(endpoints, pred);
 }
 
 }

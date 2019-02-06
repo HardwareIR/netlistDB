@@ -1,7 +1,13 @@
+#include <parallel_utils/inclusive_scan.h>
 #include "remove_useless.h"
 #include "../query/query_traverse.h"
+#include "../parallel_utils/errase.h"
+
+#include <iostream>
 
 using namespace netlistDB::query;
+using namespace netlistDB::parallel_utils;
+
 namespace netlistDB {
 namespace transform {
 
@@ -73,15 +79,17 @@ void disconnect_to_remove_connections(QueryTraverse::atomic_flag_t * visited,
 
 	// disconnect the unique items from all sets
 	for (size_t i = 0; i < to_update_ep.size(); i++) {
-		for (auto item_to_disconnect : *to_update_ep[i]) {
+		for (auto boundary_item : *to_update_ep[i]) {
 			for (size_t i2 = i + 1; i2 < to_update_ep.size(); i2++) {
-				to_update_ep[i2]->erase(item_to_disconnect);
+				// remove the item from all other sets so we clean it only once
+				to_update_ep[i2]->erase(boundary_item);
 			}
-			dynamic_cast<Net*>(item_to_disconnect)->forward_disconnect(
+
+			// disconnect the deleted part of the circuit
+			dynamic_cast<Net*>(boundary_item)->forward_disconnect(
 					[visited](iNode* n) {
 						return bool(not visited[n->index]);
 					});
-
 		}
 	}
 }
@@ -93,7 +101,9 @@ void disconnect_to_remove_connections(QueryTraverse::atomic_flag_t * visited,
 template<typename mask_index_predicate>
 size_t pack(tf::Taskflow & tf, iNode* input, iNode* output, size_t item_cnt,
 		QueryTraverse::atomic_flag_t * keep_flags) {
-	auto index = std::make_unique<int[]>(item_cnt);
+	auto index_in = std::make_unique<int[]>(item_cnt);
+	auto index_tmp = std::make_unique<int[]>(item_cnt);
+	auto index_out = std::make_unique<int[]>(item_cnt);
 	size_t step = item_cnt / tf.num_workers();
 
 	// [TODO] maybe just cast can be sufficient but we
@@ -101,28 +111,56 @@ size_t pack(tf::Taskflow & tf, iNode* input, iNode* output, size_t item_cnt,
 
 	// initialize index
 	for (size_t w = 0; w < tf.num_workers(); w++) {
-		tf.silent_emplace([w, index=index.get()]() {
-			size_t last = std::min((w+1)*step, item_cnt);
-			for (size_t i = w*step; i < last; i++) {
-				auto _i = mask_index_predicate{}(input[i]);
-				index[i] = int(keep_flags[_i]);
-			}
-		});
+		tf.silent_emplace(
+				[w, index=index_in.get(), item_cnt, step, input, keep_flags]() {
+					size_t last = std::min((w+1)*step, item_cnt);
+					for (size_t i = w*step; i < last; i++) {
+						auto _i = mask_index_predicate {}(input[i]);
+						index[i] = int(keep_flags[_i]);
+					}
+				});
 	}
 	tf.wait_for_all();
 
-	for (size_t )
+	inclusive_scan<int>(index_in.get(), index_out.get(), index_tmp.get(),
+			item_cnt, tf);
+
+	size_t new_item_cnt = index_out.get()[item_cnt - 1];
+	if (new_item_cnt == 0)
+		return 0;
+
+	step = item_cnt / tf.num_workers();
+	// put items on their palaces
+	for (size_t w = 0; w < tf.num_workers(); w++) {
+		tf.silent_emplace(
+				[w, index=index_out.get(), new_item_cnt, step, input, keep_flags]() {
+					size_t last = std::min((w+1)*step, new_item_cnt);
+					for (size_t i = w*step; i < last; i++) {
+						auto _i = mask_index_predicate {}(input[i]);
+						index[i] = int(keep_flags[_i]);
+					}
+				});
+	}
+	tf.wait_for_all();
+
+	return new_item_cnt;
 }
 
-void remove_deleted_nodes_and_nets(tf::Taskflow & tf,
-		std::vector<iNode*> & nodes, std::vector<Net*> & nets) {
-	std::vector<iNode*> nodes_tmp(nodes.size());
-	std::vector<Net*> nets_tmp(nets.size());
+//void remove_deleted_nodes_and_nets(tf::Taskflow & tf,
+//		std::vector<iNode*> & nodes, std::vector<Net*> & nets) {
+//	std::vector<iNode*> nodes_tmp(nodes.size());
+//	std::vector<Net*> nets_tmp(nets.size());
+//
+//	auto nodes_index = std::make_unique<int[]>(nodes.size());
+//	auto nets_index = std::make_unique<int[]>(nets.size());
+//
+//}
 
-	auto nodes_index = std::make_unique<int[]>(nodes.size());
-	auto nets_index = std::make_unique<int[]>(nets.size());
-
-}
+struct net_index_selector {
+	constexpr size_t & operator()(Net * net) {
+		return net->net_index;
+	}
+};
 
 bool TransformRemoveUseless::apply(Netlist & ctx) {
 	if (ctx.nodes.size() == 0)
@@ -149,9 +187,9 @@ bool TransformRemoveUseless::apply(Netlist & ctx) {
 	auto visited = q.visited;
 	auto & nodes = ctx.nodes;
 	auto cnt = nodes.size();
-
 	auto thread_cnt = std::thread::hardware_concurrency();
 	if (thread_cnt > 1) {
+		// parallel version
 		tf::Taskflow tf(thread_cnt);
 		auto to_update_ep = std::make_unique<std::set<iNode*>[]>(
 				thread_cnt * thread_cnt);
@@ -184,27 +222,33 @@ bool TransformRemoveUseless::apply(Netlist & ctx) {
 				to_delete.get(), thread_cnt);
 
 		if (any_removed) {
-			std::remove_if(nodes.begin(), nodes.end(), [visited](iNode*n) {
-				return bool(not visited[n->index]);
-			});
 			// delete the part which is useless
-			for (size_t i = 0; i < thread_cnt; i++) {
-				tf.silent_emplace([_to_delete=&to_delete.get()[i]]() {
-					for (auto item: *_to_delete) {
-						auto net = dynamic_cast<Net*>(item);
-						if (net) {
-							ctx.unregister_node(*net);
-						} else {
-							ctx.unregister_node(*item);
-						}
-						delete item;
+			errase_if<iNode*>(nodes, [visited, &ctx](iNode*n) {
+				if (bool(not visited[n->index])) {
+					auto net = dynamic_cast<Net*>(n);
+					if (net) {
+						ctx.unregister_node(*net);
+					} else {
+						ctx.unregister_node(*n);
 					}
-				});
+					delete n;
+					return true;
+				}
+				return false;
+			});
+			size_t i = 0;
+			for (auto n : nodes) {
+				n->index = i;
+				i++;
 			}
-			tf.wait_for_all();
+
+			compress_vec<Net, net_index_selector>(ctx.nets);
+
+			//ctx.integrty_assert();
 		}
 		return any_removed;
 	} else {
+		// sequential version
 		std::set<iNode*> to_update_ep;
 		std::vector<iNode*> to_delete;
 

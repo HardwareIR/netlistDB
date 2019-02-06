@@ -52,6 +52,8 @@ void QueryTraverse::clean_visit_flags(size_t thread_cnt) {
 
 void QueryTraverse::traverse(std::vector<iNode*> starts, callback_t callback,
 		size_t thread_cnt) {
+	if (starts.size() == 0)
+		return;
 	this->callback = callback;
 	if (not visited_clean) {
 		clean_visit_flags(thread_cnt);

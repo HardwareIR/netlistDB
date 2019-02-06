@@ -23,7 +23,7 @@ void Netlist::unregister_node(iNode & n) {
 }
 
 void Netlist::unregister_node(Net & n) {
-	nets.erase(&n);
+	nets[n.net_index] = nullptr;
 	unregister_node(static_cast<iNode&>(n));
 }
 
@@ -45,6 +45,27 @@ Net & Netlist::sig(const std::string & name) {
 	auto s = new Net(*this, name, DIR_UNKNOWN);
 	return *s;
 }
+
+void Netlist::integrty_assert() {
+	size_t i = 0;
+	for (auto n : nodes) {
+		assert(i == n->index);
+		for (auto f : n->forward()) {
+			assert(nodes[f->index] == f);
+		}
+		for (auto b : n->forward()) {
+			assert(nodes[b->index] == b);
+		}
+		i++;
+	}
+	i = 0;
+	for (auto n : nets) {
+		assert(nodes[n->index] == n);
+		assert(i == n->net_index);
+		i++;
+	}
+}
+
 
 Netlist::~Netlist() {
 	for (auto o : nodes) {

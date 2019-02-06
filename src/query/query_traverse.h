@@ -7,7 +7,10 @@ namespace query {
 
 class QueryTraverse {
 public:
+	// align to cacheline does not bring perf. improvement
+	// as there is large number of nodes and the access is more or less random.
 	using atomic_flag_t = std::atomic<bool>;
+
 	using callback_t = std::function<iNode::iterator(iNode&)>;
 	atomic_flag_t * visited;
 	bool visited_clean;

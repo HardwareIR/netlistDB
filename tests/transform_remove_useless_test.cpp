@@ -34,16 +34,18 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 	BOOST_CHECK_EQUAL(ctx.nodes.size(), 20090);
 
 	bool rm = t.apply(ctx);
-	size_t after_cleanup_cnt = 20090;
+	size_t after_cleanup_cnt = 2822;
+	size_t nets_after_cleanup_cnt = 1461;
 
 	BOOST_CHECK_EQUAL(rm, true);
 	BOOST_CHECK_EQUAL(ctx.nodes.size(), after_cleanup_cnt);
-	std::cout << "first pass" << std::endl;
+	BOOST_CHECK_EQUAL(ctx.nets.size(), nets_after_cleanup_cnt);
 
 	rm = t.apply(ctx);
 
 	BOOST_CHECK_EQUAL(rm, false);
 	BOOST_CHECK_EQUAL(ctx.nodes.size(), after_cleanup_cnt);
+	BOOST_CHECK_EQUAL(ctx.nets.size(), nets_after_cleanup_cnt);
 }
 //____________________________________________________________________________//
 

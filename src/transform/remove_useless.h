@@ -19,6 +19,7 @@ public:
 	 * @return true if the netlist was modified
 	 **/
 	virtual bool apply(Netlist & ctx) override;
+
 };
 
 }

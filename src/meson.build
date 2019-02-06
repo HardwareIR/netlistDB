@@ -9,6 +9,8 @@ src = [
 	'statement_if.cpp',
 	'statement_if.h',
 	
+	'parallel_utils/inclusive_scan.h',
+	
 	'query/backtrack_context.cpp',
 	'query/backtrack_context.h',
 	'query/query_traverse.cpp',

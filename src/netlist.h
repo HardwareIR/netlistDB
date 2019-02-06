@@ -166,6 +166,8 @@ public:
 	/*
 	 * Remove node from nodes on place specified by index and
 	 * optionally from nets as well
+	 *
+	 * @note thread safe, but requires compaction to reduce memory footprint
 	 **/
 	void unregister_node(iNode & n);
 	void unregister_node(Net & n);
@@ -188,6 +190,8 @@ public:
 	Net & sig();
 	// create internal signal with name specified
 	Net & sig(const std::string & name);
+
+	void integrty_assert();
 
 	~Netlist();
 };
