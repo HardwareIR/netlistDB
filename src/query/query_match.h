@@ -1,6 +1,8 @@
 #include <functional>
+
+#include "../statement_if.h"
+#include "../statement_assignment.h"
 #include "backtrack_context.h"
-#include "../statemen_if.h"
 
 namespace netlistDB {
 namespace query {

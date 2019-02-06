@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #include "../src/netlist.h"
-#include "../src/statemen_if.h"
+#include "../src/statement_if.h"
 
 using namespace netlistDB;
 

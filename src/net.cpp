@@ -1,5 +1,6 @@
 #include "netlist.h"
 #include "operator_defs.h"
+#include "statement_assignment.h"
 
 namespace netlistDB {
 
@@ -96,7 +97,7 @@ Net & Net::falling() {
 }
 
 // used as assignment
-Assignment & Net::operator()(Net & other) {
+Statement & Net::operator()(Net & other) {
 	return *(new Assignment(*this, other));
 }
 
@@ -113,6 +114,11 @@ iNode::iterator Net::backward() {
 	for (auto o : drivers)
 		it.push_back(o);
 	return it;
+}
+
+
+void Net::forward_disconnect(iNode::predicate_t pred) {
+	std::remove_if(endpoints.begin(), endpoints.end(), pred);
 }
 
 }

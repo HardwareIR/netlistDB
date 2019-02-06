@@ -1,3 +1,4 @@
+
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_MODULE netlistDB_large_query_test
@@ -10,7 +11,7 @@
 #include <random>
 
 #include "../src/netlist.h"
-#include "../src/statemen_if.h"
+#include "../src/statement_if.h"
 #include "../src/query/query_match.h"
 #include "../src/operator_defs.h"
 #include "../src/query/query_traverse.h"

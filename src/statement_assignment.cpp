@@ -1,16 +1,17 @@
-#include "netlist.h"
+#include "statement_assignment.h"
 
-using namespace netlistDB;
+namespace netlistDB {
 
-Assignment::Assignment(Net & dst, Net & src) : dst(dst), src(src) {
+Assignment::Assignment(Net & dst, Net & src) :
+		dst(dst), src(src) {
 	dst.ctx.register_node(*this);
 	dst.drivers.push_back(this);
 	src.endpoints.push_back(this);
 }
 
 Assignment::Assignment(Net & dst, std::initializer_list<Net*> dst_index,
-		Net & src) : dst(dst), dst_index(dst_index), src(
-				src) {
+		Net & src) :
+		dst(dst), dst_index(dst_index), src(src) {
 	dst.ctx.register_node(*this);
 	dst.drivers.push_back(this);
 	for (auto i : dst_index) {
@@ -31,4 +32,6 @@ iNode::iterator Assignment::backward() {
 		it.push_back(i);
 	it.push_back(&src);
 	return it;
+}
+
 }
