@@ -13,24 +13,23 @@ QueryMatch::QueryMatch() :
 		Netlist("") {
 }
 
-std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & ctx) {
+std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
 	std::vector<match_t> matches;
 
 	// find first defined signal
 	Net * root_sig = nullptr;
-	for (auto n : ctx.nets) {
+	for (auto n: nets) {
 		root_sig = n;
-		if (n)
+		if (root_sig)
 			break;
 	}
-
 	if (root_sig == nullptr) {
 		// empty match
 		return matches;
 	}
 
 	// it is expected that query size is much smaller than graph itself
-	for (auto net : ctx.nets) {
+	for (auto net : netlist.nets) {
 		if (net == nullptr)
 			continue;
 

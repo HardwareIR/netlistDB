@@ -1,4 +1,3 @@
-
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_MODULE netlistDB_large_query_test
@@ -54,6 +53,11 @@ BOOST_AUTO_TEST_CASE( query_add ) {
 	r.direction = Direction::DIR_OUT;
 
 	auto qres = query_add.search(ctx);
+	BOOST_CHECK_EQUAL(qres.size(), 29);
+
+	// search from different end
+	std::reverse(ctx.nets.begin(), ctx.nets.end());
+	qres = query_add.search(ctx);
 	BOOST_CHECK_EQUAL(qres.size(), 29);
 
 	auto adds = find_ops(ctx, OpAdd);
