@@ -6,6 +6,7 @@
 
 namespace netlistDB {
 namespace parallel_utils {
+
 template<typename T>
 void inclusive_scan(T in[], T out[], T tmp[], size_t len, tf::Taskflow & tf) {
 	if (len == 1) {
@@ -18,21 +19,22 @@ void inclusive_scan(T in[], T out[], T tmp[], size_t len, tf::Taskflow & tf) {
 	T *out2 = tmp;
 
 	auto w = std::min(workers, len_half);
-	tf.parallel_for(0, w, [=](const size_t thread_i) {
+	tf.parallel_for(0, int(w), 1, [=](int thread_i) {
 		size_t first = thread_i * len_half / w;
 		size_t end = (thread_i+1) * len_half / w;
 
-		for (long j = first; j < end; j++) {
+		for (size_t j = first; j < end; j++) {
 			in2[j] = in[j*2] + in[j*2+1];
 		}
 	});
+	tf.wait_for_all();
 
 	inclusive_scan(in2, out2, tmp + len_half, len_half, tf);
 
 	out[0] = in[0];
 	size_t len1 = len - 1;
 	w = std::min(workers, len1);
-	tf.parallel_for(0, w, [=](const size_t i) {
+	tf.parallel_for(0, int(w), 1, [=](int i) {
 		size_t first = 1 + i*len1/w;
 		size_t end = 1 + (i+1)*len1/w;
 
@@ -44,6 +46,7 @@ void inclusive_scan(T in[], T out[], T tmp[], size_t len, tf::Taskflow & tf) {
 			}
 		}
 	});
+	tf.wait_for_all();
 }
 
 /*
