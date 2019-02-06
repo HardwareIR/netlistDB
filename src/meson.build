@@ -25,6 +25,8 @@ src = [
 	'serializer/namescope.h',
 	'serializer/serializer.h',
 	
+	'transform/remove_by_mask.cpp',
+	'transform/remove_by_mask.h',
 	'transform/remove_useless.cpp',
 	'transform/remove_useless.h',
 	'transform/transformation.h',
