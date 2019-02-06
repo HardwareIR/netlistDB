@@ -9,61 +9,34 @@ using namespace std;
 namespace netlistDB {
 namespace query {
 
-bool QueryMatch::search_recurse(FunctionCall & ref, FunctionCall & call,
-		BackTrackingContext& ctx) {
-	switch (ctx.check_can_match(ref, call)) {
-	case BackTrackingContext::already_matches:
-		return true;
-	case BackTrackingContext::can_match:
-		break;
-	case BackTrackingContext::can_not_match:
-		return false;
-	}
-
-	// check all io if matches
-	if (ref.args.size() != call.args.size())
-		return false;
-
-	ctx.insert_match(ref, call);
-
-	// check if result signal matches
-	if (not search_recurse(ref.res, call.res, ctx)) {
-		return false;
-	}
-
-	// check if all inputs matches
-	auto _ref = ref.args.begin();
-	for (auto a : call.args) {
-		Net & __ref = **_ref;
-		if (not search_recurse(__ref, *a, ctx)) {
-			return false;
-		}
-		++_ref;
-	}
-	return true;
-}
-
 QueryMatch::QueryMatch() :
 		Netlist("") {
 }
 
-std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & netlist) {
+std::vector<QueryMatch::match_t> QueryMatch::search(Netlist & ctx) {
 	std::vector<match_t> matches;
+
+	// find first defined signal
 	Net * root_sig = nullptr;
-	for (auto ref : nets) {
-		if (root_sig == nullptr or root_sig->index > ref->index)
-			root_sig = ref;
+	for (auto n : ctx.nets) {
+		root_sig = n;
+		if (n)
+			break;
 	}
+
 	if (root_sig == nullptr) {
-		// empty query -> no match
+		// empty match
 		return matches;
 	}
 
 	// it is expected that query size is much smaller than graph itself
-	for (auto net : netlist.nets) {
+	for (auto net : ctx.nets) {
+		if (net == nullptr)
+			continue;
+
 		// query graph has only single component
 		// if the signal matches whole matching graph is discovered
-
+		// because match is performed in all directions
 		match_t current_match;
 		BackTrackingContext ctx(current_match);
 		if (search_recurse(*root_sig, *net, ctx)) {
@@ -110,6 +83,40 @@ bool QueryMatch::find_matching_permutation(OrderedSet<OperationNode*> & ref,
 	}
 
 	return match_found;
+}
+
+bool QueryMatch::search_recurse(FunctionCall & ref, FunctionCall & call,
+		BackTrackingContext& ctx) {
+	switch (ctx.check_can_match(ref, call)) {
+	case BackTrackingContext::already_matches:
+		return true;
+	case BackTrackingContext::can_match:
+		break;
+	case BackTrackingContext::can_not_match:
+		return false;
+	}
+
+	// check all io if matches
+	if (ref.args.size() != call.args.size())
+		return false;
+
+	ctx.insert_match(ref, call);
+
+	// check if result signal matches
+	if (not search_recurse(ref.res, call.res, ctx)) {
+		return false;
+	}
+
+	// check if all inputs matches
+	auto _ref = ref.args.begin();
+	for (auto a : call.args) {
+		Net & __ref = **_ref;
+		if (not search_recurse(__ref, *a, ctx)) {
+			return false;
+		}
+		++_ref;
+	}
+	return true;
 }
 
 bool QueryMatch::search_recurse(Net & ref, Net & net,
