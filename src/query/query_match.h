@@ -10,6 +10,7 @@ namespace query {
 /*
  * Graph pattern match query
  *
+ * @attention the query graph has to have single component
  **/
 class QueryMatch: public Netlist {
 public:
