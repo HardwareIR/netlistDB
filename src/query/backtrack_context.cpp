@@ -44,14 +44,17 @@ BackTrackingContext::match_check_t BackTrackingContext::check_can_match(
 	}
 
 	if (m == match.end()) {
+		// this node is not used in current match and can potentially match
 		return can_match;
+	} else {
+		// this node is used by something else in this match
+		return can_not_match;
 	}
 
-	return can_not_match;
 }
 
 void BackTrackingContext::insert_match(iNode & ref, iNode & n) {
-	if(match.find(&ref) == match.end()) {
+	if (match.find(&ref) == match.end()) {
 		private_match.insert(&ref);
 		match[&ref] = &n;
 	}

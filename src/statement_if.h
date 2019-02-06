@@ -27,7 +27,6 @@ public:
 	virtual iNode::iterator forward() override;
 	// iterate all output signals
 	virtual iNode::iterator backward() override;
-
 };
 
 IfStatement & If(Net & condition);

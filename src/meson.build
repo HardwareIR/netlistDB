@@ -1,11 +1,13 @@
 src = [
-	'assignment.cpp',
 	'function_call.cpp',
 	'function_def.cpp',
 	'net.cpp',
 	'netlist.cpp',
 	'operator_defs.cpp',
+	'statement_assignment.cpp',
+	'statement_assignment.h',
 	'statement_if.cpp',
+	'statement_if.h',
 	
 	'query/backtrack_context.cpp',
 	'query/backtrack_context.h',

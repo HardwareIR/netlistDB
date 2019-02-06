@@ -1,21 +1,39 @@
+#include <statement_if.h>
 #include "netlist.h"
-#include "statemen_if.h"
 
 using namespace netlistDB;
 
 Netlist::Netlist(const std::string & name) :
-		name(name), obj_seq_num(0) {
+		name(name) {
+}
+
+void Netlist::register_node(iNode & n) {
+	n.index = nodes.size();
+	nodes.push_back(&n);
+}
+
+void Netlist::register_node(Net & n) {
+	n.net_index = nets.size();
+	nets.push_back(&n);
+	register_node(static_cast<iNode&>(n));
+}
+
+void Netlist::unregister_node(iNode & n) {
+	nodes[n.index] = nullptr;
+}
+
+void Netlist::unregister_node(Net & n) {
+	nets.erase(&n);
+	unregister_node(static_cast<iNode&>(n));
 }
 
 Net & Netlist::sig_in(const std::string & name) {
-	auto s = new Net(*this, obj_seq_num++, name, DIR_IN);
-	nets.insert(s);
+	auto s = new Net(*this, name, DIR_IN);
 	return *s;
 }
 
 Net & Netlist::sig_out(const std::string & name) {
-	auto s = new Net(*this, obj_seq_num++, name, DIR_OUT);
-	nets.insert(s);
+	auto s = new Net(*this, name, DIR_OUT);
 	return *s;
 }
 
@@ -24,50 +42,15 @@ Net & Netlist::sig() {
 }
 
 Net & Netlist::sig(const std::string & name) {
-	auto s = new Net(*this, obj_seq_num++, name, DIR_UNKNOWN);
-	nets.insert(s);
+	auto s = new Net(*this, name, DIR_UNKNOWN);
 	return *s;
 }
 
 Netlist::~Netlist() {
-	// [TODO] allocating the memory during the deallocation
-	// can deadlock when deallocating because we run out of the memory
-	std::set<void *> deleted;
-	for (auto sig : nets) {
-		for (auto & d : sig->drivers) {
-			//auto fn = dynamic_cast<FunctionCall*>(d);
-			//if (fn and &(fn->res) == sig) {
-			//	delete fn;
-			//	continue;
-			//}
-			//auto asAssig = dynamic_cast<Assignment*>(d);
-			//if (asAssig and asAssig->parent == nullptr) {
-			//	if (&(asAssig->dst) == sig) {
-			//		deleted.insert(asAssig);
-			//		delete asAssig;
-			//	}
-			//	continue;
-			//}
-			if (deleted.find(d) != deleted.end())
-				continue;
-			delete d;
-			deleted.insert(d);
+	for (auto o : nodes) {
+		if (o != nullptr) {
+			delete o;
 		}
-
-		for (auto & ep : sig->endpoints) {
-			if (deleted.find(ep) != deleted.end())
-				continue;
-			delete ep;
-			deleted.insert(ep);
-
-			//auto asIf = dynamic_cast<IfStatement*>(ep);
-			//if (asIf) {
-			//	if (&(asIf->condition) == sig) {
-			//		delete ep;
-			//	}
-			//}
-		}
-
-		delete sig;
 	}
+	nodes.clear();
 }

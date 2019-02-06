@@ -49,7 +49,7 @@ Netlist* build_graph(std::vector<iNode*> & outputs, size_t N,
 
 	auto start = std::chrono::system_clock::now();
 	build_random_circuit(*ctx, N, N, N, N, rand);
-	BOOST_CHECK_EQUAL(ctx->obj_seq_num, expected_node_cnt);
+	BOOST_CHECK_EQUAL(ctx->nodes.size(), expected_node_cnt);
 
 	auto end = std::chrono::system_clock::now();
 	std::cout << "construction time: "
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 	std::vector<iNode*> outputs;
 	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
 
-	QueryTraverse q(ctx->obj_seq_num);
+	QueryTraverse q(ctx->nodes.size());
 	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
 		tf_test(outputs, q, expected_node_cnt, i);
 	}

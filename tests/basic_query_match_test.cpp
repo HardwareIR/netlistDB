@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #include "../src/netlist.h"
-#include "../src/statemen_if.h"
+#include "../src/statement_if.h"
 #include "../src/query/query_match.h"
 #include "../src/query/query_path.h"
 
@@ -50,11 +50,11 @@ BOOST_AUTO_TEST_CASE( query_result_of_add ) {
 	}
 
 	QueryMatch query_add;
-	query_add.sig("a") + query_add.sig("b");
+	auto &r = query_add.sig_in("a") + query_add.sig_in("b");
+	r.direction = Direction::DIR_OUT;
 
 	auto qres = query_add.search(ctx);
 	BOOST_CHECK_EQUAL(qres.size(), n);
-
 }
 
 BOOST_AUTO_TEST_CASE( simple_mux ) {

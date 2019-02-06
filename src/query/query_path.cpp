@@ -10,6 +10,7 @@ std::pair<QueryPath::path_t, bool> QueryPath::find_path(iNode & a, iNode & b) {
 	return {path, found};
 }
 
+// [TODO] tmp solution super sub-optimal
 bool QueryPath::find_path(iNode & a, iNode & b, path_t & path) {
 	path.push_back(&a);
 	if (&a == &b)

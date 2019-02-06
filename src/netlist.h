@@ -24,6 +24,8 @@
 namespace netlistDB {
 
 class Net;
+class Netlist;
+class Statement;
 
 /**
  * Inteface for nodes in database
@@ -34,50 +36,30 @@ public:
 	// sequential number used as a id during serialization
 	size_t index;
 
-	iNode(size_t index) :
-			index(index) {
-	}
-
 	using iterator = std::vector<iNode*>;
+	using predicate_t = std::function<bool(iNode*)>;
+
 	// iterate endpoints for Net or outputs for statement or result for expression
 	virtual iterator forward() = 0;
 	// iterate drivers for net or inputs for statement or args for expression
 	virtual iterator backward() = 0;
+
 	virtual ~iNode() {
 	}
 };
 
-class Netlist;
-class Statement;
-
 class OperationNode: public iNode {
-public:
-	OperationNode(size_t index) :
-			iNode(index) {
-	}
 };
 
 class Statement: public OperationNode {
 public:
 	Statement * parent;
 
-	Statement(size_t index) :
-			OperationNode(index), parent(nullptr) {
+	Statement() :
+			parent(nullptr) {
 	}
 };
 
-class Assignment: public Statement {
-public:
-	Net & dst;
-	std::vector<Net*> dst_index;
-	Net & src;
-
-	Assignment(const Assignment & other) = delete;
-	Assignment(Net & dst, Net & src);
-	Assignment(Net & dst, std::initializer_list<Net*> dst_index, Net & src);
-	virtual iNode::iterator forward() override;
-	virtual iNode::iterator backward() override;
-};
 
 // Container of call of the function (operator is also function)
 class FunctionCall: public OperationNode {
@@ -90,12 +72,12 @@ public:
 	Net & res;
 
 	FunctionCall(const FunctionCall& other) = delete;
-	FunctionCall(size_t index, FunctionDef & fn, Net & op0, Net & res);
-	FunctionCall(size_t index, FunctionDef & fn, Net & op0, Net & op1,
-			Net & res);
+	FunctionCall(FunctionDef & fn, Net & op0, Net & res);
+	FunctionCall(FunctionDef & fn, Net & op0, Net & op1, Net & res);
 
 	virtual iNode::iterator forward() override;
 	virtual iNode::iterator backward() override;
+
 };
 
 /**
@@ -107,6 +89,9 @@ public:
 	VarId id;
 	// netlist which is the owner of this signal
 	Netlist & ctx;
+
+	// the index of this net in Netlist.nets
+	size_t net_index;
 
 	// direction of the signal if signal is used in IO
 	Direction direction;
@@ -120,8 +105,7 @@ public:
 
 	Net(const Net & other) = delete;
 	// use methods from Netlist
-	Net(Netlist & ctx, size_t index, const std::string & name,
-			Direction direction);
+	Net(Netlist & ctx, const std::string & name, Direction direction);
 
 	Net & operator!() = delete;
 	Net & operator~();
@@ -147,10 +131,13 @@ public:
 	Net & falling();
 
 	// as assignment
-	Assignment & operator()(Net & other);
+	Statement & operator()(Net & other);
 
 	virtual iNode::iterator forward() override;
 	virtual iNode::iterator backward() override;
+
+	// disconnect the selected endpoints
+	void forward_disconnect(iNode::predicate_t pred);
 };
 
 /**
@@ -169,10 +156,25 @@ public:
  **/
 class Netlist {
 public:
+	/*
+	 * Add node in to nodes on place specified by index and
+	 * optionally to nets as well
+	 **/
+	void register_node(iNode & n);
+	void register_node(Net & n);
+
+	/*
+	 * Remove node from nodes on place specified by index and
+	 * optionally from nets as well
+	 **/
+	void unregister_node(iNode & n);
+	void unregister_node(Net & n);
+
+public:
 	// name for debugging purposes
 	std::string name;
-	std::set<Net*> nets;
-	std::atomic<size_t> obj_seq_num;
+	std::vector<Net*> nets;
+	std::vector<iNode*> nodes;
 
 	Netlist(const Netlist & other) = delete;
 	Netlist(const std::string & name);
@@ -186,6 +188,7 @@ public:
 	Net & sig();
 	// create internal signal with name specified
 	Net & sig(const std::string & name);
+
 	~Netlist();
 };
 

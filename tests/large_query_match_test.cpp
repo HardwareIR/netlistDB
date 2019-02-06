@@ -11,9 +11,10 @@
 #include <random>
 
 #include "../src/netlist.h"
-#include "../src/statemen_if.h"
+#include "../src/statement_if.h"
 #include "../src/query/query_match.h"
 #include "../src/operator_defs.h"
+#include "../src/query/query_traverse.h"
 #include "test_graphs.h"
 
 using namespace netlistDB;
@@ -21,6 +22,27 @@ using namespace netlistDB::query;
 
 BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
 
+std::vector<FunctionCall*> find_ops(Netlist & ctx, FunctionDef & op) {
+	// traverse and count the number of the add operators
+	QueryTraverse q(ctx.nodes.size());
+	std::vector<iNode*> inputs;
+	for (auto n : ctx.nets) {
+		if (n->direction == Direction::DIR_IN) {
+			inputs.push_back(n);
+		}
+	}
+
+	std::vector<FunctionCall*> ops;
+	auto cb = [&ops, &op] (iNode& n) {
+		auto _n = dynamic_cast<FunctionCall*>(&n);
+		if (_n and &_n->fn == &op) {
+			ops.push_back(_n);
+		}
+		return QueryTraverse::dummy_callback(n);
+	};
+	q.traverse(inputs, cb, 1);
+	return ops;
+}
 
 BOOST_AUTO_TEST_CASE( query_add ) {
 	Netlist ctx("test");
@@ -28,10 +50,15 @@ BOOST_AUTO_TEST_CASE( query_add ) {
 	build_random_circuit(ctx, 10, 10, 10, 10, rand);
 
 	QueryMatch query_add;
-	query_add.sig("a") + query_add.sig("b");
-	auto qres = query_add.search(ctx);
+	auto &r = query_add.sig_in("a") + query_add.sig_in("b");
+	r.direction = Direction::DIR_OUT;
 
-	BOOST_CHECK_EQUAL(qres.size(), 3);
+	auto qres = query_add.search(ctx);
+	BOOST_CHECK_EQUAL(qres.size(), 29);
+
+	auto adds = find_ops(ctx, OpAdd);
+	BOOST_CHECK_EQUAL(qres.size(), 29);
+
 }
 
 BOOST_AUTO_TEST_CASE( query_mac ) {
@@ -40,13 +67,13 @@ BOOST_AUTO_TEST_CASE( query_mac ) {
 	build_random_circuit(ctx, 100, 100, 100, 100, rand);
 
 	QueryMatch query_mac;
-	query_mac.sig("a") + (query_mac.sig("b") * query_mac.sig("c") );
+	auto &r = query_mac.sig_in("a")
+			+ (query_mac.sig_in("b") * query_mac.sig_in("c"));
+	r.direction = Direction::DIR_OUT;
 	auto qres = query_mac.search(ctx);
 
-	BOOST_CHECK_EQUAL(qres.size(), 5);
+	BOOST_CHECK_EQUAL(qres.size(), 479);
 }
-
-
 
 //____________________________________________________________________________//
 
