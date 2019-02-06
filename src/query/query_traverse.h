@@ -5,12 +5,17 @@
 namespace netlistDB {
 namespace query {
 
+
+/*
+ * Traverse nodes in circuit
+ **/
 class QueryTraverse {
 public:
-	// align to cacheline does not bring perf. improvement
+	// align to cache line does not bring perf. improvement
 	// as there is large number of nodes and the access is more or less random.
 	using atomic_flag_t = std::atomic<bool>;
 
+	// return the next nodes which should be probed
 	using callback_t = std::function<iNode::iterator(iNode&)>;
 	atomic_flag_t * visited;
 	bool visited_clean;
