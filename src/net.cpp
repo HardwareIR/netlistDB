@@ -1,7 +1,7 @@
 #include "netlist.h"
 #include "operator_defs.h"
 #include "statement_assignment.h"
-#include "parallel_utils/errase.h"
+#include "parallel_utils/errase_if.h"
 
 namespace netlistDB {
 
