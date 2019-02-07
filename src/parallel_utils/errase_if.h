@@ -25,7 +25,6 @@ void erase_if(std::vector<T*> & vec, std::function<bool(T*)> pred) {
 
 /*
  * @param pred predicate returns true if item should be erased
- *
  **/
 template<typename T, typename index_selector>
 void erase_if(std::vector<T*> & vec, std::function<bool(T*)> pred,
@@ -33,8 +32,13 @@ void erase_if(std::vector<T*> & vec, std::function<bool(T*)> pred,
 	size_t item_cnt = vec.size();
 	auto index_in = std::make_unique<unsigned[]>(item_cnt);
 	auto index_tmp = std::make_unique<unsigned[]>(item_cnt);
-	auto index_out = std::make_unique<unsigned[]>(item_cnt);
+	auto index_out = std::make_unique<unsigned[]>(item_cnt + 1);
+	// floor div
 	size_t step = item_cnt / tf.num_workers();
+	if (step * tf.num_workers() < item_cnt) {
+		step++;
+	}
+
 	// initialize index
 	for (size_t w = 0; w < tf.num_workers(); w++) {
 		tf.silent_emplace(
@@ -80,27 +84,6 @@ void erase_if(std::vector<T*> & vec, std::function<bool(T*)> pred,
 	tf.wait_for_all();
 
 	vec = new_vec;
-
-}
-
-template<typename T>
-void compress_vec(std::vector<T*> & vec) {
-	vec.erase(std::remove_if(vec.begin(), vec.end(), [](T* i) {
-		return i == nullptr;
-	}), vec.end());
-}
-
-/*
- * Remove the nullptrs and regenerate index
- * */
-template<typename T, typename index_selector>
-void compress_vec(std::vector<T*> & vec) {
-	compress_vec<T>(vec);
-	size_t i = 0;
-	for (auto item : vec) {
-		index_selector { }(item) = i;
-		i++;
-	}
 }
 
 }
