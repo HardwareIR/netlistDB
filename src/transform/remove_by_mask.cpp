@@ -1,5 +1,5 @@
 #include "remove_by_mask.h"
-#include "../parallel_utils/errase.h"
+#include "parallel_utils/errase_if.h"
 #include  <taskflow/taskflow.hpp>
 
 using namespace netlistDB::parallel_utils;
@@ -105,13 +105,6 @@ struct node_index_selector {
 	}
 };
 
-//size_t vec_size(std::vector<iNode*> * vec, size_t vec_cnt) {
-//	size_t s = 0;
-//	for (size_t i = 0; i < vec_cnt; i++)
-//		s += vec[i].size();
-//	return s;
-//}
-
 TransformRemoveByMask::TransformRemoveByMask(bool node_to_keep_mask[]) :
 		node_to_keep_mask(node_to_keep_mask) {
 }
@@ -176,9 +169,8 @@ bool TransformRemoveByMask::apply(Netlist & ctx) {
 						return false;
 					}, tf);
 
-			compress_vec<Net, net_index_selector>(ctx.nets);
-
-			ctx.integrty_assert();
+			erase_if<Net, net_index_selector>(ctx.nets,
+					[](Net*n) {return n == nullptr;}, tf);
 		}
 	} else {
 		// sequential version
@@ -200,8 +192,11 @@ bool TransformRemoveByMask::apply(Netlist & ctx) {
 				delete_node(n, ctx);
 			}
 			// remove the deleted items from the vector
-			compress_vec<iNode, node_index_selector>(ctx.nodes);
-			compress_vec<Net, net_index_selector>(ctx.nets);
+
+			erase_if<iNode, node_index_selector>(ctx.nodes,
+					[](iNode*n) {return n == nullptr;});
+			erase_if<Net, net_index_selector>(ctx.nets,
+					[](Net*n) {return n == nullptr;});
 		}
 
 	}
