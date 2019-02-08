@@ -15,6 +15,7 @@
 
 #include "test_graphs.h"
 #include "../src/query/query_traverse.h"
+#include "timer.h"
 
 using namespace netlistDB;
 using namespace netlistDB::query;
@@ -26,7 +27,7 @@ void tf_test(std::vector<iNode*> & outputs, QueryTraverse& q, size_t obj_cnt,
 		size_t thread_cnt) {
 	std::atomic<size_t> visited_cnt = 0;
 	auto callback = [&visited_cnt](iNode & n) {
-		//usleep(1);
+			//usleep(1);
 			visited_cnt++;
 			return QueryTraverse::dummy_callback(n);
 		};
@@ -71,18 +72,46 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
 
 	QueryTraverse q(ctx->nodes.size());
+	//q.load_balance_limit = 1;
 	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
 		tf_test(outputs, q, expected_node_cnt, i);
 	}
 }
 
+//BOOST_AUTO_TEST_CASE( simple_traversal_500 ) {
+//	size_t N = 500;
+//	size_t expected_node_cnt = 1983146;
+//	std::vector<iNode*> outputs;
+//	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
+//
+//	QueryTraverse q(ctx->nodes.size());
+//	//q.load_balance_limit = 1;
+//	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+//		tf_test(outputs, q, expected_node_cnt, i);
+//	}
+//}
+//
+//BOOST_AUTO_TEST_CASE( simple_traversal_750 ) {
+//	size_t N = 750;
+//	size_t expected_node_cnt = 1983146;
+//	std::vector<iNode*> outputs;
+//	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
+//
+//	QueryTraverse q(ctx->nodes.size());
+//	//q.load_balance_limit = 1;
+//	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+//		tf_test(outputs, q, expected_node_cnt, i);
+//	}
+//}
+//
 //BOOST_AUTO_TEST_CASE( simple_traversal_1000 ) {
 //	size_t N = 1000;
 //	size_t expected_node_cnt = 1983146;
 //	std::vector<iNode*> outputs;
 //	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
 //
-//	QueryTraverse q(ctx->obj_seq_num);
+//	QueryTraverse q(ctx->nodes.size());
+//	//q.load_balance_limit = 1;
 //	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
 //		tf_test(outputs, q, expected_node_cnt, i);
 //	}
