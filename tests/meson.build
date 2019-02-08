@@ -14,6 +14,7 @@ tests = [
 test_common_src = [
 	'test_graphs.cpp',
 	'test_graphs.h',
+	'timer.cpp',
 ]
 
 foreach t : tests
@@ -28,7 +29,7 @@ endforeach
 
 tbb_dep = dependency('tbb')
 tbb_taskflow_benchmark_exe = executable('tbb_taskflow_benchmark',
-		['tbb_taskflow_benchmark.cpp'] + test_common_src + ['timer.cpp'],
+		['tbb_taskflow_benchmark.cpp'] + test_common_src,
 		dependencies: [boost_deps, thread_dep, tbb_dep],
 		link_with: [netlistDB_lib, ],
 		cpp_args: EXTRA_CXX_ARGS,
