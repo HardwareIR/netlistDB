@@ -27,10 +27,11 @@ foreach t : tests
 	test(t[1] + '_test', test_exe, workdir : meson.source_root())
 endforeach
 
-tbb_dep = dependency('tbb')
-tbb_taskflow_benchmark_exe = executable('tbb_taskflow_benchmark',
-		['tbb_taskflow_benchmark.cpp'] + test_common_src,
-		dependencies: [boost_deps, thread_dep, tbb_dep],
-		link_with: [netlistDB_lib, ],
-		cpp_args: EXTRA_CXX_ARGS,
-        c_args: EXTRA_C_ARGS)
+#tbb_dep = dependency('tbb')
+#tbb_taskflow_benchmark_exe = executable('tbb_taskflow_benchmark',
+#		['tbb_taskflow_benchmark.cpp'] + test_common_src,
+#		dependencies: [boost_deps, thread_dep, tbb_dep],
+#		link_with: [netlistDB_lib, ],
+#		cpp_args: EXTRA_CXX_ARGS,
+#        c_args: EXTRA_C_ARGS)
+
