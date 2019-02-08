@@ -15,6 +15,7 @@
 
 #include "test_graphs.h"
 #include "../src/transform/remove_useless.h"
+#include "timer.h"
 
 using namespace netlistDB;
 using namespace netlistDB::transform;
@@ -33,7 +34,9 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 	TransformRemoveUseless t;
 	BOOST_CHECK_EQUAL(ctx.nodes.size(), 20090);
 
+	//auto ti = new Timer("100");
 	bool rm = t.apply(ctx);
+	//delete ti;
 	size_t after_cleanup_cnt = 2822;
 	size_t nets_after_cleanup_cnt = 1461;
 
