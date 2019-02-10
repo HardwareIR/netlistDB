@@ -9,6 +9,7 @@ tests = [
 	  ['taskflow', 'tests for taskflow functionality'],
 	  ['transform_remove_useless', 'tests for TransformRemoveUseless functionality'],
 	  ['chained_iter', 'tests for chained iterator'],
+	  ['ordered_set', 'tests for ordered set collection'],
 ]
 
 test_common_src = [

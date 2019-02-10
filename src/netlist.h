@@ -15,11 +15,12 @@
 #include <unordered_map>
 #include <atomic>
 
-#include "ordered_set.h"
+#include "utils/ordered_set.h"
 #include "varId.h"
 #include "constants.h"
 #include "pointer_container.h"
 #include "function_def.h"
+#include "utils/chained_iterator.h"
 
 namespace netlistDB {
 
@@ -34,15 +35,16 @@ class Statement;
 class iNode {
 public:
 	// sequential number used as a id during serialization
+	// and as a index in main list of iNode instances in Netlist.nodes
 	size_t index;
 
-	using iterator = std::vector<iNode*>;
+	using iterator = utils::ChainedSequence<iNode*>;
 	using predicate_t = std::function<bool(iNode*)>;
 
-	// iterate endpoints for Net or outputs for statement or result for expression
-	virtual iterator forward() = 0;
-	// iterate drivers for net or inputs for statement or args for expression
-	virtual iterator backward() = 0;
+	// iterator of endpoints for Net or outputs for statement or result for expression
+	iterator forward;
+	// iterator of drivers for net or inputs for statement or args for expression
+	iterator backward;
 
 	virtual ~iNode() {
 	}
@@ -61,23 +63,21 @@ public:
 };
 
 
-// Container of call of the function (operator is also function)
+/**
+ * Container of call of the function (operator is also function)
+ */
 class FunctionCall: public OperationNode {
 public:
 	// definition of the function
 	FunctionDef & fn;
 	// arguments specified in call
-	std::vector<Net *> args;
+	std::vector<Net*> args;
 	// result of the function, operator result or return from function call
 	Net & res;
 
 	FunctionCall(const FunctionCall& other) = delete;
 	FunctionCall(FunctionDef & fn, Net & op0, Net & res);
 	FunctionCall(FunctionDef & fn, Net & op0, Net & op1, Net & res);
-
-	virtual iNode::iterator forward() override;
-	virtual iNode::iterator backward() override;
-
 };
 
 /**
@@ -96,8 +96,8 @@ public:
 	// direction of the signal if signal is used in IO
 	Direction direction;
 	// operators/ statements which are driving the value of this signal
-	OrderedSet<OperationNode*> drivers;
-	OrderedSet<OperationNode*> endpoints;
+	utils::OrderedSet<OperationNode*> drivers;
+	utils::OrderedSet<OperationNode*> endpoints;
 	using UsageCacheKey = _UsageCacheKey<FunctionDef, Net>;
 	std::unordered_map<UsageCacheKey, Net*> usage_cache;
 	// index used for last priority ordering
@@ -132,9 +132,6 @@ public:
 
 	// as assignment
 	Statement & operator()(Net & other);
-
-	virtual iNode::iterator forward() override;
-	virtual iNode::iterator backward() override;
 
 	// disconnect the selected endpoints
 	void forward_disconnect(iNode::predicate_t pred);

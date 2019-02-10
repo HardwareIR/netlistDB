@@ -2,11 +2,18 @@
 
 namespace netlistDB {
 
+void init_iterators(Assignment * a) {
+	a->forward.push_back(reinterpret_cast<iNode*>(&a->dst));
+	a->backward.push_back(reinterpret_cast<iNode*>(&a->src));
+	a->backward.push_back(reinterpret_cast<std::vector<iNode*>*>(&a->dst_index));
+}
+
 Assignment::Assignment(Net & dst, Net & src) :
 		dst(dst), src(src) {
 	dst.ctx.register_node(*this);
 	dst.drivers.push_back(this);
 	src.endpoints.push_back(this);
+	init_iterators(this);
 }
 
 Assignment::Assignment(Net & dst, std::initializer_list<Net*> dst_index,
@@ -18,20 +25,7 @@ Assignment::Assignment(Net & dst, std::initializer_list<Net*> dst_index,
 		i->endpoints.push_back(this);
 	}
 	src.endpoints.push_back(this);
-}
-
-iNode::iterator Assignment::forward() {
-	iNode::iterator it;
-	it.push_back(&dst);
-	return it;
-}
-
-iNode::iterator Assignment::backward() {
-	iNode::iterator it;
-	for (auto i : dst_index)
-		it.push_back(i);
-	it.push_back(&src);
-	return it;
+	init_iterators(this);
 }
 
 }

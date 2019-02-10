@@ -5,6 +5,7 @@
 #include "statement_if.h"
 
 using namespace std;
+using namespace netlistDB::utils;
 
 namespace netlistDB {
 namespace query {
@@ -233,7 +234,7 @@ bool QueryMatch::search_recurse(IfStatement & ref, IfStatement & n,
 			or ref.ifFalse_specified != n.ifFalse_specified)
 		return false;
 
-	if (not search_recurse(ref.condition, n.condition, ctx))
+	if (not search_recurse(*ref.condition, *n.condition, ctx))
 		return false;
 
 	if (not statements_matches(ref.ifTrue, n.ifFalse, ctx))

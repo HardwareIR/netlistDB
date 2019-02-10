@@ -27,7 +27,7 @@ bool TransformRemoveUseless::apply(Netlist & ctx) {
 	// discover what was used
 	QueryTraverse q(ctx.nodes.size());
 	auto walk_all_drivers = [](iNode &n) {
-		return n.backward();
+		return n.backward;
 	};
 	q.traverse(outputs, walk_all_drivers);
 

@@ -12,13 +12,7 @@ QueryTraverse::QueryTraverse(size_t max_items) :
 }
 
 iNode::iterator QueryTraverse::dummy_callback(iNode &n) {
-	iNode::iterator it;
-	// [TODO] chain iterrators instead
-	for (auto n : n.backward())
-		it.push_back(n);
-	for (auto n : n.forward())
-		it.push_back(n);
-	return it;
+	return n.backward.joined(n.forward);
 }
 
 void QueryTraverse::clean_visit_flags(atomic_flag_t * start,

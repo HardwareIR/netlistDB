@@ -2,10 +2,13 @@
 
 namespace netlistDB {
 
-IfStatement::IfStatement(Net & condition) :
-		condition(condition), ifTrue_specified(false), ifFalse_specified(false) {
+IfStatement::IfStatement(Net & condition):
+		condition(&condition), ifTrue_specified(false), ifFalse_specified(false) {
 	condition.ctx.register_node(*this);
 	condition.endpoints.push_back(this);
+	// condition can change for this reason we have to use pointer on
+	// field where condition signal pointer is stored
+	backward.push_back(reinterpret_cast<iNode**>(&this->condition));
 }
 
 IfStatement & IfStatement::operator()(
@@ -26,6 +29,7 @@ IfStatement & IfStatement::Elif(Net & cond,
 
 	cond.endpoints.push_back(this);
 	elseIf.push_back( { &cond, statements });
+	backward.push_back(reinterpret_cast<iNode*>(&elseIf[elseIf.size()-1].first));
 
 	return *this;
 }
@@ -35,16 +39,6 @@ IfStatement & IfStatement::Else(std::initializer_list<Statement*> statements) {
 	ifFalse = statements;
 	ifFalse_specified = true;
 	return *this;
-}
-
-iNode::iterator IfStatement::forward() {
-	iNode::iterator it;
-	throw std::runtime_error("not implemented");
-	return it;
-}
-
-iNode::iterator IfStatement::backward() {
-	throw std::runtime_error("not implemented");
 }
 
 IfStatement & If(Net & condition) {

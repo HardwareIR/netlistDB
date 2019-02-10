@@ -55,8 +55,8 @@ protected:
 	 * @param allow_more_in_graph if true there can an extra items in the graph
 	 * @return true if match was found
 	 **/
-	static bool find_matching_permutation(OrderedSet<OperationNode*> & ref,
-			OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx,
+	static bool find_matching_permutation(utils::OrderedSet<OperationNode*> & ref,
+			utils::OrderedSet<OperationNode*> & graphIo, BackTrackingContext& ctx,
 			bool allow_more_in_graph);
 
 	static bool statements_matches(std::vector<Statement *> & ref,

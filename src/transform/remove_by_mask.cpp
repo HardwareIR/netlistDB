@@ -48,7 +48,7 @@ void collect_boundaries_between_deleted_and_keept(bool * node_to_keep_mask,
 		if (not node_to_keep_mask[i]) {
 			auto n = nodes[i];
 			to_delete.push_back(n);
-			for (auto d : n->backward()) {
+			for (auto d : n->backward) {
 				if (node_to_keep_mask[d->index]) {
 					// this driver will remain and the deleted segment has to be disconnected
 					auto _i = to_update_ep_index(thread_i, thread_cnt,

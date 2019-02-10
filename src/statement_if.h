@@ -6,7 +6,7 @@ namespace netlistDB {
 
 class IfStatement: public Statement {
 public:
-	Net & condition;
+	Net * condition;
 
 	bool ifTrue_specified;
 	std::vector<Statement *> ifTrue;
@@ -22,11 +22,6 @@ public:
 	IfStatement & Elif(Net & cond,
 			std::initializer_list<Statement*> statements);
 	IfStatement & Else(std::initializer_list<Statement*> statements);
-
-	// iterate all input signals
-	virtual iNode::iterator forward() override;
-	// iterate all output signals
-	virtual iNode::iterator backward() override;
 };
 
 IfStatement & If(Net & condition);
