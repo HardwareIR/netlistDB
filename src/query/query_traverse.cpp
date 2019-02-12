@@ -112,5 +112,6 @@ void QueryTraverse::traverse(iNode & n) {
 				stack.push_back(item);
 	}
 }
+
 }
 }
