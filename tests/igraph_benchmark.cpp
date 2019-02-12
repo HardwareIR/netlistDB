@@ -5,7 +5,7 @@
 #include "timer.h"
 
 using namespace netlistDB;
-
+// https://github.com/zero-impact/Undergrad-Classes/blob/4016cc06d0269167dad0283f5780c982ba6da505/CO759/A1/examples/simple/igraph_bfs2.c
 /*
  * Collect edges from Netlist to vector suitable for igraph_t constructor
  **/
@@ -80,6 +80,7 @@ void igraph_bfs_benchmark(const igraph_t & graph, const Netlist & netlist) {
 			 /*pred*/nullptr, /*succ*/nullptr, /*dist*/ nullptr,
 			 /*callback=*/ &bfs_callback, /*extra=*/ &visited);
 	delete t;
+	assert(visited == netlist.nodes.size());
 }
 
 int main(void) {
