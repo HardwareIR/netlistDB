@@ -32,15 +32,10 @@ void tf_test(std::vector<iNode*> & outputs, QueryTraverse& q, size_t obj_cnt,
 			return QueryTraverse::dummy_callback(n);
 		};
 	q.clean_visit_flags(thread_cnt);
-	auto start = std::chrono::system_clock::now();
+	auto t = new Timer(std::string("threads ") + std::to_string(thread_cnt));
 	q.traverse(outputs, callback, thread_cnt);
-
-	auto end = std::chrono::system_clock::now();
-	std::cout << "threads " << thread_cnt << " Tf runtime: "
-			<< std::chrono::duration_cast<std::chrono::milliseconds>(
-					end - start).count() << " ms" << std::endl;
+	delete t;
 	BOOST_CHECK_EQUAL(visited_cnt, obj_cnt);
-
 }
 
 Netlist* build_graph(std::vector<iNode*> & outputs, size_t N,
@@ -48,14 +43,10 @@ Netlist* build_graph(std::vector<iNode*> & outputs, size_t N,
 	auto ctx = new Netlist("example_circuit");
 	std::mt19937 rand(0);
 
-	auto start = std::chrono::system_clock::now();
+	auto t = new Timer("construction time");
 	build_random_circuit(*ctx, N, N, N, N, rand);
+	delete t;
 	BOOST_CHECK_EQUAL(ctx->nodes.size(), expected_node_cnt);
-
-	auto end = std::chrono::system_clock::now();
-	std::cout << "construction time: "
-			<< std::chrono::duration_cast<std::chrono::milliseconds>(
-					end - start).count() << " ms" << std::endl;
 
 	for (auto & n : ctx->nets) {
 		if (n->direction == Direction::DIR_OUT) {
