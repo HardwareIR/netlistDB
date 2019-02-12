@@ -16,7 +16,7 @@ bool QueryPath::find_path(iNode & a, iNode & b, path_t & path) {
 	if (&a == &b)
 		return true;
 
-	for (auto node : a.forward()) {
+	for (auto node : a.forward) {
 		bool not_in_path = std::find(path.begin(), path.end(), node)
 				== path.end();
 		if (not_in_path) {

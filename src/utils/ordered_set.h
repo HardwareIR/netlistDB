@@ -3,6 +3,9 @@
 #include <vector>
 #include <unordered_set>
 
+namespace netlistDB {
+namespace utils {
+
 /*
  * Set + vector to keep order of items and allow fast iteration
  *
@@ -10,11 +13,10 @@
  * 		because linear search in array is faster
  *
  * */
-template<typename T>
+template<typename T, size_t USE_SET_LOWER_LIMIT = 4>
 class OrderedSet: public std::vector<T> {
 	using vec_t = std::vector<T>;
 	using value_type = typename vec_t::value_type;
-	static constexpr size_t USE_SET_LOWER_LIMIT = 4;
 	std::unordered_set<T> _set;
 public:
 	OrderedSet() :
@@ -46,7 +48,7 @@ public:
 	}
 
 	void replace(const value_type& __x) {
-
+		throw std::runtime_error("NotImplemented");
 	}
 
 	void push_back_many(const vec_t & vec) {
@@ -54,3 +56,7 @@ public:
 			push_back(i);
 	}
 };
+
+}
+}
+

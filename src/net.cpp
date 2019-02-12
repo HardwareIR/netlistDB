@@ -36,6 +36,8 @@ Net & apply(FunctionDef & fn, Net & a) {
 Net::Net(Netlist & ctx, const std::string & name, Direction direction) :
 		id(name), ctx(ctx), net_index(0), direction(direction) {
 	ctx.register_node(*this);
+	forward.push_back(reinterpret_cast<std::vector<iNode*>*>(&endpoints));
+	backward.push_back(reinterpret_cast<std::vector<iNode*>*>(&drivers));
 }
 
 Net & Net::operator~() {
@@ -100,21 +102,6 @@ Net & Net::falling() {
 // used as assignment
 Statement & Net::operator()(Net & other) {
 	return *(new Assignment(*this, other));
-}
-
-iNode::iterator Net::forward() {
-	iNode::iterator it;
-	for (auto i : endpoints) {
-		it.push_back(i);
-	}
-	return it;
-}
-
-iNode::iterator Net::backward() {
-	iNode::iterator it;
-	for (auto o : drivers)
-		it.push_back(o);
-	return it;
 }
 
 void Net::forward_disconnect(iNode::predicate_t pred) {

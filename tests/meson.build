@@ -9,6 +9,7 @@ tests = [
 	  ['taskflow', 'tests for taskflow functionality'],
 	  ['transform_remove_useless', 'tests for TransformRemoveUseless functionality'],
 	  ['chained_iter', 'tests for chained iterator'],
+	  ['ordered_set', 'tests for ordered set collection'],
 ]
 
 test_common_src = [
@@ -31,6 +32,14 @@ endforeach
 #tbb_taskflow_benchmark_exe = executable('tbb_taskflow_benchmark',
 #		['tbb_taskflow_benchmark.cpp'] + test_common_src,
 #		dependencies: [boost_deps, thread_dep, tbb_dep],
+#		link_with: [netlistDB_lib, ],
+#		cpp_args: EXTRA_CXX_ARGS,
+#        c_args: EXTRA_C_ARGS)
+
+#igraph_dep = dependency('igraph')
+#igraph_benchmark_exe = executable('igraph_benchmark',
+#		['igraph_benchmark.cpp'] + test_common_src,
+#		dependencies: [boost_deps, thread_dep, igraph_dep],
 #		link_with: [netlistDB_lib, ],
 #		cpp_args: EXTRA_CXX_ARGS,
 #        c_args: EXTRA_C_ARGS)

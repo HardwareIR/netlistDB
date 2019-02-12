@@ -11,8 +11,6 @@ public:
 	Assignment(const Assignment & other) = delete;
 	Assignment(Net & dst, Net & src);
 	Assignment(Net & dst, std::initializer_list<Net*> dst_index, Net & src);
-	virtual iNode::iterator forward() override;
-	virtual iNode::iterator backward() override;
 };
 
 }

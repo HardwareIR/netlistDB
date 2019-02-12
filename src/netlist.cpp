@@ -50,10 +50,10 @@ void Netlist::integrty_assert() {
 	size_t i = 0;
 	for (auto n : nodes) {
 		assert(i == n->index);
-		for (auto f : n->forward()) {
+		for (auto f : n->forward) {
 			assert(nodes[f->index] == f);
 		}
-		for (auto b : n->forward()) {
+		for (auto b : n->forward) {
 			assert(nodes[b->index] == b);
 		}
 		i++;

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <assert.h>
 
 namespace netlistDB {
 namespace utils {
@@ -8,78 +9,71 @@ namespace utils {
  **/
 template<class T>
 class ChaindedIter: public std::iterator<std::forward_iterator_tag, T> {
-	std::vector<std::vector<T>*> vectors;
-	typename std::vector<T>::iterator actual;
-	typename std::vector<T>::iterator actual_end;
-	typename std::vector<T>::iterator total_end;
+public:
+	using it_t = typename std::vector<T>::iterator;
+
+	static constexpr it_t to_iter(T * item) {
+		return *reinterpret_cast<it_t*>(&item);
+	}
+
+	struct _Item {
+		enum Item_t {
+			VEC, PTR, VAL,
+		};
+
+		union {
+			std::vector<T>* vec;
+			T * ptr;
+			T val;
+		} item;
+		Item_t t;
+
+		_Item(std::vector<T>* vec) :
+				t(VEC) {
+			item.vec = vec;
+		}
+
+		_Item(T* ptr) :
+				t(PTR) {
+			item.ptr = ptr;
+		}
+
+		_Item(T val) :
+				t(VAL) {
+			item.val = val;
+		}
+
+		std::pair<it_t, it_t> get_begin_end() {
+			if (t == VEC) {
+				return {item.vec->begin(), item.vec->end()};
+			} else if (t == PTR) {
+				return {to_iter(item.ptr), to_iter(item.ptr) + 1};
+			} else {
+				assert(t == VAL);
+				return {to_iter(&item.val), to_iter(&item.val) + 1};
+			}
+		}
+	};
+
+protected:
+	std::vector<_Item> & vectors;
+
+	it_t actual;
+	it_t actual_end;
 	size_t actual_vec_i;
 
 public:
-
-	ChaindedIter(std::vector<std::vector<T>*> vectors, size_t start,
-			size_t size) :
-			vectors(vectors) {
-		_init(start, size);
-	}
-
-	ChaindedIter(std::initializer_list<std::vector<T>*> l, size_t start,
-			size_t size) {
-		vectors.reserve(l.size());
-		for (auto v : l) {
-			vectors.push_back(v);
-		}
-		_init(start, size);
-	}
-
-	void _init(size_t start, size_t size) {
-		// resolve actual and actual_end
-		actual_vec_i = 0;
-		size_t offset = 0;
-		while (true) {
-			auto & av = *vectors[actual_vec_i];
-			size_t offset_in_actual = start - offset;
-			if (offset_in_actual < av.size()) {
-				actual = av.begin() + offset_in_actual;
-				actual_end = av.end();
-				break;
-			}
-			offset += av.size();
-			actual_vec_i++;
-			if (actual_vec_i >= vectors.size()) {
-				// overflow
-				actual = actual_end = av.end();
-				break;
-			}
-		}
-
-		// resolve total end
-		size_t offset_in_actual = start - offset;
-		size_t end_vec_i = actual_vec_i;
-		while (true) {
-			auto & av = *vectors[end_vec_i];
-			if (size > av.size() - offset_in_actual) {
-				// end in some next vector
-				end_vec_i++;
-				offset_in_actual = 0;
-				size -= av.size();
-				if (end_vec_i >= vectors.size()) {
-					// overflow
-					total_end = av.end();
-					break;
-				}
-			} else {
-				// end in this vector
-				total_end = av.begin() + offset_in_actual + size;
-				break;
-			}
+	ChaindedIter(std::vector<_Item> & vectors) :
+			vectors(vectors), actual(nullptr), actual_end(nullptr), actual_vec_i(0) {
+		if (vectors.size()) {
+			auto & first = vectors[0];
+			std::tie(actual, actual_end) = first.get_begin_end();
+			skip_item_if_on_end();
 		}
 	}
 
-	ChaindedIter(const ChaindedIter & other,
-			typename std::vector<T>::iterator actual_pos,
-			typename std::vector<T>::iterator actual_end, size_t actual_vec_i) :
-			vectors(other.vectors), actual(actual_pos), actual_end(actual_end), total_end(
-					other.total_end), actual_vec_i(actual_vec_i) {
+	ChaindedIter(std::vector<_Item> & vectors, it_t actual_pos, it_t actual_end, size_t actual_vec_i) :
+			vectors(vectors), actual(actual_pos), actual_end(actual_end), actual_vec_i(actual_vec_i) {
 	}
 
 	T& operator*() {
@@ -92,29 +86,87 @@ public:
 
 	ChaindedIter& operator++() {
 		actual++;
-		if (actual == actual_end and actual != total_end) {
-			actual_vec_i++;
-			auto & av = *vectors[actual_vec_i];
-			actual = av.begin();
-			actual_end = av.end();
-		}
+		// there can be the empty vectors which we need to skip
+		skip_item_if_on_end();
 		return *this;
 	}
 
-	ChaindedIter begin() const {
-		return ChaindedIter(*this, actual, actual_end, actual_vec_i);
-	}
-
-	ChaindedIter end() const {
-		return ChaindedIter(*this, total_end, actual, vectors.size());
-	}
-
 	friend bool operator==(ChaindedIter a, ChaindedIter b) {
-		return a.actual == b.actual;
+		return a.actual == b.actual and a.actual_vec_i == b.actual_vec_i;
 	}
 
 	friend bool operator!=(ChaindedIter a, ChaindedIter b) {
-		return a.actual != b.actual;
+		return a.actual != b.actual or a.actual_vec_i != b.actual_vec_i;
+	}
+
+private:
+	constexpr void skip_item_if_on_end() {
+		while (actual == actual_end and actual_vec_i + 1 < vectors.size()) {
+			actual_vec_i++;
+			auto & av = vectors[actual_vec_i];
+			std::tie(actual, actual_end) = av.get_begin_end();
+		}
+	}
+};
+
+template<class T>
+class ChainedSequence {
+	using _Item = typename ChaindedIter<T>::_Item;
+	std::vector<_Item> vectors;
+
+public:
+	ChainedSequence() {
+	}
+
+	ChainedSequence(std::initializer_list<T> l) {
+		for (auto & v : l) {
+			push_back(&v);
+		}
+	}
+
+	ChainedSequence(std::initializer_list<std::vector<T>*> l) {
+		for (auto v : l) {
+			push_back(v);
+		}
+	}
+
+	constexpr void push_back(std::vector<T>* item) {
+		vectors.push_back(_Item(item));
+	}
+
+	constexpr void push_back(T* item) {
+		vectors.push_back(_Item(item));
+	}
+
+	constexpr void push_back(T item) {
+		vectors.push_back(_Item(item));
+	}
+
+	ChainedSequence joined(const ChainedSequence & other) const {
+		ChainedSequence it;
+		it.vectors.reserve(vectors.size() + other.vectors.size());
+		it.vectors.insert(it.vectors.end(), vectors.begin(), vectors.end());
+		it.vectors.insert(it.vectors.end(), other.vectors.begin(),
+				other.vectors.end());
+		return it;
+	}
+
+	ChaindedIter<T> begin() {
+		return ChaindedIter<T>(vectors);
+	}
+
+	ChaindedIter<T> end() {
+		using it_t = typename std::vector<T>::iterator;
+		it_t actual, actual_end;
+		if (vectors.size()) {
+			auto & last = vectors.back();
+			std::tie(actual, actual_end) = last.get_begin_end();
+			actual = actual_end;
+		}
+		size_t i = vectors.size();
+		if (i > 0)
+			i--;
+		return ChaindedIter<T>(vectors, actual, actual_end, i);
 	}
 };
 
