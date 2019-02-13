@@ -31,7 +31,6 @@ igraph_bool_t bfs_callback(const igraph_t *graph,
 			   igraph_integer_t rank,
 			   igraph_integer_t dist,
 			   void *extra) {
-  //printf(" %li", (long int) vid);
 	//usleep(1);
 	(*reinterpret_cast<size_t*>(extra))++;
 	return 0;
