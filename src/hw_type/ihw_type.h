@@ -14,9 +14,9 @@ class iHwType {
 public:
 	const boost::multiprecision::cpp_int all_mask;
 	// @return number of bits required for representation of value for this type
-	virtual size_t bit_length() = 0;
+	virtual size_t bit_length() const = 0;
+	virtual bool operator==(const iHwType & other) const = 0;
 	virtual ~iHwType();
-
 
 };
 
