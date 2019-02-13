@@ -1,8 +1,11 @@
 #include "test_graphs.h"
 #include "../src/statement_if.h"
+#include "../src/hw_type/common.h"
 
 using namespace std;
 using namespace netlistDB;
+using namespace netlistDB::hw_type;
+
 
 template<typename T>
 T select_any(vector<T> & objs, mt19937 & rand) {
@@ -75,7 +78,7 @@ void build_random_circuit(Netlist & ctx, size_t input_cnt, size_t output_cnt,
 	vector<Net*> nets;
 	for (size_t i = 0; i < input_cnt; i++) {
 		auto name = string("in") + to_string(i);
-		nets.push_back(&(ctx.sig_in(name)));
+		nets.push_back(&(ctx.sig_in(name, hw_int32)));
 	}
 
 	for (size_t lvl = 0; lvl < height; lvl++) {
@@ -98,7 +101,7 @@ void build_random_circuit(Netlist & ctx, size_t input_cnt, size_t output_cnt,
 	}
 	for (size_t i = 0; i < output_cnt; i++) {
 		auto name = string("out") + to_string(i);
-		auto & o = ctx.sig_out(name);
+		auto & o = ctx.sig_out(name, hw_int32);
 		auto rand_sig = select_any(nets, rand);
 		o(*rand_sig);
 	}
@@ -128,8 +131,8 @@ Net & high_pass_filter(Net & in, Net & clk, std::vector<Net*> a,
 	std::vector<std::pair<Net*, Net*>> z;
 	for (size_t i = 0; i < order; i++) {
 		auto name = std::string("z") + std::to_string(i + 1);
-		auto & r = ctx.sig(name);
-		auto & r_next = ctx.sig(name + "_next");
+		auto & r = ctx.sig(name, hw_int32);
+		auto & r_next = ctx.sig(name + "_next", hw_int32);
 
 		If(clk.rising())( { &r(r_next) });
 		z.push_back( { &r, &r_next });
@@ -172,7 +175,7 @@ void build_random_circuit_low_pass_filter(Netlist & ctx, size_t input_cnt,
 	vector<Net*> nets;
 	for (size_t i = 0; i < input_cnt; i++) {
 		auto name = string("in") + to_string(i);
-		nets.push_back(&(ctx.sig_in(name)));
+		nets.push_back(&(ctx.sig_in(name, hw_int32)));
 	}
 
 	for (size_t lvl = 0; lvl < height; lvl++) {
@@ -195,7 +198,7 @@ void build_random_circuit_low_pass_filter(Netlist & ctx, size_t input_cnt,
 	}
 	for (size_t i = 0; i < output_cnt; i++) {
 		auto name = string("out") + to_string(i);
-		auto & o = ctx.sig_out(name);
+		auto & o = ctx.sig_out(name, hw_int32);
 		auto rand_sig = select_any(nets, rand);
 		o(*rand_sig);
 	}

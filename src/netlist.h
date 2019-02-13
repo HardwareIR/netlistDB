@@ -21,6 +21,8 @@
 #include "pointer_container.h"
 #include "function_def.h"
 #include "utils/chained_iterator.h"
+#include "hw_type/ihw_type.h"
+#include "hw_type/ihw_type_value.h"
 
 namespace netlistDB {
 
@@ -62,7 +64,6 @@ public:
 	}
 };
 
-
 /**
  * Container of call of the function (operator is also function)
  */
@@ -93,6 +94,12 @@ public:
 	// the index of this net in Netlist.nets
 	size_t net_index;
 
+	// type of value of this signal
+	hw_type::iHwType & t;
+	// the optional value of this signal
+	// if the value is specified the signal is constant
+	hw_type::iHwTypeValue * val;
+
 	// direction of the signal if signal is used in IO
 	Direction direction;
 	// operators/ statements which are driving the value of this signal
@@ -105,7 +112,9 @@ public:
 
 	Net(const Net & other) = delete;
 	// use methods from Netlist
-	Net(Netlist & ctx, const std::string & name, Direction direction);
+	Net(Netlist & ctx, hw_type::iHwType & t, const std::string & name,
+			Direction direction);
+	bool is_const();
 
 	Net & operator!() = delete;
 	Net & operator~();
@@ -179,14 +188,14 @@ public:
 	Netlist(const std::string & name);
 
 	// create input signal
-	Net & sig_in(const std::string & name);
+	Net & sig_in(const std::string & name, hw_type::iHwType & t);
 	// create output signal
-	Net & sig_out(const std::string & name);
+	Net & sig_out(const std::string & name, hw_type::iHwType & t);
 
 	// create internal signals without specified name
-	Net & sig();
+	Net & sig(hw_type::iHwType & t);
 	// create internal signal with name specified
-	Net & sig(const std::string & name);
+	Net & sig(const std::string & name, hw_type::iHwType & t);
 
 	void integrty_assert();
 

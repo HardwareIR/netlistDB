@@ -13,10 +13,13 @@
 #include "../src/statement_if.h"
 #include "../src/query/query_match.h"
 #include "../src/query/query_path.h"
+#include "../src/hw_type/common.h"
 
 
 using namespace netlistDB;
 using namespace netlistDB::query;
+using namespace netlistDB::hw_type;
+
 
 BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
 
@@ -26,13 +29,13 @@ BOOST_AUTO_TEST_CASE( query_result_of_add ) {
 	size_t n = 20;
 
 	for (size_t i = 0; i < n; i++) {
-		auto &a = ctx.sig_in("a");
-		auto &b = ctx.sig_in("b");
+		auto &a = ctx.sig_in("a", hw_int32);
+		auto &b = ctx.sig_in("b", hw_int32);
 		auto &res = a + b;
 		expected.push_back( { &a, &b, &res });
 
 		// add some garbage
-		auto & c = ctx.sig_in("c");
+		auto & c = ctx.sig_in("c", hw_int32);
 		~a;
 		res & c;
 
@@ -50,7 +53,7 @@ BOOST_AUTO_TEST_CASE( query_result_of_add ) {
 	}
 
 	QueryMatch query_add;
-	auto &r = query_add.sig_in("a") + query_add.sig_in("b");
+	auto &r = query_add.sig_in("a", hw_int32) + query_add.sig_in("b", hw_int32);
 	r.direction = Direction::DIR_OUT;
 
 	auto qres = query_add.search(ctx);
@@ -61,17 +64,17 @@ BOOST_AUTO_TEST_CASE( simple_mux ) {
 	Netlist ctx("mux");
 	size_t N = 1;
 	for (size_t i = 0; i < N; i++) {
-		auto &a = ctx.sig_in("a");
-		auto &b = ctx.sig_in("b");
-		auto &c = ctx.sig_in("c");
+		auto &a = ctx.sig_in("a", hw_bit);
+		auto &b = ctx.sig_in("b", hw_bit);
+		auto &c = ctx.sig_in("c", hw_bit);
 
 		If(a)( { &a(b), }).Else( { &a(c), });
 	}
 
 	QueryMatch q_mux;
-	auto &qa = q_mux.sig_in("a");
-	auto &qb = q_mux.sig_in("b");
-	auto &qc = q_mux.sig_in("c");
+	auto &qa = q_mux.sig_in("a", hw_bit);
+	auto &qb = q_mux.sig_in("b", hw_bit);
+	auto &qc = q_mux.sig_in("c", hw_bit);
 
 	If(qa)( { &qa(qb), }).Else( { &qa(qc), });
 

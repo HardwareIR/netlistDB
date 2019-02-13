@@ -5,14 +5,14 @@
 
 namespace netlistDB {
 
-Net & apply(FunctionDef & fn, Net & a, Net & b) {
+Net & apply_call(FunctionDef & fn, Net & a, Net & b) {
 	assert(&(a.ctx) == &(b.ctx));
 	Net::UsageCacheKey k(fn, { &a, &b });
 	auto prev = a.usage_cache.find(k);
 	if (prev != a.usage_cache.end())
 		return *prev->second;
 
-	auto & res = a.ctx.sig();
+	auto & res = a.ctx.sig(a.t);
 	new FunctionCall(fn, a, b, res);
 
 	a.usage_cache[k] = &res;
@@ -20,83 +20,88 @@ Net & apply(FunctionDef & fn, Net & a, Net & b) {
 	return res;
 }
 
-Net & apply(FunctionDef & fn, Net & a) {
+Net & apply_call(FunctionDef & fn, Net & a) {
 	Net::UsageCacheKey k(fn, { &a });
 	auto prev = a.usage_cache.find(k);
 	if (prev != a.usage_cache.end())
 		return *prev->second;
 
-	auto & res = a.ctx.sig();
+	auto & res = a.ctx.sig(a.t);
 	new FunctionCall(fn, a, res);
 
 	a.usage_cache[k] = &res;
 	return res;
 }
 
-Net::Net(Netlist & ctx, const std::string & name, Direction direction) :
-		id(name), ctx(ctx), net_index(0), direction(direction) {
+Net::Net(Netlist & ctx, hw_type::iHwType & t, const std::string & name,
+		Direction direction) :
+		id(name), ctx(ctx), net_index(0), t(t), direction(direction) {
 	ctx.register_node(*this);
 	forward.push_back(reinterpret_cast<std::vector<iNode*>*>(&endpoints));
 	backward.push_back(reinterpret_cast<std::vector<iNode*>*>(&drivers));
 }
 
+bool Net::is_const() {
+	return val != nullptr;
+}
+
 Net & Net::operator~() {
-	return apply(OpNeg, *this);
+	return apply_call(OpNeg, *this);
 }
 
 Net & Net::operator|(Net & other) {
-	return apply(OpOr, *this, other);
+	return apply_call(OpOr, *this, other);
 }
 Net & Net::operator&(Net & other) {
-	return apply(OpAnd, *this, other);
+	return apply_call(OpAnd, *this, other);
 }
 Net & Net::operator^(Net & other) {
-	return apply(OpXor, *this, other);
+	return apply_call(OpXor, *this, other);
 }
 
 Net & Net::operator<=(Net & other) {
-	return apply(OpLE, *this, other);
+	return apply_call(OpLE, *this, other);
 }
 Net & Net::operator<(Net & other) {
-	return apply(OpLt, *this, other);
+	return apply_call(OpLt, *this, other);
 }
 Net & Net::operator>=(Net & other) {
-	return apply(OpGE, *this, other);
+	return apply_call(OpGE, *this, other);
 }
 Net & Net::operator>(Net & other) {
-	return apply(OpGt, *this, other);
+	return apply_call(OpGt, *this, other);
 }
 Net & Net::operator==(Net & other) {
-	return apply(OpEq, *this, other);
+	return apply_call(OpEq, *this, other);
 }
 Net & Net::operator!=(Net & other) {
-	return apply(OpNeq, *this, other);
+	return apply_call(OpNeq, *this, other);
 }
 
 Net & Net::operator-() {
-	return apply(OpUnMinus, *this);
+	return apply_call(OpUnMinus, *this);
 }
 Net & Net::operator+(Net & other) {
-	return apply(OpAdd, *this, other);
+	return apply_call(OpAdd, *this, other);
 }
 Net & Net::operator-(Net & other) {
-	return apply(OpSub, *this, other);
+	return apply_call(OpSub, *this, other);
 }
 Net & Net::operator*(Net & other) {
-	return apply(OpMul, *this, other);
+	return apply_call(OpMul, *this, other);
 }
 Net & Net::operator/(Net & other) {
-	return apply(OpDiv, *this, other);
+	return apply_call(OpDiv, *this, other);
 }
 
 Net & Net::concat(Net & other) {
-	return apply(OpConcat, *this, other);
+	return apply_call(OpConcat, *this, other);
 }
 Net & Net::rising() {
-	return apply(OpRising, *this);
+	return apply_call(OpRising, *this);
 }
 Net & Net::falling() {
-	return apply(OpFalling, *this);
+	return apply_call(OpFalling, *this);
 }
 
 // used as assignment
