@@ -1,5 +1,7 @@
 # NetlistDB
 
+(Note that even the name is not in final version...)
+
 NetlistDB is an experimental netlist database for hardware developement tools (hardware synthesis tools, simulators, code generators, ...).
 It is designed to allow efficient parallel processing of complex circut transofmation tasks while not sacrifising single thread performance.
 
@@ -60,10 +62,10 @@ This object can be used to build the circuits as it is shown in example below.
 
 ```cpp
 Netlist ctx("adder");
-Net &a = ctx.sig_in("a");
-Net &b = ctx.sig_in("b");
+Net &a = ctx.sig_in("a", hw_int32);
+Net &b = ctx.sig_in("b", hw_int32);
 Net &res_tmp = a + b;
-Net &res = ctx.sig_out("out");
+Net &res = ctx.sig_out("out", hw_int32);
 res(res_tmp);
 ```
 
@@ -73,7 +75,7 @@ The QueryMatch is also Netlist. The query is specified by the other circuit as s
 
 ```cpp
 QueryMatch query_add;
-Net &r = query_add.sig_in("a") + query_add.sig_in("b");
+Net &r = query_add.sig_in("a", hw_int32) + query_add.sig_in("b", hw_int32);
 // if the result is not marked as output the query searches only
 // the unconnected results as "r" is not connected anywhere 
 r.direction = Direction::DIR_OUT;
