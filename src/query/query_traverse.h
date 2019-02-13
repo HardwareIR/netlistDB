@@ -66,5 +66,6 @@ protected:
 	 **/
 	void traverse(iNode & n);
 };
+
 }
 }

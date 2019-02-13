@@ -1,14 +1,15 @@
 src = [
-	'function_call.cpp',
-	'function_def.cpp',
-	'net.cpp',
-	'netlist.cpp',
-	'operator_defs.cpp',
-	'statement_assignment.cpp',
-	'statement_assignment.h',
-	'statement_if.cpp',
-	'statement_if.h',
+	'hw_type/common.cpp',
+	'hw_type/common.h',
+	'hw_type/hw_int_value.cpp',
+	'hw_type/hw_int_value.h',
+	'hw_type/hw_int.cpp',
+	'hw_type/hw_int.h',
+	'hw_type/ihw_type_value.h',
+	'hw_type/ihw_type.cpp',
+	'hw_type/ihw_type.h',
 	
+	'parallel_utils/errase_if.h',
 	'parallel_utils/inclusive_scan.h',
 	
 	'query/backtrack_context.cpp',
@@ -30,6 +31,16 @@ src = [
 	'transform/remove_useless.cpp',
 	'transform/remove_useless.h',
 	'transform/transformation.h',
+	
+	'function_call.cpp',
+	'function_def.cpp',
+	'net.cpp',
+	'netlist.cpp',
+	'operator_defs.cpp',
+	'statement_assignment.cpp',
+	'statement_assignment.h',
+	'statement_if.cpp',
+	'statement_if.h',
 ]
 
 EXTRA_CXX_ARGS = [

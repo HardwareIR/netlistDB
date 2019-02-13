@@ -11,6 +11,7 @@
 
 #include "../src/netlist.h"
 #include "../src/statement_if.h"
+#include "../src/hw_type/common.h"
 #include "../src/query/query_match.h"
 #include "../src/operator_defs.h"
 #include "../src/query/query_traverse.h"
@@ -18,9 +19,10 @@
 
 using namespace netlistDB;
 using namespace netlistDB::query;
+using namespace netlistDB::hw_type;
 
 BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
-
+auto & t = hw_int32;
 std::vector<FunctionCall*> find_ops(Netlist & ctx, FunctionDef & op) {
 	// traverse and count the number of the add operators
 	QueryTraverse q(ctx.nodes.size());
@@ -49,7 +51,8 @@ BOOST_AUTO_TEST_CASE( query_add ) {
 	build_random_circuit(ctx, 10, 10, 10, 10, rand);
 
 	QueryMatch query_add;
-	auto &r = query_add.sig_in("a") + query_add.sig_in("b");
+
+	auto &r = query_add.sig_in("a", t) + query_add.sig_in("b", t);
 	r.direction = Direction::DIR_OUT;
 
 	auto qres = query_add.search(ctx);
@@ -71,8 +74,8 @@ BOOST_AUTO_TEST_CASE( query_mac ) {
 	build_random_circuit(ctx, 100, 100, 100, 100, rand);
 
 	QueryMatch query_mac;
-	auto &r = query_mac.sig_in("a")
-			+ (query_mac.sig_in("b") * query_mac.sig_in("c"));
+	auto &r = query_mac.sig_in("a", t)
+			+ (query_mac.sig_in("b", t) * query_mac.sig_in("c", t));
 	r.direction = Direction::DIR_OUT;
 	auto qres = query_mac.search(ctx);
 

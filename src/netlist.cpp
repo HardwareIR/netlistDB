@@ -27,22 +27,22 @@ void Netlist::unregister_node(Net & n) {
 	unregister_node(static_cast<iNode&>(n));
 }
 
-Net & Netlist::sig_in(const std::string & name) {
-	auto s = new Net(*this, name, DIR_IN);
+Net & Netlist::sig_in(const std::string & name, hw_type::iHwType & t) {
+	auto s = new Net(*this, t, name, DIR_IN);
 	return *s;
 }
 
-Net & Netlist::sig_out(const std::string & name) {
-	auto s = new Net(*this, name, DIR_OUT);
+Net & Netlist::sig_out(const std::string & name, hw_type::iHwType & t) {
+	auto s = new Net(*this, t, name, DIR_OUT);
 	return *s;
 }
 
-Net & Netlist::sig() {
-	return sig("");
+Net & Netlist::sig(hw_type::iHwType & t) {
+	return sig("", t);
 }
 
-Net & Netlist::sig(const std::string & name) {
-	auto s = new Net(*this, name, DIR_UNKNOWN);
+Net & Netlist::sig(const std::string & name, hw_type::iHwType & t) {
+	auto s = new Net(*this, t, name, DIR_UNKNOWN);
 	return *s;
 }
 
