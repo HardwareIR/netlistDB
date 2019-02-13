@@ -65,7 +65,6 @@ BOOST_AUTO_TEST_CASE( query_add ) {
 
 	auto adds = find_ops(ctx, OpAdd);
 	BOOST_CHECK_EQUAL(qres.size(), 29);
-
 }
 
 BOOST_AUTO_TEST_CASE( query_mac ) {
