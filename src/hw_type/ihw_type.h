@@ -1,5 +1,6 @@
 #pragma once
 #include <stddef.h>
+#include <boost/multiprecision/cpp_int.hpp>
 
 namespace netlistDB {
 namespace hw_type {
@@ -11,9 +12,12 @@ namespace hw_type {
  **/
 class iHwType {
 public:
+	const boost::multiprecision::cpp_int all_mask;
 	// @return number of bits required for representation of value for this type
 	virtual size_t bit_length() = 0;
 	virtual ~iHwType();
+
+
 };
 
 }
