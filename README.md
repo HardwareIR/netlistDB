@@ -20,6 +20,7 @@ It is designed to allow efficient parallel processing of complex circut transofm
 | non-blocking assignment | <=        | <=                    |  Assignment object - use Net::operator() [1]  |
 | preprocessor            | macros    | generate              |  c++ code - no restrictions                   |
 | process, sensitivity    | always,.. | process               |  automatically resolved [2]                   |
+| bits type               | [0:15]    | std_logic_vector      | HwInt object                                  |
 
 [1] The Assignment object constructed by call operator on Net is non blocking as blocking assingment can be used the c++ assignment.
 [2] Each statement is self sufficient process with automatically managed sensitivity. (There is transformation class which transforms
