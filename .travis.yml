@@ -19,6 +19,7 @@ matrix:
             - g++-8
             - boost1.67
             - meson
+            - ninja-build
 
 before_script:
   - git clone https://github.com/cpp-taskflow/cpp-taskflow
