@@ -1,6 +1,7 @@
 build/
 
 # eclipse project
+.cproject
 .project
 .settings/
 .pydevproject

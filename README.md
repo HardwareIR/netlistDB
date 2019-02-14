@@ -1,10 +1,16 @@
 # NetlistDB
 
+[![Build Status](https://travis-ci.org/HardwareIR/hardwareIr.svg?branch=master)](https://travis-ci.org/HardwareIR/hardwareIr)
+
+
 (Note that even the name is not in final version...)
 
 NetlistDB is an experimental netlist database for hardware developement tools (hardware synthesis tools, simulators, code generators, ...).
 It is designed to allow efficient parallel processing of complex circut transofmation tasks while not sacrifising single thread performance.
 
+## The purpose of NetlistDB
+
+This library is a backedn and intermediate format for representation of circuit. The direct use may result in more ugly code than verilog itself. Think of this as blazing fast code generator and the backend for the circuit optimalizers and generators. 
 
 # Circuit representation in NetlistDB
 
@@ -20,10 +26,11 @@ It is designed to allow efficient parallel processing of complex circut transofm
 | non-blocking assignment | <=        | <=                    |  Assignment object - use Net::operator() [1]  |
 | preprocessor            | macros    | generate              |  c++ code - no restrictions                   |
 | process, sensitivity    | always,.. | process               |  automatically resolved [2]                   |
+| bits type               | [0:15]    | std_logic_vector      | HwInt object                                  |
 
 [1] The Assignment object constructed by call operator on Net is non blocking as blocking assingment can be used the c++ assignment.
-[2] Each statement is self sufficient process with automatically managed sensitivity. (There is transformation class which transforms
-    the statements to readable format so the serializae output is minimalized and readable.)
+
+[2] Each statement is self sufficient process with automatically managed sensitivity. (There is transformation class which transforms the statements to readable format so the serialized output is minimalized and readable.)
     
 
 # Installation

@@ -1,0 +1,44 @@
+dist: xenial
+language: cpp
+sudo: true
+os: linux
+cache:
+  apt: true
+
+# for meson
+python:
+- '3.6'
+
+matrix:
+  include:
+    - env: COMPILER=g++-8 BUILD=Debug
+      compiler: gcc
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'ppa:mhier/libboost-latest'
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+            - boost1.67
+            - ninja-build
+            - python3-pip
+            - python3-setuptools
+
+before_script:
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then export CXX=${COMPILER}; fi
+  - sudo pip3 install meson
+  - git clone https://github.com/cpp-taskflow/cpp-taskflow
+  - cd cpp-taskflow
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
+  - sudo make install
+  - cd ../..
+  - mkdir build
+  - meson build
+  - cd build
+
+script: ninja && ninja test
