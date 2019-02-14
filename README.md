@@ -1,5 +1,8 @@
 # NetlistDB
 
+[![Build Status](https://travis-ci.org/HardwareIR/hardwareIr.svg?branch=master)](https://travis-ci.org/HardwareIR/hardwareIr)
+
+
 (Note that even the name is not in final version...)
 
 NetlistDB is an experimental netlist database for hardware developement tools (hardware synthesis tools, simulators, code generators, ...).
