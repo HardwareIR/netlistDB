@@ -5,6 +5,10 @@ os: linux
 cache:
   apt: true
 
+# for meson
+python:
+- '3.6'
+
 matrix:
   include:
     - env: COMPILER=g++-8 BUILD=Debug
