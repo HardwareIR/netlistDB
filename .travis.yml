@@ -23,6 +23,7 @@ matrix:
             - g++-8
             - boost1.67
             - ninja-build
+            - python3-pip
 
 before_script:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then export CXX=${COMPILER}; fi
