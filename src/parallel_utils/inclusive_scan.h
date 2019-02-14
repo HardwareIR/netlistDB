@@ -1,7 +1,7 @@
 #pragma once
 #include <taskflow/taskflow.hpp>
 
-// similar to https://github.com/robzan8/prefixsum/blob/master/src/prefixSumRec.hpp
+// based on https://github.com/robzan8/prefixsum/blob/master/src/prefixSumRec.hpp
 // [TODO] use c++17 inclusive_scan after implemented also in GCC https://en.cppreference.com/w/cpp/algorithm/inclusive_scan
 
 namespace netlistDB {
