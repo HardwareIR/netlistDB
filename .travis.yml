@@ -1,0 +1,36 @@
+dist: trusty
+language: cpp
+sudo: true
+os: linux
+cache:
+  apt: true
+
+matrix:
+  include:
+    - env: COMPILER=g++-7 BUILD=Debug STANDARD=14
+      compiler: gcc
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'ppa:mhier/libboost-latest'
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+            - boost1.67
+            - meson
+
+before_script:
+  - git clone https://github.com/cpp-taskflow/cpp-taskflow
+  - cd cpp-taskflow
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make
+  - sudo make install
+  - cd ../..
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then export CXX=${COMPILER}; fi
+  - meson build
+  - cd build
+
+script: ninja && ninja test
