@@ -17,7 +17,7 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - g++-8
-            - libboost1.67-all-dev
+            - boost1.62-all-dev
             - meson
             - ninja-build
 
