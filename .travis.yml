@@ -16,7 +16,7 @@ matrix:
             - sourceline: 'ppa:mhier/libboost-latest'
             - ubuntu-toolchain-r-test
           packages:
-            - g++-7
+            - g++-8
             - boost1.67
             - meson
 
