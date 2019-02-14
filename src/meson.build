@@ -45,7 +45,7 @@ src = [
 
 # pack all verilog template files in to single cpp with defined strings
 ver_dir = 'serializer/verilog/'
-templates_to_cpp = find_program('templates_to_cpp.py', '../scripts/templates_to_cpp.py')
+templates_to_cpp = find_program('../scripts/templates_to_cpp.py')
 templates_as_cpp = custom_target(
 	'convert_templates_to_cpp',
     input: [ver_dir + 'component_instance.v', ver_dir + 'if.v',
