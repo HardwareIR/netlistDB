@@ -65,65 +65,65 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 
 	QueryTraverse q(ctx->nodes.size());
 	//q.load_balance_limit = 1;
-	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+	for (size_t i = 1; i <= 2; i++) {
 		tf_test(outputs, q, expected_node_cnt, i);
 	}
 }
 
-BOOST_AUTO_TEST_CASE( simple_traversal_500 ) {
-	size_t N = 500;
-	size_t expected_node_cnt = 496620;
-	std::vector<iNode*> outputs;
-	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
-	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
-
-	QueryTraverse q(ctx->nodes.size());
-	//q.load_balance_limit = 1;
-	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
-		tf_test(outputs, q, expected_node_cnt, i);
-	}
-}
-
-BOOST_AUTO_TEST_CASE( simple_traversal_750 ) {
-	size_t N = 750;
-	size_t expected_node_cnt = 1115936;
-	std::vector<iNode*> outputs;
-	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
-	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
-
-	QueryTraverse q(ctx->nodes.size());
-	//q.load_balance_limit = 1;
-	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
-		tf_test(outputs, q, expected_node_cnt, i);
-	}
-}
-
-BOOST_AUTO_TEST_CASE( simple_traversal_1000 ) {
-	size_t N = 1000;
-	size_t expected_node_cnt = 1983146;
-	std::vector<iNode*> outputs;
-	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
-	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
-
-	QueryTraverse q(ctx->nodes.size());
-	//q.load_balance_limit = 1;
-	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
-		tf_test(outputs, q, expected_node_cnt, i);
-	}
-}
-
-BOOST_AUTO_TEST_CASE( simple_traversal_2000 ) {
-	size_t N = 2000;
-	size_t expected_node_cnt = 7926124;
-	std::vector<iNode*> outputs;
-	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
-	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
-
-	QueryTraverse q(ctx->nodes.size());
-	for (size_t i = 8; i <= std::thread::hardware_concurrency(); i++) {
-		tf_test(outputs, q, expected_node_cnt, i);
-	}
-}
+//BOOST_AUTO_TEST_CASE( simple_traversal_500 ) {
+//	size_t N = 500;
+//	size_t expected_node_cnt = 496620;
+//	std::vector<iNode*> outputs;
+//	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
+//	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
+//
+//	QueryTraverse q(ctx->nodes.size());
+//	//q.load_balance_limit = 1;
+//	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+//		tf_test(outputs, q, expected_node_cnt, i);
+//	}
+//}
+//
+//BOOST_AUTO_TEST_CASE( simple_traversal_750 ) {
+//	size_t N = 750;
+//	size_t expected_node_cnt = 1115936;
+//	std::vector<iNode*> outputs;
+//	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
+//	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
+//
+//	QueryTraverse q(ctx->nodes.size());
+//	//q.load_balance_limit = 1;
+//	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+//		tf_test(outputs, q, expected_node_cnt, i);
+//	}
+//}
+//
+//BOOST_AUTO_TEST_CASE( simple_traversal_1000 ) {
+//	size_t N = 1000;
+//	size_t expected_node_cnt = 1983146;
+//	std::vector<iNode*> outputs;
+//	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
+//	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
+//
+//	QueryTraverse q(ctx->nodes.size());
+//	//q.load_balance_limit = 1;
+//	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+//		tf_test(outputs, q, expected_node_cnt, i);
+//	}
+//}
+//
+//BOOST_AUTO_TEST_CASE( simple_traversal_2000 ) {
+//	size_t N = 2000;
+//	size_t expected_node_cnt = 7926124;
+//	std::vector<iNode*> outputs;
+//	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
+//	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
+//
+//	QueryTraverse q(ctx->nodes.size());
+//	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+//		tf_test(outputs, q, expected_node_cnt, i);
+//	}
+//}
 //____________________________________________________________________________//
 
 BOOST_AUTO_TEST_SUITE_END()

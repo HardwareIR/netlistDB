@@ -12,7 +12,7 @@ using namespace netlistDB::parallel_utils;
 namespace netlistDB {
 namespace transform {
 
-bool TransformRemoveUseless::apply(Netlist & ctx) {
+bool TransformRemoveUseless::apply(Netlist & ctx, size_t thread_cnt) {
 	if (ctx.nodes.size() == 0)
 		return false;
 
@@ -29,13 +29,13 @@ bool TransformRemoveUseless::apply(Netlist & ctx) {
 	auto walk_all_drivers = [](iNode &n) {
 		return n.backward;
 	};
-	q.traverse(outputs, walk_all_drivers);
+	q.traverse(outputs, walk_all_drivers, thread_cnt);
 
 	// the items which was not visited have no effect on output;
 	// it the result signal is deleted the driver is deleted as well
 	// from this reason we are searching only for signals
 
-	return TransformRemoveByMask(reinterpret_cast<bool*>(q.visited)).apply(ctx);
+	return TransformRemoveByMask(reinterpret_cast<bool*>(q.visited)).apply(ctx, thread_cnt);
 }
 
 }
