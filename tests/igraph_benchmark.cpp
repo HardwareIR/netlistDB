@@ -36,7 +36,7 @@ igraph_bool_t bfs_callback(const igraph_t *graph,
 	return 0;
 }
 
-void igraph_bfs_benchmark(const igraph_t & graph, const Netlist & netlist) {
+void igraph_bfs_benchmark(const igraph_t & graph, const Netlist & netlist, size_t N) {
 	std::vector<Net*> outputs;
 	for (auto & n : netlist.nets) {
 		if (n->direction == Direction::DIR_OUT) {
@@ -49,7 +49,7 @@ void igraph_bfs_benchmark(const igraph_t & graph, const Netlist & netlist) {
 		VECTOR(roots)[i]=outputs[i]->index;
 	}
 	size_t visited = 0;
-	auto t = new Timer("igraph_bfs");
+	auto t = new Timer(std::string("igraph_bfs ") + std::to_string(N));
 	igraph_bfs(&graph, /*root=*/-1, /*roots=*/ &roots, /*neimode=*/ IGRAPH_OUT,
 		     /*unreachable=*/ 1, /*restricted=*/ 0,
 		     /*order*/nullptr, /*rank*/ nullptr, /*father*/nullptr,
@@ -60,24 +60,26 @@ void igraph_bfs_benchmark(const igraph_t & graph, const Netlist & netlist) {
 }
 
 int main(void) {
-	igraph_t graph;
-	igraph_vector_t result;
+	std::vector<size_t> sizes = {100, 200, 500, 750, 1000};
+	for (size_t N: sizes) {
+		igraph_t graph;
+		igraph_vector_t result;
 
-	Netlist ctx("example");
-	std::mt19937 rand(0);
-	size_t N = 100;
-	build_random_circuit(ctx, N, N, N, N, rand);
-	netlistDB_to_iGraph(graph, ctx);
-	//dummy_igraph(graph);
+		Netlist ctx("example");
+		std::mt19937 rand(0);
+		build_random_circuit(ctx, N, N, N, N, rand);
+		netlistDB_to_iGraph(graph, ctx);
+		//dummy_igraph(graph);
 
-	igraph_vector_init(&result, 0);
-	igraph_degree(&graph, &result, igraph_vss_all(), IGRAPH_ALL, IGRAPH_LOOPS);
-	printf("Maximum degree is      %10i, vertex %2i.\n",
-			(int) igraph_vector_max(&result),
-			(int) igraph_vector_which_max(&result));
-	igraph_bfs_benchmark(graph, ctx);
-	igraph_vector_destroy(&result);
-	igraph_destroy(&graph);
+		igraph_vector_init(&result, 0);
+		//igraph_degree(&graph, &result, igraph_vss_all(), IGRAPH_ALL, IGRAPH_LOOPS);
+		//printf("Maximum degree is      %10i, vertex %2i.\n",
+		//		(int) igraph_vector_max(&result),
+		//		(int) igraph_vector_which_max(&result));
+		igraph_bfs_benchmark(graph, ctx, N);
+		igraph_vector_destroy(&result);
+		igraph_destroy(&graph);
+	}
 
 	return 0;
 }
