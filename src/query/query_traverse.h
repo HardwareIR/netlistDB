@@ -13,6 +13,7 @@ class QueryTraverse {
 public:
 	// align to cache line does not bring perf. improvement
 	// as there is large number of nodes and the access is more or less random.
+	// [TODO] how is this possible?
 	using atomic_flag_t = std::atomic<bool>;
 
 	// return the next nodes which should be probed
