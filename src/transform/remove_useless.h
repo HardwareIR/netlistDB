@@ -16,9 +16,10 @@ public:
 	 *     disconnect what was not used
 	 *     delete what was not used.
 	 *
+	 * @param thread_cnt the number of threads to use if 0 the optimal number will be used
 	 * @return true if the netlist was modified
 	 **/
-	virtual bool apply(Netlist & ctx) override;
+	virtual bool apply(Netlist & ctx, size_t thread_cnt = 0) override;
 
 };
 

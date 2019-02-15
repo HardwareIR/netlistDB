@@ -119,10 +119,12 @@ void delete_node(iNode * n, Netlist & ctx) {
 	delete n;
 }
 
-bool TransformRemoveByMask::apply(Netlist & ctx) {
+bool TransformRemoveByMask::apply(Netlist & ctx, size_t thread_cnt) {
 	auto & nodes = ctx.nodes;
 	auto cnt = nodes.size();
-	auto thread_cnt = std::thread::hardware_concurrency();
+	if (thread_cnt == 0)
+		thread_cnt = std::thread::hardware_concurrency();
+
 	bool any_removed = false;
 	if (thread_cnt > 1) {
 		// parallel version
