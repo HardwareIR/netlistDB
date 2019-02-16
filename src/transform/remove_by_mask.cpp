@@ -183,7 +183,7 @@ bool TransformRemoveByMask::apply(Netlist & ctx, size_t thread_cnt) {
 		collect_boundaries_between_deleted_and_keept(node_to_keep_mask, nodes,
 				0, 1, cnt, &to_update_ep, to_delete);
 
-		bool any_removed = to_delete.size() or to_update_ep.size();
+		any_removed = to_delete.size() or to_update_ep.size();
 		if (any_removed) {
 			// disconnect the part which is being removed
 			disconnect_to_remove_connections(node_to_keep_mask, &to_update_ep,
