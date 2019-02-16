@@ -7,10 +7,40 @@
 namespace netlistDB {
 namespace parallel_utils {
 
+/*
+ * Simple serial version
+ * */
 template<typename T>
-void inclusive_scan(T in[], T out[], T tmp[], size_t len, tf::Taskflow & tf) {
-	if (len == 1) {
-		out[0] = in[0];
+void inclusive_scan(T in[], T out[], size_t len) {
+	if (len <= 0) {
+		return;
+	}
+
+	out[0] = in[0];
+	for (size_t i = 1; i < len; i++) {
+		out[i] = out[i - 1] + in[i];
+	}
+}
+
+/*
+ * Perform prefix sum of item from array "in"
+ * and store the result in to array "out"
+ *
+ * @param in the array with the input
+ * @param out the array with the result
+ * @param tmp the tmp array
+ * @param len size of all arrays
+ * @param tf the instance of TaskFlow thread pool
+ * @param worker_threshold minimum amount of work for worker
+ *         (if there is not enought work less worker thread is used)
+ *
+ * [TODO] Replaced with std/tbb impl.
+ *   Looks like fork bomb but due TaskFlow load balancing scales relatively well.
+ * */
+template<typename T>
+void inclusive_scan(T in[], T out[], T tmp[], size_t len, tf::Taskflow & tf, size_t min_work_per_thread = 1) {
+	if (len <= min_work_per_thread) {
+		inclusive_scan<T>(in, out, len);
 		return;
 	}
 	size_t workers = tf.num_workers();
@@ -29,7 +59,7 @@ void inclusive_scan(T in[], T out[], T tmp[], size_t len, tf::Taskflow & tf) {
 	});
 	tf.wait_for_all();
 
-	inclusive_scan(in2, out2, tmp + len_half, len_half, tf);
+	inclusive_scan(in2, out2, tmp + len_half, len_half, tf, min_work_per_thread);
 
 	out[0] = in[0];
 	size_t len1 = len - 1;
@@ -47,48 +77,6 @@ void inclusive_scan(T in[], T out[], T tmp[], size_t len, tf::Taskflow & tf) {
 		}
 	});
 	tf.wait_for_all();
-}
-
-/*
- * Perform prefix sum of item from array "in"
- * and store the result in to array "out"
- *
- * @param in the array with the input
- * @param out the array with the result
- * @param tmp the tmp array
- * @param len size of all arrays
- * @param thread_cnt the max number of the worker threads to use
- * @param worker_threshold minimum amount of work for worker
- *         (if there is not enought work less worker thread is used)
- * */
-template<typename T>
-void inclusive_scan(T in[], T out[], T tmp[], size_t len, size_t thread_cnt,
-		size_t worker_threshold = 1) {
-	if (len <= 0 || thread_cnt <= 0) {
-		return;
-	}
-
-	thread_cnt = std::min(thread_cnt, len / worker_threshold);
-
-	if (thread_cnt == 1) {
-		inclusive_scan<T>(in, out, len);
-		return;
-	}
-
-	tf::Taskflow tf(thread_cnt);
-	inclusive_scan(in, out, tmp, len, tf, thread_cnt);
-}
-
-template<typename T>
-void inclusive_scan(T in[], T out[], size_t len) {
-	if (len <= 0) {
-		return;
-	}
-
-	out[0] = in[0];
-	for (size_t i = 1; i < len; i++) {
-		out[i] = out[i - 1] + in[i];
-	}
 }
 
 }
