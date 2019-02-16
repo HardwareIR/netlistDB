@@ -37,14 +37,16 @@ This library is a backend and intermediate format for representation of digital 
 
 Install dependencies
 ```
-sudo apt-get install build-essentials meson cmake git libtbb-dev
+sudo apt-get install build-essentials meson cmake git libtbb-dev libboost-all-dev
+# [NOTE] if you are using old system like like ubuntu 14 on travis-ci install fresh meson by
+#        pip3 install meson instead to avoid compilications with libboost discovery
 ```
 
 build this library
 ```
-meson build
+meson build # meson is tool similar to cmake or autotools
 cd build
-ninja
+ninja # ninja is tool similar to make
 ```
 
 run tests
