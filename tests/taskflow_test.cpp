@@ -32,6 +32,7 @@ void tf_test(std::vector<iNode*> & outputs, QueryTraverse& q, size_t obj_cnt,
 			return QueryTraverse::dummy_callback(n);
 		};
 	q.clean_visit_flags(thread_cnt);
+	//q.load_balance_limit = 1;
 	auto t = new Timer(std::string("threads ") + std::to_string(thread_cnt));
 	q.traverse(outputs, callback, thread_cnt);
 	delete t;
@@ -64,7 +65,7 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
 
 	QueryTraverse q(ctx->nodes.size());
-	//q.load_balance_limit = 1;
+	//for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
 	for (size_t i = 1; i <= 2; i++) {
 		tf_test(outputs, q, expected_node_cnt, i);
 	}
@@ -78,7 +79,6 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 //	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
 //
 //	QueryTraverse q(ctx->nodes.size());
-//	//q.load_balance_limit = 1;
 //	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
 //		tf_test(outputs, q, expected_node_cnt, i);
 //	}
@@ -92,7 +92,6 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 //	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
 //
 //	QueryTraverse q(ctx->nodes.size());
-//	//q.load_balance_limit = 1;
 //	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
 //		tf_test(outputs, q, expected_node_cnt, i);
 //	}
@@ -106,7 +105,6 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 //	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
 //
 //	QueryTraverse q(ctx->nodes.size());
-//	//q.load_balance_limit = 1;
 //	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
 //		tf_test(outputs, q, expected_node_cnt, i);
 //	}
