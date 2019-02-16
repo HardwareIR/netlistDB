@@ -2,7 +2,7 @@
 
 #include <thread>
 #include "parallel_utils/erase_if.h"
-#include "../debug_utils/timer.h"
+//#include "../debug_utils/timer.h"
 
 using namespace netlistDB::parallel_utils;
 
@@ -136,7 +136,7 @@ bool TransformRemoveByMask::apply(Netlist & ctx) {
 	auto to_delete = std::make_unique<std::vector<iNode*>[]>(thread_cnt);
 
 	// resolve the boundaries between removed and kept part of the graph
-	auto t = new Timer("collect_boundaries_between_deleted_and_keept");
+	//auto t = new Timer("collect_boundaries_between_deleted_and_keept");
 	tbb::task_group g;
 	for (size_t thr_i = 0; thr_i < thread_cnt; thr_i++) {
 		g.run(
@@ -149,7 +149,7 @@ bool TransformRemoveByMask::apply(Netlist & ctx) {
 				});
 	}
 	g.wait();
-	delete t;
+	//delete t;
 
 	any_removed = check_if_any_removed(to_update_ep.get(), to_delete.get(),
 			thread_cnt);
@@ -158,7 +158,7 @@ bool TransformRemoveByMask::apply(Netlist & ctx) {
 		// disconnect the part which is being removed
 		// to_update_ep sets are separated by % op and each thread processing disjunct set of nets
 		tbb::task_group g1;
-		t = new Timer("disconnect_to_remove_connections");
+		//t = new Timer("disconnect_to_remove_connections");
 		for (size_t i = 0; i < thread_cnt; i++) {
 			g1.run(
 					[node_to_keep_mask=node_to_keep_mask,
@@ -168,9 +168,9 @@ bool TransformRemoveByMask::apply(Netlist & ctx) {
 					});
 		}
 		g1.wait();
-		delete t;
+		//delete t;
 
-		t = new Timer("packing");
+		//t = new Timer("packing");
 		// delete the part which is useless
 		erase_if<iNode*, node_index_selector>(nodes,
 				[node_to_keep_mask=node_to_keep_mask, &ctx](iNode*n) {
@@ -183,7 +183,7 @@ bool TransformRemoveByMask::apply(Netlist & ctx) {
 
 		erase_if<Net*, net_index_selector>(ctx.nets,
 				[](Net*n) {return n == nullptr;});
-		delete t;
+		//delete t;
 	}
 
 	// return true if the netlist was modified
