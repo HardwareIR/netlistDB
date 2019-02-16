@@ -1,5 +1,5 @@
+#include <parallel_utils/erase_if.h>
 #include "remove_useless.h"
-#include "../parallel_utils/errase_if.h"
 #include "../query/query_traverse.h"
 #include "../utils/chained_iterator.h"
 #include "remove_by_mask.h"
@@ -35,7 +35,8 @@ bool TransformRemoveUseless::apply(Netlist & ctx, size_t thread_cnt) {
 	// it the result signal is deleted the driver is deleted as well
 	// from this reason we are searching only for signals
 
-	return TransformRemoveByMask(reinterpret_cast<typename QueryTraverse::flag_t*>(q.visited)).apply(ctx, thread_cnt);
+	auto visited = reinterpret_cast<typename QueryTraverse::flag_t*>(q.visited);
+	return TransformRemoveByMask(visited).apply(ctx, thread_cnt);
 }
 
 }

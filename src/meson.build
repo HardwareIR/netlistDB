@@ -9,7 +9,7 @@ src = [
 	'hw_type/ihw_type.cpp',
 	'hw_type/ihw_type.h',
 	
-	'parallel_utils/errase_if.h',
+	'parallel_utils/erase_if.h',
 	'parallel_utils/inclusive_scan.h',
 	
 	'query/backtrack_context.cpp',

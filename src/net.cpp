@@ -1,7 +1,7 @@
+#include <parallel_utils/erase_if.h>
 #include "netlist.h"
 #include "operator_defs.h"
 #include "statement_assignment.h"
-#include "parallel_utils/errase_if.h"
 
 namespace netlistDB {
 
@@ -110,7 +110,7 @@ Statement & Net::operator()(Net & other) {
 }
 
 void Net::forward_disconnect(iNode::predicate_t pred) {
-	parallel_utils::erase_if<OperationNode>(endpoints, pred);
+	parallel_utils::erase_if<OperationNode*>(endpoints, pred);
 }
 
 }

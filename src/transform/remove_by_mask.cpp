@@ -1,5 +1,5 @@
+#include <parallel_utils/erase_if.h>
 #include "remove_by_mask.h"
-#include "parallel_utils/errase_if.h"
 #include  <taskflow/taskflow.hpp>
 
 using namespace netlistDB::parallel_utils;
@@ -162,7 +162,7 @@ bool TransformRemoveByMask::apply(Netlist & ctx, size_t thread_cnt) {
 			tf.wait_for_all();
 
 			// delete the part which is useless
-			erase_if<iNode, node_index_selector>(nodes,
+			erase_if<iNode*, node_index_selector>(nodes,
 					[node_to_keep_mask=node_to_keep_mask, &ctx](iNode*n) {
 						if (bool(not node_to_keep_mask[n->index])) {
 							delete_node(n, ctx);
@@ -171,7 +171,7 @@ bool TransformRemoveByMask::apply(Netlist & ctx, size_t thread_cnt) {
 						return false;
 					}, tf);
 
-			erase_if<Net, net_index_selector>(ctx.nets,
+			erase_if<Net*, net_index_selector>(ctx.nets,
 					[](Net*n) {return n == nullptr;}, tf);
 		}
 	} else {
@@ -195,9 +195,9 @@ bool TransformRemoveByMask::apply(Netlist & ctx, size_t thread_cnt) {
 			}
 			// remove the deleted items from the vector
 
-			erase_if<iNode, node_index_selector>(ctx.nodes,
+			erase_if<iNode*, node_index_selector>(ctx.nodes,
 					[](iNode*n) {return n == nullptr;});
-			erase_if<Net, net_index_selector>(ctx.nets,
+			erase_if<Net*, net_index_selector>(ctx.nets,
 					[](Net*n) {return n == nullptr;});
 		}
 
