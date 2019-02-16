@@ -16,6 +16,7 @@
 #include "../src/operator_defs.h"
 #include "../src/query/query_traverse.h"
 #include "test_graphs.h"
+#include "timer.h"
 
 using namespace netlistDB;
 using namespace netlistDB::query;
@@ -68,15 +69,20 @@ BOOST_AUTO_TEST_CASE( query_add ) {
 }
 
 BOOST_AUTO_TEST_CASE( query_mac ) {
+	size_t N = 100;
+
 	Netlist ctx("test");
 	std::mt19937 rand(0);
-	build_random_circuit(ctx, 100, 100, 100, 100, rand);
+	build_random_circuit(ctx, N, N, N, N, rand);
 
 	QueryMatch query_mac;
 	auto &r = query_mac.sig_in("a", t)
 			+ (query_mac.sig_in("b", t) * query_mac.sig_in("c", t));
 	r.direction = Direction::DIR_OUT;
+
+	auto t = new Timer(std::string("query_mac size:") + std::to_string(N));
 	auto qres = query_mac.search(ctx);
+	delete t;
 
 	BOOST_CHECK_EQUAL(qres.size(), 479);
 }
