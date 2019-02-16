@@ -25,6 +25,8 @@ void erase_if(std::vector<T> & vec, std::function<bool(T)> pred) {
 
 /*
  * @param pred predicate returns true if item should be erased
+ *
+ * [TODO] add check if none will be removed do not perform scanning, reallocations and copy
  **/
 template<typename T, typename index_selector>
 void erase_if(std::vector<T> & vec, std::function<bool(T)> pred,
