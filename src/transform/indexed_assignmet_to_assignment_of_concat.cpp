@@ -106,6 +106,7 @@ bool TransformIndexedAssignmentsToAssignmentOfConcat::apply(Netlist & ctx) {
 			// delete all drivers as they are being replaced
 			// create concatenation of all inputs
 			// connect concatenated inputs to output
+			throw std::runtime_error("not implemented");
 			updated = true;
 		}
 	}
