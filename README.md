@@ -67,7 +67,7 @@ Net &a = ctx.sig_in("a", hw_int32);
 Net &b = ctx.sig_in("b", hw_int32);
 Net &res_tmp = a + b;
 Net &res = ctx.sig_out("out", hw_int32);
-res(res_tmp);
+res(res_tmp); // equivalent of res <= res_tmp in verilog/vhdl
 ```
 
 To perform analysis of the Netlist there is netlistDB::query namespace.
