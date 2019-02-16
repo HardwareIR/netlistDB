@@ -9,15 +9,15 @@ namespace netlistDB {
 namespace parallel_utils {
 
 template<typename T>
-void erase_if(std::vector<T*> & vec, std::function<bool(T*)> pred) {
+void erase_if(std::vector<T> & vec, std::function<bool(T)> pred) {
 	vec.erase(std::remove_if(vec.begin(), vec.end(), pred), vec.end());
 }
 
 template<typename T, typename index_selector>
-void erase_if(std::vector<T*> & vec, std::function<bool(T*)> pred) {
+void erase_if(std::vector<T> & vec, std::function<bool(T)> pred) {
 	erase_if<T>(vec, pred);
 	size_t i = 0;
-	for (T* item : vec) {
+	for (T & item : vec) {
 		index_selector { }(item) = i;
 		i++;
 	}
@@ -27,7 +27,7 @@ void erase_if(std::vector<T*> & vec, std::function<bool(T*)> pred) {
  * @param pred predicate returns true if item should be erased
  **/
 template<typename T, typename index_selector>
-void erase_if(std::vector<T*> & vec, std::function<bool(T*)> pred,
+void erase_if(std::vector<T> & vec, std::function<bool(T)> pred,
 		tf::Taskflow & tf) {
 	size_t item_cnt = vec.size();
 	auto index_in = std::make_unique<unsigned[]>(item_cnt);
@@ -54,10 +54,10 @@ void erase_if(std::vector<T*> & vec, std::function<bool(T*)> pred,
 
 	// now index_in is filled with 1 for every item which should stay and 0 for each item to remove
 	inclusive_scan<unsigned>(index_in.get(), index_out.get(), index_tmp.get(),
-			item_cnt, tf);
+			item_cnt, tf, 16);
 
 	size_t new_item_cnt = index_out.get()[item_cnt - 1];
-	std::vector<T*> new_vec(new_item_cnt);
+	std::vector<T> new_vec(new_item_cnt);
 	// if index[i-1] < index[i] then item on index i should go in to output on index[i]
 	for (size_t w = 0; w < tf.num_workers(); w++) {
 		tf.silent_emplace(
