@@ -16,7 +16,6 @@ tests = [
 test_common_src = [
 	'test_graphs.cpp',
 	'test_graphs.h',
-	'timer.cpp',
 ]
 
 foreach t : tests

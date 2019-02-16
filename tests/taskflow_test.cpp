@@ -13,9 +13,10 @@
 #include <atomic>
 #include <boost/range/join.hpp>
 
-#include "test_graphs.h"
 #include "../src/query/query_traverse.h"
-#include "timer.h"
+#include "../src/debug_utils/timer.h"
+#include "test_graphs.h"
+
 
 using namespace netlistDB;
 using namespace netlistDB::query;

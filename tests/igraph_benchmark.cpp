@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "test_graphs.h"
-#include "timer.h"
+#include "../src/debug_utils/timer.h"
 #include "netlist_to_igraph.h"
 
 using namespace netlistDB;

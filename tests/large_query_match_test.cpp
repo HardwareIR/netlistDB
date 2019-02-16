@@ -15,8 +15,8 @@
 #include "../src/query/query_match.h"
 #include "../src/operator_defs.h"
 #include "../src/query/query_traverse.h"
+#include "../src/debug_utils/timer.h"
 #include "test_graphs.h"
-#include "timer.h"
 
 using namespace netlistDB;
 using namespace netlistDB::query;

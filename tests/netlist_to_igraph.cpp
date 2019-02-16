@@ -1,8 +1,7 @@
-#include <igraph.h>
-#include <iostream>
-
+#include "netlist_to_igraph.h"
+#include "../src/debug_utils/timer.h"
 #include "test_graphs.h"
-#include "timer.h"
+#include <iostream>
 
 namespace netlistDB {
 // https://github.com/zero-impact/Undergrad-Classes/blob/4016cc06d0269167dad0283f5780c982ba6da505/CO759/A1/examples/simple/igraph_bfs2.c

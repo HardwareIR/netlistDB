@@ -9,7 +9,7 @@
 #include <random>
 
 #include "../src/parallel_utils/erase_if.h"
-#include "timer.h"
+#include "../src/debug_utils/timer.h"
 
 using namespace netlistDB;
 using namespace netlistDB::parallel_utils;

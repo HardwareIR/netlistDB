@@ -15,7 +15,8 @@
 
 #include "test_graphs.h"
 #include "../src/transform/remove_useless.h"
-#include "timer.h"
+#include "../src/debug_utils/timer.h"
+
 
 using namespace netlistDB;
 using namespace netlistDB::transform;

@@ -1,4 +1,7 @@
 src = [
+    'debug_utils/timer.cpp',
+    'debug_utils/timer.h',
+
 	'hw_type/common.cpp',
 	'hw_type/common.h',
 	'hw_type/hw_int_value.cpp',

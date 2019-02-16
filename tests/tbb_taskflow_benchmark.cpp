@@ -14,7 +14,8 @@
 #include <tbb/task_group.h>
 #include <taskflow/taskflow.hpp>
 
-#include "timer.h"
+#include "../src/debug_utils/timer.h"
+
 
 int fib_tbb(int n) {
 	if (n < 2) {
