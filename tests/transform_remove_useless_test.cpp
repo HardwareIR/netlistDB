@@ -20,35 +20,37 @@
 using namespace netlistDB;
 using namespace netlistDB::transform;
 
-
 BOOST_AUTO_TEST_SUITE( TransformRemoveUseless_testsuite )
-
 
 BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 	size_t N = 100;
-	std::vector<iNode*> outputs;
-	Netlist ctx("example");
-	std::mt19937 rand(0);
-	build_random_circuit(ctx, N, N, N, N, rand);
+	for (size_t thread_cnt = 1; thread_cnt <= 2; thread_cnt++) {
+		std::vector<iNode*> outputs;
+		Netlist ctx("example");
+		std::mt19937 rand(0);
+		build_random_circuit(ctx, N, N, N, N, rand);
 
-	TransformRemoveUseless t;
-	BOOST_CHECK_EQUAL(ctx.nodes.size(), 20090);
+		TransformRemoveUseless t;
+		BOOST_CHECK_EQUAL(ctx.nodes.size(), 20090);
 
-	//auto ti = new Timer("100");
-	bool rm = t.apply(ctx);
-	//delete ti;
-	size_t after_cleanup_cnt = 2822;
-	size_t nets_after_cleanup_cnt = 1461;
+		auto ti = new Timer(std::string("size ") + std::to_string(N) + " threads:" + std::to_string(thread_cnt));
+		bool rm = t.apply(ctx, thread_cnt);
+		delete ti;
+		size_t after_cleanup_cnt = 2822;
+		size_t nets_after_cleanup_cnt = 1461;
 
-	BOOST_CHECK_EQUAL(rm, true);
-	BOOST_CHECK_EQUAL(ctx.nodes.size(), after_cleanup_cnt);
-	BOOST_CHECK_EQUAL(ctx.nets.size(), nets_after_cleanup_cnt);
+		BOOST_CHECK_EQUAL(rm, true);
+		BOOST_CHECK_EQUAL(ctx.nodes.size(), after_cleanup_cnt);
+		BOOST_CHECK_EQUAL(ctx.nets.size(), nets_after_cleanup_cnt);
 
-	rm = t.apply(ctx);
+		ti = new Timer(std::string("clean size ") + std::to_string(N) + " threads:" + std::to_string(thread_cnt));
+		rm = t.apply(ctx, thread_cnt);
+		delete ti;
 
-	BOOST_CHECK_EQUAL(rm, false);
-	BOOST_CHECK_EQUAL(ctx.nodes.size(), after_cleanup_cnt);
-	BOOST_CHECK_EQUAL(ctx.nets.size(), nets_after_cleanup_cnt);
+		BOOST_CHECK_EQUAL(rm, false);
+		BOOST_CHECK_EQUAL(ctx.nodes.size(), after_cleanup_cnt);
+		BOOST_CHECK_EQUAL(ctx.nets.size(), nets_after_cleanup_cnt);
+	}
 }
 //____________________________________________________________________________//
 
