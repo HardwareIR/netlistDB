@@ -10,7 +10,7 @@ It is designed to allow efficient parallel processing of complex circut transofm
 
 ## The purpose of NetlistDB
 
-This library is a backedn and intermediate format for representation of circuit. The direct use may result in more ugly code than verilog itself. Think of this as blazing fast code generator and the backend for the circuit optimalizers and generators. 
+This library is a backend and intermediate format for representation of digital circuit. The direct use may result in more ugly code than verilog itself. Think of this as blazing fast code generator and the backend for the circuit optimalizers and generators. 
 
 # Circuit representation in NetlistDB
 
@@ -37,14 +37,16 @@ This library is a backedn and intermediate format for representation of circuit.
 
 Install dependencies
 ```
-sudo apt-get install build-essentials meson cmake git libtbb-dev
+sudo apt-get install build-essentials meson cmake git libtbb-dev libboost-all-dev
+# [NOTE] if you are using old system like like ubuntu 14 on travis-ci install fresh meson by
+#        pip3 install meson instead to avoid complications with libboost discovery
 ```
 
 build this library
 ```
-meson build
+meson build # meson is tool similar to cmake or autotools
 cd build
-ninja
+ninja # ninja is tool similar to make
 ```
 
 run tests
@@ -65,7 +67,7 @@ Net &a = ctx.sig_in("a", hw_int32);
 Net &b = ctx.sig_in("b", hw_int32);
 Net &res_tmp = a + b;
 Net &res = ctx.sig_out("out", hw_int32);
-res(res_tmp);
+res(res_tmp); // equivalent of res <= res_tmp in verilog/vhdl
 ```
 
 To perform analysis of the Netlist there is netlistDB::query namespace.
