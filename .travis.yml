@@ -30,14 +30,6 @@ matrix:
 before_script:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then export CXX=${COMPILER}; fi
   - sudo pip3 install meson
-  - git clone https://github.com/cpp-taskflow/cpp-taskflow
-  - cd cpp-taskflow
-  - mkdir build
-  - cd build
-  - cmake ..
-  - make
-  - sudo make install
-  - cd ../..
   - mkdir build
   - meson build
   - cd build

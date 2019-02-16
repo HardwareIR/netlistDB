@@ -13,7 +13,6 @@ src = [
 	'hw_type/ihw_type.h',
 	
 	'parallel_utils/erase_if.h',
-	'parallel_utils/inclusive_scan.h',
 	
 	'query/backtrack_context.cpp',
 	'query/backtrack_context.h',
@@ -68,13 +67,13 @@ EXTRA_C_ARGS = []
 #libgomp = cc.find_library('gomp')
 #boost_thread = dependency('boost', modules: ['thread', 'system'])
 thread_dep = dependency('threads')
-
+tbb_dep = dependency('tbb')
 netlistDB_incldir = include_directories('.')
 netlistDB_lib = shared_library(
 	'netlistDB',
     src,
     include_directories : [netlistDB_incldir, ],
-    dependencies : [thread_dep],
+    dependencies : [thread_dep, tbb_dep],
     install : true,
     cpp_args: EXTRA_CXX_ARGS,
     c_args: EXTRA_C_ARGS,

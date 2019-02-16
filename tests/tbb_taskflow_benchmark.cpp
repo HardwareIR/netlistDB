@@ -35,10 +35,10 @@ int fib_tf(int n, tf::SubflowBuilder& subflow) {
 		return n;
 	} else {
 		int x, y;
-		tbb::task_group g;
-		g.run([&] {x=fib_tf(n-1, subflow);}); // spawn a task
-		g.run([&] {y=fib_tf(n-2, subflow);}); // spawn another task
-		g.wait();                // wait for both tasks to complete
+		auto a = subflow.emplace([&] {x=fib_tf(n-1, subflow);});
+		auto b = subflow.emplace([&] {y=fib_tf(n-2, subflow);});
+		a.join();
+		b.join();
 		return x + y;
 	}
 }

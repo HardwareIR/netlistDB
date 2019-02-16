@@ -110,7 +110,7 @@ Statement & Net::operator()(Net & other) {
 }
 
 void Net::forward_disconnect(iNode::predicate_t pred) {
-	parallel_utils::erase_if<OperationNode*>(endpoints, pred);
+	parallel_utils::erase_if_seq<OperationNode*>(endpoints, pred);
 }
 
 }

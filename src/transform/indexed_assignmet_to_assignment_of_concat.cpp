@@ -1,7 +1,7 @@
 #include "indexed_assignmet_to_assignment_of_concat.h"
 #include <exception>
 #include <thread>
-#include <taskflow/taskflow.hpp>
+#include <tbb/tbb.h>
 #include "../statement_assignment.h"
 
 using namespace std;
@@ -84,21 +84,21 @@ bool TransformIndexedAssignmentsToAssignmentOfConcat::apply(Netlist & ctx) {
 	// Assert all parts of the signals are driven
 
 	// Collect all the input signals for specified target signal
-	tf::Taskflow tf(thread_cnt);
-	tf.parallel_for(0, int(thread_cnt), [&] (const int thread_i) {
-		size_t step = thread_cnt;
-		auto & to_upd = to_update[thread_i];
+	tbb::parallel_for(size_t(0), size_t(thread_cnt),
+			[&] (const size_t thread_i) {
+				size_t step = thread_cnt;
+				auto & to_upd = to_update[thread_i];
 
-		for(size_t i = thread_i; i < ctx.nets.size(); i+= step) {
-			Net * n = ctx.nets[i];
-			vector<Net*> inputs;
-			if (is_result_of_indexed_assignment(*n, inputs)) {
-				to_upd.push_back( {n, inputs});
-			}
-		}
+				for(size_t i = thread_i; i < ctx.nets.size(); i+= step) {
+					Net * n = ctx.nets[i];
+					vector<Net*> inputs;
+					if (is_result_of_indexed_assignment(*n, inputs)) {
+						to_upd.push_back( {n, inputs});
+					}
+				}
 
-	});
-	tf.wait_for_all();
+			});
+
 	bool updated = false;
 	// sequentially replace the indexed assignments
 	for (size_t t = 0; t < thread_cnt; t++) {

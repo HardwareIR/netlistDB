@@ -37,15 +37,7 @@ This library is a backedn and intermediate format for representation of circuit.
 
 Install dependencies
 ```
-sudo apt-get install build-essentials meson cmake git
-
-git clone https://github.com/cpp-taskflow/cpp-taskflow
-cd cpp-taskflow
-mkdir build
-cd build
-cmake ..
-make
-sudo make install
+sudo apt-get install build-essentials meson cmake git libtbb-dev
 ```
 
 build this library

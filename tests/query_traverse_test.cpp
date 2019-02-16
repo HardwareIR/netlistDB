@@ -26,16 +26,17 @@ BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
 
 void tf_test(std::vector<iNode*> & outputs, QueryTraverse& q, size_t obj_cnt,
 		size_t thread_cnt) {
+
 	std::atomic<size_t> visited_cnt = 0;
 	auto callback = [&visited_cnt](iNode & n) {
 			//usleep(1);
 			visited_cnt++;
 			return QueryTraverse::dummy_callback(n);
 		};
-	q.clean_visit_flags(thread_cnt);
+	q.clean_visit_flags();
 	//q.load_balance_limit = 1;
 	auto t = new Timer(std::string("threads ") + std::to_string(thread_cnt));
-	q.traverse(outputs, callback, thread_cnt);
+	q.traverse(outputs, callback);
 	delete t;
 	BOOST_CHECK_EQUAL(visited_cnt, obj_cnt);
 }
