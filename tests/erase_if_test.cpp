@@ -35,9 +35,9 @@ struct indexed_int_index_selector {
 };
 
 BOOST_AUTO_TEST_CASE( simple ) {
-	size_t N = 100000;
+	size_t N = 1000;
 	std::uniform_int_distribution<> rand_bool(0, 1);
-	for (size_t thread_cnt = 1; thread_cnt < 15; thread_cnt++) {
+	for (size_t thread_cnt = 1; thread_cnt <= 2; thread_cnt++) {
 		std::mt19937 rand(0);
 		std::vector<indexed_int> a(N), a_expected;
 		a_expected.reserve(N);
