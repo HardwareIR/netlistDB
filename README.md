@@ -39,7 +39,7 @@ Install dependencies
 ```
 sudo apt-get install build-essentials meson cmake git libtbb-dev libboost-all-dev
 # [NOTE] if you are using old system like like ubuntu 14 on travis-ci install fresh meson by
-#        pip3 install meson instead to avoid compilications with libboost discovery
+#        pip3 install meson instead to avoid complications with libboost discovery
 ```
 
 build this library
