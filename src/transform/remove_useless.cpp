@@ -35,7 +35,7 @@ bool TransformRemoveUseless::apply(Netlist & ctx, size_t thread_cnt) {
 	// it the result signal is deleted the driver is deleted as well
 	// from this reason we are searching only for signals
 
-	return TransformRemoveByMask(reinterpret_cast<bool*>(q.visited)).apply(ctx, thread_cnt);
+	return TransformRemoveByMask(reinterpret_cast<typename QueryTraverse::flag_t*>(q.visited)).apply(ctx, thread_cnt);
 }
 
 }

@@ -40,7 +40,7 @@ bool check_if_any_removed(std::set<iNode*> * to_update_ep,
  *
  *  @param to_update_ep (size thread_cnt^2)
  **/
-void collect_boundaries_between_deleted_and_keept(bool * node_to_keep_mask,
+void collect_boundaries_between_deleted_and_keept(typename query::QueryTraverse::flag_t * node_to_keep_mask,
 		std::vector<iNode*> nodes, size_t thread_i, size_t thread_cnt,
 		size_t size, std::set<iNode*> * to_update_ep,
 		std::vector<iNode*> & to_delete) {
@@ -67,7 +67,7 @@ void collect_boundaries_between_deleted_and_keept(bool * node_to_keep_mask,
  * @param _to_update_ep [thread_cnt^2] size array with matrix of sets
  * 		to separate updated objects
  **/
-void disconnect_to_remove_connections(bool * node_to_keep_mask,
+void disconnect_to_remove_connections(typename query::QueryTraverse::flag_t * node_to_keep_mask,
 		std::set<iNode*> * _to_update_ep, size_t thread_i, size_t thread_cnt) {
 	// collect to_update_ep sets to single vector
 	std::vector<std::set<iNode*> *> to_update_ep(thread_cnt);
@@ -105,7 +105,7 @@ struct node_index_selector {
 	}
 };
 
-TransformRemoveByMask::TransformRemoveByMask(bool node_to_keep_mask[]) :
+TransformRemoveByMask::TransformRemoveByMask(typename query::QueryTraverse::flag_t node_to_keep_mask[]) :
 		node_to_keep_mask(node_to_keep_mask) {
 }
 
