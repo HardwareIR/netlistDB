@@ -35,7 +35,6 @@ void inclusive_scan(T in[], T out[], size_t len) {
  *         (if there is not enought work less worker thread is used)
  *
  * [TODO] Replaced with std/tbb impl.
- *   Looks like fork bomb but due TaskFlow load balancing scales relatively well.
  * */
 template<typename T>
 void inclusive_scan(T in[], T out[], T tmp[], size_t len, tf::Taskflow & tf, size_t min_work_per_thread = 1) {
