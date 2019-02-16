@@ -25,6 +25,7 @@ matrix:
             - ninja-build
             - python3-pip
             - python3-setuptools
+            - libtbb-dev
 
 before_script:
   - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then export CXX=${COMPILER}; fi
