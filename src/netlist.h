@@ -70,8 +70,8 @@ public:
 	}
 
 	template<typename iterable>
-	constexpr void extend(const iterable & other) {
-		extend<iterable>(other);
+	void extend(const iterable & other) {
+		_extend<iterable>(other);
 	}
 
 	void clear() {
@@ -80,12 +80,12 @@ public:
 	}
 private:
 	template<typename iterable>
-	constexpr void extend(SensitivityCtx * self, const iterable & other) {
-		self->extend(other);
+	void _extend(const iterable & other) {
+		utils::OrderedSet<iNode*>::extend(other);
 	}
-	constexpr void extend(SensitivityCtx * self, const SensitivityCtx & other) {
-		self->extend(other);
-		self->contains_event_dep |= other.contains_event_dep;
+	void _extend(const SensitivityCtx & other) {
+		utils::OrderedSet<iNode*>::extend(other);
+		contains_event_dep |= other.contains_event_dep;
 	}
 
 };
