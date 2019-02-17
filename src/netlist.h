@@ -55,35 +55,86 @@ public:
 class OperationNode: public iNode {
 };
 
+class SensitivityCtx : public utils::OrderedSet<iNode*> {
+public:
+	bool contains_event_dep;
+};
+
 /*
  * @ivar _is_completly_event_dependent statement does not have
- *      any combinational statement
- * @ivar _now_is_event_dependent statement is event (clk) dependent
- * @ivar parent parent instance of HdlStatement or nullptr
- * @ivar _inputs OrderedSet of input signals for this statement
- * @ivar _outputs OrderedSet of output signals for this statement
+ *      any combinational or async statement
+ * @ivar _is_partially_event_dependent statement depends on clock, but may
+ * 		contain async logic
  * @ivar _sensitivity OrderedSet of input signals
  *     or (rising/falling) operator
  * @ivar _enclosed_for set of outputs for which this statement is enclosed
  *     (for which there is not any unused branch)
+ *
+ * */
+class SensitivityInfo {
+public:
+	bool is_completly_event_dependent;
+	bool now_is_event_dependent;
+	utils::OrderedSet<Net*> enclosed_for;
+	SensitivityCtx sensitivity;
+	SensitivityInfo() :
+			is_completly_event_dependent(false), now_is_event_dependent(false) {
+	}
+};
+
+/*
+ * @ivar parent parent instance of HdlStatement or nullptr
+ * @ivar _inputs OrderedSet of input signals for this statement
+ * @ivar _outputs OrderedSet of output signals for this statement
+
  * @ivar rank number of used branches in statement, used as prefilter
  *     for statement comparing
+ *
+ * @attention the sensitivity has to be discovered explicitely
  */
 class Statement: public OperationNode {
 public:
 	Statement * parent;
-	bool _is_completly_event_dependent;
-	bool _now_is_event_dependent;
+
+	// IO of this statement
 	utils::OrderedSet<Net*> _inputs;
 	utils::OrderedSet<Net*> _outputs;
-	utils::OrderedSet<Net*> _enclosed_for;
-	utils::OrderedSet<Net*> _sensitivity;
+
+	SensitivityInfo sens;
+
+	// outputs which are not latched in this statement
 	size_t rank;
 
 	Statement() :
-			parent(nullptr), _is_completly_event_dependent(false), _now_is_event_dependent(
-					false), rank(0) {
+			parent(nullptr), rank(1) {
 	}
+
+	/*
+	 * Set parent statement and update it's sensitivity and IO
+	 * */
+	void _set_parent_stm(Statement * stm);
+	/*
+	 * After parent statement become event dependent
+	 * propagate event dependency flag to child statements
+	 */
+	void _on_parent_event_dependent();
+
+	/*
+	 * @return iterator over all (direct) children statements
+	 * */
+	virtual utils::ChainedSequence<Statement*> _iter_stms() = 0;
+
+	/*
+	 * @return the Netlist where signals for connected to this statement are created
+	 * */
+	Netlist & _get_context();
+
+	/*
+	 * call _set_parent_stm for the collection and copy the vector to target
+	 * */
+	void _register_stements(const std::vector<Statement*> & statements,
+			std::vector<Statement*> & target);
+
 };
 
 /**
@@ -182,6 +233,7 @@ public:
  * Also for some nodes the order of neighbors does matter for some does not.
  * For example order of Signal endpoints does not matter. The order of Signals
  * in FunctionCall does.
+ *
  **/
 class Netlist {
 public:

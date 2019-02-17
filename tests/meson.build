@@ -12,6 +12,7 @@ tests = [
 	  ['ordered_set', 'tests for ordered set collection'],
 	  ['erase_if', 'tests for erase if'],
 	  ['statement_assignment', 'test for statment Assignment object'],
+	  ['statement_if', 'test for IfStatemet object'],
 ]
 
 test_common_src = [

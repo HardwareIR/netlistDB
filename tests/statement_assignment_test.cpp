@@ -32,10 +32,8 @@ BOOST_AUTO_TEST_CASE( object_props ) {
 
 		std::vector<Net*> a_vec({&a});
 		std::vector<Net*> b_vec({&b});
-		BOOST_TEST(assig->_enclosed_for == a_vec, tt::per_element());
 		BOOST_TEST(assig->_outputs == a_vec, tt::per_element());
 		BOOST_TEST(assig->_inputs == b_vec, tt::per_element());
-		BOOST_TEST(assig->_sensitivity == b_vec, tt::per_element());
 	}
 	{
 		auto &a = ctx.sig_in("a", hw_int32);
@@ -60,10 +58,8 @@ BOOST_AUTO_TEST_CASE( object_props ) {
 
 		std::vector<Net*> a_vec({&a});
 		std::vector<Net*> ib_vec({&i, &b});
-		BOOST_TEST(assig->_enclosed_for == a_vec, tt::per_element());
 		BOOST_TEST(assig->_outputs == a_vec, tt::per_element());
 		BOOST_TEST(assig->_inputs == ib_vec, tt::per_element());
-		BOOST_TEST(assig->_sensitivity == ib_vec, tt::per_element());
 	}
 }
 

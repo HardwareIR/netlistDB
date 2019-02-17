@@ -36,4 +36,8 @@ extern FunctionDef OpRising;
 extern FunctionDef OpFalling;
 // [todo] rising and falling ?= event
 
+constexpr bool is_event_op(const FunctionDef & op) {
+	return &op == &OpRising or &op == &OpFalling;
+}
+
 }

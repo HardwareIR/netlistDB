@@ -16,10 +16,16 @@ src = [
 	
 	'query/backtrack_context.cpp',
 	'query/backtrack_context.h',
+	'query/expr_sensitivity_probe.cpp',
+	'query/expr_sensitivity_probe.h',
+	'query/query_enclosure.cpp',
+	'query/query_enclosure.h',
 	'query/query_traverse.cpp',
 	'query/query_traverse.h',
 	'query/query_match.cpp',
 	'query/query_match.h',
+	'query/query_sensitivity.cpp',
+	'query/query_sensitivity.h',
 	'query/query_path.cpp',
 	'query/query_path.cpp',
 	
@@ -36,8 +42,11 @@ src = [
 	
 	'function_call.cpp',
 	'function_def.cpp',
+	'function_def.h',
+	'istatement.cpp',
 	'net.cpp',
 	'netlist.cpp',
+	'netlist.h',
 	'operator_defs.cpp',
 	'statement_assignment.cpp',
 	'statement_assignment.h',

@@ -1,5 +1,6 @@
 #include "statement_assignment.h"
 #include "operator_defs.h"
+#include "query/expr_sensitivity_probe.h"
 
 using namespace std;
 namespace netlistDB {
@@ -15,9 +16,6 @@ Assignment::Assignment(Net & _dst, Net & _src) :
 	}
 	_inputs.push_back(&src);
 	_outputs.push_back(&dst);
-	_enclosed_for.push_back(&dst);
-	for (auto i : _inputs)
-		_sensitivity.push_back(i);
 
 	forward.push_back(reinterpret_cast<vector<iNode*>*>(&_outputs));
 	backward.push_back(reinterpret_cast<iNode*>(&src));
@@ -40,6 +38,10 @@ Net & Assignment::extract_dst_index_cascade(Net & dst) {
 		return extract_dst_index_cascade(*indexed_on);
 	}
 	return dst;
+}
+
+utils::ChainedSequence<Statement*> Assignment::_iter_stms() {
+	return {};
 }
 
 }

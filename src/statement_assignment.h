@@ -19,6 +19,8 @@ protected:
 	 * @return clean dst net without any index operator
 	 */
 	Net & extract_dst_index_cascade(Net & dst);
+	virtual utils::ChainedSequence<Statement*> _iter_stms() override;
+
 };
 
 }

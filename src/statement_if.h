@@ -4,6 +4,18 @@
 
 namespace netlistDB {
 
+class _IfSttementSensExtra {
+public:
+	std::set<Net*> ifTrue_enclosed_for;
+	std::vector<std::set<Net*>> elseIf_enclosed_for;
+	std::set<Net*> ifFalse_enclosed_for;
+};
+
+/*
+ * The representation if the if statement for the netlist
+ *
+ * The if statement can represent multiple hardware components like multiplexer or latch
+ * */
 class IfStatement: public Statement {
 public:
 	Net * condition;
@@ -17,13 +29,25 @@ public:
 	bool ifFalse_specified;
 	std::vector<Statement *> ifFalse;
 
+	_IfSttementSensExtra sens_extra;
+
+	/*
+	 * Condition of the if statement
+	 * */
 	IfStatement(Net & condition);
+	// the if true branch
 	IfStatement & operator()(std::initializer_list<Statement*> statements);
+	// elif branch
 	IfStatement & Elif(Net & cond,
 			std::initializer_list<Statement*> statements);
+	// else branch
 	IfStatement & Else(std::initializer_list<Statement*> statements);
+
+	virtual utils::ChainedSequence<Statement*> _iter_stms() override;
+
 };
 
+// the helper method for IfStatement construction
 IfStatement & If(Net & condition);
 
 }
