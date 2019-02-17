@@ -28,7 +28,7 @@ foreach t : tests
 		link_with: [netlistDB_lib, ],
 		cpp_args: EXTRA_CXX_ARGS,
         c_args: EXTRA_C_ARGS)
-	test(t[1] + '_test', test_exe, workdir : meson.source_root())
+	test(t[1], test_exe, workdir : meson.source_root())
 endforeach
 
 #igraph_dep = dependency('igraph')
