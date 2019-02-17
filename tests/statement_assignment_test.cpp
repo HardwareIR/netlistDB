@@ -25,15 +25,24 @@ BOOST_AUTO_TEST_CASE( object_props ) {
 		auto &a = ctx.sig_in("a", hw_int32);
 		auto &b = ctx.sig_out("b", hw_int32);
 		auto assig = dynamic_cast<Assignment *>(&a(b));
+		BOOST_CHECK_EQUAL(assig->parent, nullptr);
 		BOOST_CHECK_EQUAL(&assig->dst, &a);
 		BOOST_CHECK_EQUAL(&assig->src, &b);
 		BOOST_CHECK_EQUAL(assig->dst_index.size(), 0);
+
+		std::vector<Net*> a_vec({&a});
+		std::vector<Net*> b_vec({&b});
+		BOOST_TEST(assig->_enclosed_for == a_vec, tt::per_element());
+		BOOST_TEST(assig->_outputs == a_vec, tt::per_element());
+		BOOST_TEST(assig->_inputs == b_vec, tt::per_element());
+		BOOST_TEST(assig->_sensitivity == b_vec, tt::per_element());
 	}
 	{
 		auto &a = ctx.sig_in("a", hw_int32);
 		auto &i = ctx.sig_in("i", hw_int32);
 		auto &b = ctx.sig_out("b", hw_int32);
 		auto assig = dynamic_cast<Assignment *>(&a[i](b));
+		BOOST_CHECK_EQUAL(assig->parent, nullptr);
 		BOOST_CHECK_EQUAL(&assig->dst, &a);
 
 		std::vector<iNode*> assig_vec({assig});
@@ -48,6 +57,13 @@ BOOST_AUTO_TEST_CASE( object_props ) {
 		BOOST_CHECK_EQUAL(&assig->src, &b);
 		BOOST_CHECK_EQUAL(assig->dst_index.size(), 1);
 		BOOST_CHECK_EQUAL(assig->dst_index[0], &i);
+
+		std::vector<Net*> a_vec({&a});
+		std::vector<Net*> ib_vec({&i, &b});
+		BOOST_TEST(assig->_enclosed_for == a_vec, tt::per_element());
+		BOOST_TEST(assig->_outputs == a_vec, tt::per_element());
+		BOOST_TEST(assig->_inputs == ib_vec, tt::per_element());
+		BOOST_TEST(assig->_sensitivity == ib_vec, tt::per_element());
 	}
 }
 

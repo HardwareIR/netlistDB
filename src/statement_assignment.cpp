@@ -1,38 +1,28 @@
 #include "statement_assignment.h"
 #include "operator_defs.h"
 
+using namespace std;
 namespace netlistDB {
 
-void init_iterators(Assignment * a) {
-	a->forward.push_back(reinterpret_cast<iNode*>(&a->dst));
-	a->backward.push_back(reinterpret_cast<iNode*>(&a->src));
-	a->backward.push_back(
-			reinterpret_cast<std::vector<iNode*>*>(&a->dst_index));
-}
-
-Assignment::Assignment(Net & dst, Net & src) :
-		dst(extract_dst_index_cascade(dst)), src(src) {
-	this->dst.ctx.register_node(*this);
-	this->dst.drivers.push_back(this);
+Assignment::Assignment(Net & _dst, Net & _src) :
+		Statement(), dst(extract_dst_index_cascade(_dst)), src(_src) {
+	dst.ctx.register_node(*this);
+	dst.drivers.push_back(this);
 	src.endpoints.push_back(this);
 	for (auto i : dst_index) {
 		i->endpoints.push_back(this);
+		_inputs.push_back(i);
 	}
-	init_iterators(this);
-}
+	_inputs.push_back(&src);
+	_outputs.push_back(&dst);
+	_enclosed_for.push_back(&dst);
+	for (auto i : _inputs)
+		_sensitivity.push_back(i);
 
-//Assignment::Assignment(Net & dst, std::initializer_list<Net*> dst_index,
-//		Net & src) :
-//		dst_index(dst_index),
-//		dst(extract_dst_index_cascade(dst)), src(src) {
-//	dst.ctx.register_node(*this);
-//	dst.drivers.push_back(this);
-//	for (auto i : dst_index) {
-//		i->endpoints.push_back(this);
-//	}
-//	src.endpoints.push_back(this);
-//	init_iterators(this);
-//}
+	forward.push_back(reinterpret_cast<vector<iNode*>*>(&_outputs));
+	backward.push_back(reinterpret_cast<iNode*>(&src));
+	backward.push_back(reinterpret_cast<vector<iNode*>*>(&dst_index));
+}
 
 Net & Assignment::extract_dst_index_cascade(Net & dst) {
 	// now I am result of the index  xxx[xx] <= source

@@ -12,7 +12,6 @@ public:
 
 	Assignment(const Assignment & other) = delete;
 	Assignment(Net & dst, Net & src);
-	//Assignment(Net & dst, std::initializer_list<Net*> dst_index, Net & src);
 protected:
 	/* Find out if dst signal is something indexed
 	 * save indexes in to dst_index
