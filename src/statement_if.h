@@ -36,11 +36,14 @@ public:
 	 * */
 	IfStatement(Net & condition);
 	// the if true branch
+	IfStatement & operator()(Statement* statement);
 	IfStatement & operator()(std::initializer_list<Statement*> statements);
 	// elif branch
+	IfStatement & Elif(Net & cond, Statement* statement);
 	IfStatement & Elif(Net & cond,
 			std::initializer_list<Statement*> statements);
 	// else branch
+	IfStatement & Else(Statement* statement);
 	IfStatement & Else(std::initializer_list<Statement*> statements);
 
 	virtual utils::ChainedSequence<Statement*> _iter_stms() override;

@@ -8,17 +8,25 @@ IfStatement::IfStatement(Net & condition) :
 	_inputs.push_back(&condition);
 	condition.endpoints.push_back(this);
 	condition.ctx.register_node(*this);
+	rank = 0;
 }
 
+IfStatement & IfStatement::operator() (Statement* statement){
+	return operator ()({statement});
+}
 IfStatement & IfStatement::operator()(
 		std::initializer_list<Statement*> statements) {
 	assert(not ifTrue_specified);
 	assert(not ifFalse_specified);
 	assert(elseIf.size() == 0);
-
+	rank += 1;
 	ifTrue_specified = true;
 	_register_stements(statements, ifTrue);
 	return *this;
+}
+
+IfStatement & IfStatement::Elif(Net & cond, Statement* statement) {
+	return Elif(cond, { statement });
 }
 
 IfStatement & IfStatement::Elif(Net & cond,
@@ -30,7 +38,7 @@ IfStatement & IfStatement::Elif(Net & cond,
 	_inputs.push_back(&cond);
 	cond.endpoints.push_back(this);
 
-	elseIf.push_back( { &cond, {} });
+	elseIf.push_back( { &cond, { } });
 	auto & stms = elseIf[elseIf.size() - 1].second;
 
 	_register_stements(statements, stms);
@@ -38,10 +46,13 @@ IfStatement & IfStatement::Elif(Net & cond,
 	return *this;
 }
 
+IfStatement & IfStatement::Else(Statement* statement) {
+	return Else( { statement });
+}
+
 IfStatement & IfStatement::Else(std::initializer_list<Statement*> statements) {
 	assert(not ifFalse_specified);
 	assert(parent == nullptr);
-	ifFalse = statements;
 	ifFalse_specified = true;
 	rank += 1;
 	_register_stements(statements, ifFalse);

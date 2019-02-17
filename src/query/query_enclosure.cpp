@@ -56,7 +56,7 @@ std::set<Net*> QueryEnclosure::apply(const std::vector<Statement*> & statements,
 		for (auto stm : statements) {
 			if (is_in(o, stm->_outputs)) {
 				assert(not has_driver);
-				has_driver = false;
+				has_driver = true;
 				if (is_in(o, stm->sens.enclosed_for))
 					result.insert(o);
 			}
@@ -87,13 +87,15 @@ void QueryEnclosure::apply(IfStatement & ifstm) {
 	for (auto & s : ifstm.sens_extra.ifTrue_enclosed_for) {
 		bool enclosed = true;
 
+		// check if is driven also by all elifs
 		for (auto & elif_e : elif_encls) {
-
 			if (not_in(s, elif_e)) {
 				enclosed = false;
 				break;
 			}
 		}
+
+		// if driven by elifs and ifFalse then is driven always
 		if (enclosed and is_in(s, ifstm.sens_extra.ifFalse_enclosed_for)) {
 			encl.push_back(s);
 		}

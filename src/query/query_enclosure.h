@@ -13,6 +13,7 @@ namespace query {
  * The result is stored in sens property of the statement itself
  * */
 class QueryEnclosure {
+public:
 	// dispatch apply call for all statement types
 	static void apply(Statement & stm);
 	static void apply(Assignment & a);

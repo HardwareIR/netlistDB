@@ -10,6 +10,7 @@ tests = [
 	  ['transform_remove_useless', 'tests for TransformRemoveUseless'],
 	  ['chained_iter', 'tests for chained iterator'],
 	  ['ordered_set', 'tests for ordered set collection'],
+	  ['query_enclosure', 'test for the QueryEnclosure'],
 	  ['erase_if', 'tests for erase if'],
 	  ['statement_assignment', 'test for statment Assignment object'],
 	  ['statement_if', 'test for IfStatemet object'],

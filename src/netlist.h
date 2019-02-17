@@ -98,7 +98,7 @@ private:
  * @ivar _sensitivity OrderedSet of input signals
  *     or (rising/falling) operator
  * @ivar _enclosed_for set of outputs for which this statement is enclosed
- *     (for which there is not any unused branch)
+ *     (for which there is not any unused branch = where is not latch)
  *
  * */
 class SensitivityInfo {
@@ -117,7 +117,7 @@ public:
  * @ivar _inputs OrderedSet of input signals for this statement
  * @ivar _outputs OrderedSet of output signals for this statement
 
- * @ivar rank number of used branches in statement, used as prefilter
+ * @ivar rank sum of numbers of used branches in statement, used as prefilter
  *     for statement comparing
  *
  * @attention the sensitivity has to be discovered explicitely
@@ -132,7 +132,6 @@ public:
 
 	SensitivityInfo sens;
 
-	// outputs which are not latched in this statement
 	size_t rank;
 
 	Statement() :

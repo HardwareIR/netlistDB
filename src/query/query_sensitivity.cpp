@@ -32,11 +32,6 @@ void QuerySensitivity::apply(Statement & stm, set<iNode*> & seen) {
 }
 
 void QuerySensitivity::apply(Assignment & assig, set<iNode*> & seen) {
-	auto & ef = assig.sens.enclosed_for;
-	for (auto o : assig._outputs) {
-		ef.push_back(o);
-	}
-
 	set<Net*> casualSensitivity;
 	for (Net* inp : assig._inputs) {
 		auto exit_inp = seen.find(inp);
