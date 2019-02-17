@@ -55,12 +55,34 @@ public:
 class OperationNode: public iNode {
 };
 
+/*
+ * @ivar _is_completly_event_dependent statement does not have
+ *      any combinational statement
+ * @ivar _now_is_event_dependent statement is event (clk) dependent
+ * @ivar parent parent instance of HdlStatement or nullptr
+ * @ivar _inputs OrderedSet of input signals for this statement
+ * @ivar _outputs OrderedSet of output signals for this statement
+ * @ivar _sensitivity OrderedSet of input signals
+ *     or (rising/falling) operator
+ * @ivar _enclosed_for set of outputs for which this statement is enclosed
+ *     (for which there is not any unused branch)
+ * @ivar rank number of used branches in statement, used as prefilter
+ *     for statement comparing
+ */
 class Statement: public OperationNode {
 public:
 	Statement * parent;
+	bool _is_completly_event_dependent;
+	bool _now_is_event_dependent;
+	utils::OrderedSet<Net*> _inputs;
+	utils::OrderedSet<Net*> _outputs;
+	utils::OrderedSet<Net*> _enclosed_for;
+	utils::OrderedSet<Net*> _sensitivity;
+	size_t rank;
 
 	Statement() :
-			parent(nullptr) {
+			parent(nullptr), _is_completly_event_dependent(false), _now_is_event_dependent(
+					false), rank(0) {
 	}
 };
 
