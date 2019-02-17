@@ -10,10 +10,10 @@ public:
 	/*
 	 * Discover the sensitivity of all statements
 	 * */
-	void apply(Netlist & ctx);
-	void apply(Statement & stm, std::set<iNode*> & seen);
-	void apply(Assignment & assig, std::set<iNode*> & seen);
-	void apply(IfStatement & ifstm, std::set<iNode*> & seen);
+	static void apply(Netlist & ctx);
+	static void apply(Statement & stm, std::set<iNode*> & seen);
+	static void apply(Assignment & assig, std::set<iNode*> & seen);
+	static void apply(IfStatement & ifstm, std::set<iNode*> & seen);
 
 };
 

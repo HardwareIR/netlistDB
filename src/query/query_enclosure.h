@@ -17,6 +17,7 @@ public:
 	// dispatch apply call for all statement types
 	static void apply(Statement & stm);
 	static void apply(Assignment & a);
+
 	/*
 	 * Discover the enclosure for if statement and all potential child statements
 	 * */
