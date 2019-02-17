@@ -53,7 +53,6 @@ BOOST_AUTO_TEST_CASE( if_then_else ) {
 		BOOST_TEST(i3.sens.sensitivity == ac_vec, tt::per_element());
 		BOOST_CHECK_EQUAL(i3.sens.is_completly_event_dependent, false);
 		BOOST_CHECK_EQUAL(i3.sens.now_is_event_dependent, false);
-		BOOST_CHECK_EQUAL(i3.sens_extra.elseIf_enclosed_for.size(), 0);
 	}
 	{
 		set<iNode*> seen;
@@ -64,7 +63,6 @@ BOOST_AUTO_TEST_CASE( if_then_else ) {
 		BOOST_TEST(i4.sens.sensitivity == ac_vec, tt::per_element());
 		BOOST_CHECK_EQUAL(i4.sens.is_completly_event_dependent, false);
 		BOOST_CHECK_EQUAL(i4.sens.now_is_event_dependent, false);
-		BOOST_CHECK_EQUAL(i4.sens_extra.elseIf_enclosed_for.size(), 1);
 	}
 	{
 		set<iNode*> seen;
@@ -74,7 +72,6 @@ BOOST_AUTO_TEST_CASE( if_then_else ) {
 		BOOST_TEST(i5.sens.sensitivity == ac_vec, tt::per_element());
 		BOOST_CHECK_EQUAL(i5.sens.is_completly_event_dependent, false);
 		BOOST_CHECK_EQUAL(i5.sens.now_is_event_dependent, false);
-		BOOST_CHECK_EQUAL(i5.sens_extra.elseIf_enclosed_for.size(), 1);
 	}
 }
 
