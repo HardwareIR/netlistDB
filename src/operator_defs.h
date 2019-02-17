@@ -30,6 +30,7 @@ extern FunctionDef OpMul;
 // modulo, rem?
 
 extern FunctionDef OpConcat;
+extern FunctionDef OpSlice; // index, ranged index
 
 extern FunctionDef OpRising;
 extern FunctionDef OpFalling;

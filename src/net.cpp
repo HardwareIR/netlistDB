@@ -97,6 +97,11 @@ Net & Net::operator/(Net & other) {
 Net & Net::concat(Net & other) {
 	return apply_call(OpConcat, *this, other);
 }
+
+Net & Net::operator[](Net & index) {
+	return apply_call(OpSlice, *this, index);
+}
+
 Net & Net::rising() {
 	return apply_call(OpRising, *this);
 }
