@@ -56,9 +56,9 @@ class OperationNode: public iNode {
 };
 
 /*
- *Sensitivity list used for resolution of sensitivity for statements and HWProcess instances
+ * Sensitivity list used for resolution of sensitivity for hw statement instances
  *
- *:ivar contains_ev_dependency: True if this contains event dependent
+ * @ivar contains_event_dep: true if this contains event dependent
  *    sensitivity
  */
 
