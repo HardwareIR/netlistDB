@@ -49,6 +49,8 @@ void QuerySensitivity::apply(IfStatement & ifstm, set<iNode*> & seen) {
 
 	ExprSensitivityProbe::apply(*ifstm.condition, seen, ctx);
 	if (ctx.contains_event_dep) {
+		ifstm.sens.is_completly_event_dependent = true;
+		ifstm.sens.now_is_event_dependent = true;
 		return;
 	}
 
@@ -65,8 +67,10 @@ void QuerySensitivity::apply(IfStatement & ifstm, set<iNode*> & seen) {
 			break;
 
 		ExprSensitivityProbe::apply(*cond, seen, ctx);
-		if (ctx.contains_event_dep)
+		if (ctx.contains_event_dep) {
+			ifstm.sens.now_is_event_dependent = true;
 			break;
+		}
 
 		for (auto stm : stms) {
 			if (ctx.contains_event_dep)
@@ -76,17 +80,16 @@ void QuerySensitivity::apply(IfStatement & ifstm, set<iNode*> & seen) {
 			ctx.extend(stm->sens.sensitivity);
 		}
 	}
-	if (not ctx.contains_event_dep and ifstm.ifFalse_specified) {
+	if (ifstm.ifFalse_specified) {
+		if (ifstm.sens.now_is_event_dependent)
+			runtime_error(
+					"can not negate use else branch together with condition with event expr.");
 		// else
 		for (auto stm : ifstm.ifFalse) {
 			apply(*stm, seen);
 			ctx.extend(stm->sens.sensitivity);
 		}
 
-	} else {
-		if (ifstm.ifFalse_specified)
-			runtime_error(
-					"can not negate use else branch together with condition with event expr.");
 	}
 }
 

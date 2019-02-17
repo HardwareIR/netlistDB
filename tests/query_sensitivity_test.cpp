@@ -37,7 +37,6 @@ BOOST_AUTO_TEST_CASE( if_then_else ) {
 		BOOST_CHECK_EQUAL(i.sens.now_is_event_dependent, false);
 	}
 	{
-
 		set<iNode*> seen;
 		auto & i2 = If(a)(&b(c));
 		QuerySensitivity::apply(i2, seen);
@@ -73,6 +72,45 @@ BOOST_AUTO_TEST_CASE( if_then_else ) {
 		BOOST_CHECK_EQUAL(i5.sens.is_completly_event_dependent, false);
 		BOOST_CHECK_EQUAL(i5.sens.now_is_event_dependent, false);
 	}
+}
+
+
+BOOST_AUTO_TEST_CASE( if_then_else_event ) {
+	Netlist ctx("test");
+		auto &a = ctx.sig_in("a", hw_int32);
+		auto &b = ctx.sig_in("b", hw_int32);
+		auto &c = ctx.sig_out("c", hw_int32);
+		auto &d = ctx.sig_out("d", hw_int32);
+		auto &ar = a.rising();
+		OperationNode * rising_op = ar.drivers[0];
+		vector<iNode*> a_vec( { &a });
+		vector<iNode*> ar_vec({rising_op});
+		vector<iNode*> ac_vec( { &a, &c });
+		{
+			auto & i = If(ar)( { });
+			set<iNode*> seen;
+			QuerySensitivity::apply(i, seen);
+			BOOST_TEST(i.sens.sensitivity == ar_vec, tt::per_element());
+			BOOST_CHECK_EQUAL(i.sens.is_completly_event_dependent, true);
+			BOOST_CHECK_EQUAL(i.sens.now_is_event_dependent, true);
+		}
+		{
+			set<iNode*> seen;
+			auto & i = If(ar)(&b(c));
+			QuerySensitivity::apply(i, seen);
+			BOOST_TEST(i.sens.sensitivity == ar_vec, tt::per_element());
+			BOOST_CHECK_EQUAL(i.sens.is_completly_event_dependent, true);
+			BOOST_CHECK_EQUAL(i.sens.now_is_event_dependent, true);
+		}
+		{
+			set<iNode*> seen;
+			auto & i = If(a)(&b(c)).Elif(ar, &b(d));
+			QuerySensitivity::apply(i, seen);
+			BOOST_TEST(i.sens.sensitivity == vector<iNode*>({&a, &c, rising_op}), tt::per_element());
+			BOOST_CHECK_EQUAL(i.sens.is_completly_event_dependent, false);
+			BOOST_CHECK_EQUAL(i.sens.now_is_event_dependent, true);
+		}
+
 }
 
 //____________________________________________________________________________//
