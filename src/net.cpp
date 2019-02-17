@@ -35,7 +35,7 @@ Net & apply_call(FunctionDef & fn, Net & a) {
 
 Net::Net(Netlist & ctx, hw_type::iHwType & t, const std::string & name,
 		Direction direction) :
-		id(name), ctx(ctx), net_index(0), t(t), direction(direction) {
+		id(name), ctx(ctx), net_index(0), t(t), val(nullptr), direction(direction) {
 	ctx.register_node(*this);
 	forward.push_back(reinterpret_cast<std::vector<iNode*>*>(&endpoints));
 	backward.push_back(reinterpret_cast<std::vector<iNode*>*>(&drivers));
