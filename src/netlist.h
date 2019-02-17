@@ -55,9 +55,12 @@ public:
 class OperationNode: public iNode {
 };
 
-class SensitivityCtx : public utils::OrderedSet<iNode*> {
+class SensitivityCtx: public utils::OrderedSet<iNode*> {
 public:
 	bool contains_event_dep;
+	SensitivityCtx() :
+			contains_event_dep(false) {
+	}
 };
 
 /*

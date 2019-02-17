@@ -13,6 +13,7 @@ tests = [
 	  ['erase_if', 'tests for erase if'],
 	  ['statement_assignment', 'test for statment Assignment object'],
 	  ['statement_if', 'test for IfStatemet object'],
+	  ['expr_sensitivity_probe', 'test for the epxression sensitivity probe'],
 ]
 
 test_common_src = [
