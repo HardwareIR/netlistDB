@@ -55,12 +55,39 @@ public:
 class OperationNode: public iNode {
 };
 
+/*
+ *Sensitivity list used for resolution of sensitivity for statements and HWProcess instances
+ *
+ *:ivar contains_ev_dependency: True if this contains event dependent
+ *    sensitivity
+ */
+
 class SensitivityCtx: public utils::OrderedSet<iNode*> {
 public:
 	bool contains_event_dep;
 	SensitivityCtx() :
 			contains_event_dep(false) {
 	}
+
+	template<typename iterable>
+	constexpr void extend(const iterable & other) {
+		extend<iterable>(other);
+	}
+
+	void clear() {
+		utils::OrderedSet<iNode*>::clear();
+		contains_event_dep = false;
+	}
+private:
+	template<typename iterable>
+	constexpr void extend(SensitivityCtx * self, const iterable & other) {
+		self->extend(other);
+	}
+	constexpr void extend(SensitivityCtx * self, const SensitivityCtx & other) {
+		self->extend(other);
+		self->contains_event_dep |= other.contains_event_dep;
+	}
+
 };
 
 /*
