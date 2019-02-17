@@ -11,9 +11,10 @@ namespace netlistDB {
 class VarId {
 public:
 	std::string name;
+	bool hidden;
 
 	VarId(const std::string & name) :
-			name(name) {
+			name(name), hidden(true) {
 	}
 };
 

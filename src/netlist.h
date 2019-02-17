@@ -201,6 +201,8 @@ public:
 	// the optional value of this signal
 	// if the value is specified the signal is constant
 	hw_type::iHwTypeValue * val;
+	// the value used if signal does not have any explicit driver
+	Net * nop_val;
 
 	// direction of the signal if signal is used in IO
 	Direction direction;
