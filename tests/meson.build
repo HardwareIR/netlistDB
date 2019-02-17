@@ -7,7 +7,7 @@ tests = [
 	  ['large_query_match', 'benchmarks for query engine'],
 	  ['query_flooding', 'tests for flooding query engine'],
 	  ['query_traverse', 'tests for QueryTraverse'],
-	  ['transform_remove_useless', 'tests for TransformRemoveUseless functionality'],
+	  ['transform_remove_useless', 'tests for TransformRemoveUseless'],
 	  ['chained_iter', 'tests for chained iterator'],
 	  ['ordered_set', 'tests for ordered set collection'],
 	  ['erase_if', 'tests for erase if'],
