@@ -16,9 +16,9 @@ namespace utils {
 template<typename T, size_t USE_SET_LOWER_LIMIT = 4>
 class OrderedSet: public std::vector<T> {
 	using vec_t = std::vector<T>;
-	using value_type = typename vec_t::value_type;
 	std::unordered_set<T> _set;
 public:
+	using value_type = typename vec_t::value_type;
 	OrderedSet() :
 			vec_t() {
 		vec_t::reserve(4);
