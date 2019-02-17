@@ -135,6 +135,7 @@ public:
 	Net & operator*(Net & other);
 	Net & operator/(Net & other);
 
+	Net & operator[](Net & index);
 	Net & concat(Net & other);
 	Net & rising();
 	Net & falling();

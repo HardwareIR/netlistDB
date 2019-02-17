@@ -10,7 +10,8 @@ tests = [
 	  ['transform_remove_useless', 'tests for TransformRemoveUseless functionality'],
 	  ['chained_iter', 'tests for chained iterator'],
 	  ['ordered_set', 'tests for ordered set collection'],
-	  ['erase_if', 'tests for erase if']
+	  ['erase_if', 'tests for erase if'],
+	  ['statement_assignment', 'test for statment Assignment object'],
 ]
 
 test_common_src = [
