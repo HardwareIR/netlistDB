@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE( object_props ) {
 	BOOST_TEST(ifs._outputs == outp_vec, tt::per_element());
 	BOOST_TEST(ifs._inputs == inp_vec, tt::per_element());
 
-	BOOST_CHECK_EQUAL(ifs.rank, 2);
+	BOOST_CHECK_EQUAL(ifs.rank, 1);
 }
 
 BOOST_AUTO_TEST_CASE( object_props_else ) {
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE( object_props_else ) {
 	BOOST_TEST(ifs._outputs == outp_vec, tt::per_element());
 	BOOST_TEST(ifs._inputs == inp_vec, tt::per_element());
 
-	BOOST_CHECK_EQUAL(ifs.rank, 4);
+	BOOST_CHECK_EQUAL(ifs.rank, 2);
 }
 
 //____________________________________________________________________________//
