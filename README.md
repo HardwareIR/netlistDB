@@ -1,7 +1,7 @@
 # NetlistDB
 
 [![Build Status](https://travis-ci.org/HardwareIR/hardwareIr.svg?branch=master)](https://travis-ci.org/HardwareIR/hardwareIr)
-
+[![Coverage Status](https://coveralls.io/repos/github/HardwareIR/hardwareIr/badge.svg?branch=master)](https://coveralls.io/github/HardwareIR/hardwareIr?branch=master)
 
 (Note that even the name is not in final version...)
 
