@@ -28,6 +28,8 @@ src = [
 	'query/query_sensitivity.h',
 	'query/query_structural_cmp.cpp',
 	'query/query_structural_cmp.h',
+	'query/query_structural_compatible.cpp',
+	'query/query_structural_compatible.h',
 	'query/query_path.cpp',
 	'query/query_path.cpp',
 	

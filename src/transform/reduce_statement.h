@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../netlist.h"
 #include "../statement_assignment.h"
 #include "../statement_if.h"
@@ -37,17 +39,6 @@ public:
 	static void merge_with_other_stm(IfStatement & a, IfStatement & b);
 	static void merge_with_other_stm(Statement & a, Statement & b);
 
-	// dispatch is_mergable call for all types
-	static bool is_mergable(Statement & a, Statement & b);
-	static bool is_mergable(Assignment & a, Assignment & b);
-	static bool is_mergable(IfStatement & a, IfStatement & b);
-	// Walk statements and compare if they can be merged into one statement vector
-	static bool is_mergable(const std::vector<Statement*> & stmsA,
-			const std::vector<Statement*> & stmsB);
-	static bool is_mergable(const std::vector<Statement*> & stmsA,
-			bool a_specified, const std::vector<Statement*> & stmsB,
-			bool b_specified);
-
 	/*
 	 * Try reduce statement and put result in res
 	 *
@@ -64,21 +55,12 @@ public:
 	 * */
 	static std::pair<size_t, bool> apply(std::vector<Statement*> & statements,
 			std::vector<Statement*> & new_statements);
-
-	// :return: first statement with rank > 1 or nullptr if iterator empty
-	static Statement * get_stm_with_branches(
-			std::vector<Statement*>::const_iterator & stm_it,
-			const std::vector<Statement*>::const_iterator & stm_it_end);
 	/*
 	 * Merge nested IfContarner form else branch to this IfContainer
 	 * as elif and else branches
 	 * */
 	static void merge_nested_if_from_else(IfStatement & self,
 			IfStatement & ifStm);
-
-	static bool if_cond_has_effect(const std::vector<Statement*> & ifTrue,
-			const std::vector<Statement*> & ifFalse, bool ifFalse_specified,
-			const elseif_t & elIfs);
 
 	/*
 	 *  Update signal IO after reduce attempt
