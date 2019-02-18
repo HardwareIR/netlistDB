@@ -1,9 +1,9 @@
-#include "indexed_assignment_to_assignment_of_concat.h"
+#include <netlistDB/transform/indexed_assignment_to_assignment_of_concat.h>
 
 #include <exception>
 #include <thread>
 #include <tbb/tbb.h>
-#include "../statement_assignment.h"
+#include <netlistDB/statement_assignment.h>
 
 using namespace std;
 

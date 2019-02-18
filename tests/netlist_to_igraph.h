@@ -1,7 +1,7 @@
 #pragma once
 #include <igraph.h>
 #include <iostream>
-#include "../src/netlist.h"
+#include <netlistDB/netlist.h>
 
 
 namespace netlistDB {

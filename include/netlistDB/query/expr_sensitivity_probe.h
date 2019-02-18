@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../netlist.h"
+#include <netlistDB/netlist.h>
 #include <set>
 
 namespace netlistDB {

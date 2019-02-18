@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdint.h>
-#include "../src/utils/ordered_set.h"
+#include <netlistDB/utils/ordered_set.h>
 
 using namespace netlistDB::utils;
 

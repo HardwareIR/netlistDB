@@ -1,6 +1,6 @@
-#include "statement_assignment.h"
-#include "operator_defs.h"
-#include "query/expr_sensitivity_probe.h"
+#include <netlistDB/statement_assignment.h>
+#include <netlistDB/operator_defs.h>
+#include <netlistDB/query/expr_sensitivity_probe.h>
 
 using namespace std;
 namespace netlistDB {

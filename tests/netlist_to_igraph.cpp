@@ -1,5 +1,5 @@
 #include "netlist_to_igraph.h"
-#include "../src/debug_utils/timer.h"
+#include "debug_utils/timer.h"
 #include "test_graphs.h"
 #include <iostream>
 

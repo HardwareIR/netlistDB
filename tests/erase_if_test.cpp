@@ -8,7 +8,7 @@
 #include <fstream>
 #include <random>
 
-#include "../src/parallel_utils/erase_if.h"
+#include <netlistDB/parallel_utils/erase_if.h>
 #include "../src/debug_utils/timer.h"
 
 using namespace netlistDB;

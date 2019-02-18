@@ -1,8 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include "../netlist.h"
-#include "serializer.h"
+#include <netlistDB/netlist.h>
+#include <netlistDB/serializer/serializer.h>
 
 namespace netlistDB {
 namespace serializer {

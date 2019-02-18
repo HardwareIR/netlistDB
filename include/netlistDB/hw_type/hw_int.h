@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ihw_type.h"
-#include "../netlist.h"
+#include <netlistDB/netlist.h>
 
 namespace netlistDB {
 namespace hw_type {

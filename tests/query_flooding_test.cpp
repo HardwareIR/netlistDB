@@ -9,9 +9,9 @@
 #include <fstream>
 #include <stdint.h>
 
-#include "../src/netlist.h"
-#include "../src/statement_if.h"
-#include "../src/hw_type/common.h"
+#include <netlistDB/netlist.h>
+#include <netlistDB/statement_if.h>
+#include <netlistDB/hw_type/common.h>
 
 using namespace netlistDB;
 using namespace netlistDB::hw_type;

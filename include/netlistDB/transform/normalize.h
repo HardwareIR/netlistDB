@@ -1,5 +1,6 @@
 #pragma once
-#include "transformation.h"
+
+#include <netlistDB/transform/transformation.h>
 
 namespace netlistDB {
 namespace transform {

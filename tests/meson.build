@@ -24,14 +24,14 @@ test_common_src = [
 	'test_graphs.cpp',
 	'test_graphs.h',
 ]
-
 foreach t : tests
 	test_exe = executable(t[0]  + '_test',
 		[t[0] + '_test.cpp'] + test_common_src,
 		dependencies: [boost_deps, thread_dep, tbb_dep],
 		link_with: [netlistDB_lib, ],
 		cpp_args: EXTRA_CXX_ARGS,
-        c_args: EXTRA_C_ARGS)
+        c_args: EXTRA_C_ARGS,
+        include_directories: netlistDB_incldir)
 	test(t[1], test_exe, workdir : meson.source_root())
 endforeach
 

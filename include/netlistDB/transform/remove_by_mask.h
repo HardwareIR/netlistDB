@@ -1,7 +1,7 @@
 #pragma once
 
-#include "transformation.h"
-#include "../query/query_traverse.h"
+#include <netlistDB/transform/transformation.h>
+#include <netlistDB/query/query_traverse.h>
 
 namespace netlistDB {
 namespace transform {

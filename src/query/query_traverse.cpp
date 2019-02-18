@@ -1,4 +1,4 @@
-#include "query_traverse.h"
+#include <netlistDB/query/query_traverse.h>
 
 namespace netlistDB {
 namespace query {

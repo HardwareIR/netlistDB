@@ -1,4 +1,4 @@
-#include "hw_int.h"
+#include <netlistDB/hw_type/hw_int.h>
 
 namespace netlistDB {
 namespace hw_type {

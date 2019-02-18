@@ -1,10 +1,10 @@
-#include "statement_to_hwprocess.h"
-#include "reduce_statement.h"
-#include "../utils/ordered_set.h"
-#include "../query/query_enclosure.h"
-#include "../query/query_sensitivity.h"
-#include "../query/query_public_net.h"
-#include "../parallel_utils/erase_if.h"
+#include <netlistDB/transform/statement_to_hwprocess.h>
+#include <netlistDB/transform/reduce_statement.h>
+#include <netlistDB/utils/ordered_set.h>
+#include <netlistDB/query/query_enclosure.h>
+#include <netlistDB/query/query_sensitivity.h>
+#include <netlistDB/query/query_public_net.h>
+#include <netlistDB/parallel_utils/erase_if.h>
 
 using namespace std;
 using namespace netlistDB::utils;

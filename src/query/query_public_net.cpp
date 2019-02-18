@@ -1,4 +1,4 @@
-#include "query_public_net.h"
+#include <netlistDB/query/query_public_net.h>
 
 #include <assert.h>
 

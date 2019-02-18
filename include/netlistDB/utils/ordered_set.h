@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <unordered_set>
-#include "../parallel_utils/erase_if.h"
+#include <netlistDB/parallel_utils/erase_if.h>
 
 namespace netlistDB {
 namespace utils {

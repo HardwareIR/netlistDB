@@ -1,9 +1,9 @@
 #pragma once
 
 #include <string>
-#include "netlist.h"
-#include "../statement_hwprocess.h"
-#include "../statement_if.h"
+#include <netlistDB/netlist.h>
+#include <netlistDB/statement_hwprocess.h>
+#include <netlistDB/statement_if.h>
 
 namespace netlistDB {
 namespace transform {

@@ -1,4 +1,4 @@
-#include "verilog.h"
+#include <netlistDB/serializer/verilog.h>
 
 namespace netlistDB {
 namespace serializer {

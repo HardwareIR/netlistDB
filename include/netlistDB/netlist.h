@@ -15,14 +15,14 @@
 #include <unordered_map>
 #include <atomic>
 
-#include "utils/ordered_set.h"
-#include "varId.h"
-#include "constants.h"
-#include "pointer_container.h"
-#include "function_def.h"
-#include "utils/chained_iterator.h"
-#include "hw_type/ihw_type.h"
-#include "hw_type/ihw_type_value.h"
+#include <netlistDB/utils/ordered_set.h>
+#include <netlistDB/varId.h>
+#include <netlistDB/constants.h>
+#include <netlistDB/pointer_container.h>
+#include <netlistDB/function_def.h>
+#include <netlistDB/utils/chained_iterator.h>
+#include <netlistDB/hw_type/ihw_type.h>
+#include <netlistDB/hw_type/ihw_type_value.h>
 
 namespace netlistDB {
 

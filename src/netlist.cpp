@@ -1,5 +1,5 @@
-#include <statement_if.h>
-#include "netlist.h"
+#include <netlistDB/statement_if.h>
+#include <netlistDB/netlist.h>
 
 using namespace netlistDB;
 

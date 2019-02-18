@@ -1,4 +1,4 @@
-#include "statement_hwprocess.h"
+#include <netlistDB/statement_hwprocess.h>
 
 namespace netlistDB {
 

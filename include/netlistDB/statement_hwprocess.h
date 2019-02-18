@@ -1,7 +1,9 @@
 #pragma once
+
 #include <string>
-#include "netlist.h"
-#include "utils/ordered_set.h"
+
+#include <netlistDB/netlist.h>
+#include <netlistDB/utils/ordered_set.h>
 
 namespace netlistDB {
 

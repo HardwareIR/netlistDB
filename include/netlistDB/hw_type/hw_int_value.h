@@ -2,8 +2,8 @@
 
 #include <boost/multiprecision/cpp_int.hpp>
 //#include <boost/multiprecision/gmp.hpp>
-#include "ihw_type_value.h"
-#include "hw_int.h"
+#include <netlistDB/hw_type/ihw_type_value.h>
+#include <netlistDB/hw_type/hw_int.h>
 
 namespace netlistDB {
 namespace hw_type {

@@ -1,4 +1,4 @@
-#include "operator_defs.h"
+#include <netlistDB/operator_defs.h>
 
 namespace netlistDB {
 

@@ -8,12 +8,12 @@
 #include <fstream>
 #include <stdint.h>
 
-#include "../src/netlist.h"
-#include "../src/statement_if.h"
-#include "../src/statement_assignment.h"
-#include "../src/hw_type/common.h"
-#include "../src/transform/reduce_statement.h"
-#include "../src/query/query_structural_cmp.h"
+#include <netlistDB/netlist.h>
+#include <netlistDB/statement_if.h>
+#include <netlistDB/statement_assignment.h>
+#include <netlistDB/hw_type/common.h>
+#include <netlistDB/transform/reduce_statement.h>
+#include <netlistDB/query/query_structural_cmp.h>
 
 using namespace std;
 namespace tt = boost::test_tools;

@@ -1,4 +1,4 @@
-#include "netlist.h"
+#include <netlistDB/netlist.h>
 
 namespace netlistDB {
 

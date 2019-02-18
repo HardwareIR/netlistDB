@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../netlist.h"
 #include <functional>
+
+#include <netlistDB/netlist.h>
 
 namespace netlistDB {
 namespace query {

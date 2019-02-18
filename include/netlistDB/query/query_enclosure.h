@@ -1,10 +1,11 @@
 #pragma once
 
-#include "../netlist.h"
-#include "../statement_if.h"
-#include "../statement_assignment.h"
 #include <set>
 #include <vector>
+
+#include <netlistDB/netlist.h>
+#include <netlistDB/statement_if.h>
+#include <netlistDB/statement_assignment.h>
 
 namespace netlistDB {
 namespace query {

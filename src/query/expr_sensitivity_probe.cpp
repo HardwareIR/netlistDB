@@ -1,5 +1,5 @@
-#include "expr_sensitivity_probe.h"
-#include "../operator_defs.h"
+#include <netlistDB/query/expr_sensitivity_probe.h>
+#include <netlistDB/operator_defs.h>
 
 using namespace std;
 namespace netlistDB {

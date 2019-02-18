@@ -1,5 +1,5 @@
-#include "query_structural_compatible.h"
-#include "query_structural_cmp.h"
+#include <netlistDB/query/query_structural_compatible.h>
+#include <netlistDB/query/query_structural_cmp.h>
 
 using namespace std;
 namespace netlistDB {

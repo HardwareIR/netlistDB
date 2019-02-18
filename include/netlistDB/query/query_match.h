@@ -2,9 +2,9 @@
 
 #include <functional>
 
-#include "../statement_if.h"
-#include "../statement_assignment.h"
-#include "backtrack_context.h"
+#include <netlistDB/statement_if.h>
+#include <netlistDB/statement_assignment.h>
+#include <netlistDB/query/backtrack_context.h>
 
 namespace netlistDB {
 namespace query {

@@ -1,6 +1,6 @@
-#include "reduce_statement.h"
-#include "../utils/groupedby.h"
-#include "../query/query_structural_compatible.h"
+#include <netlistDB/transform/reduce_statement.h>
+#include <netlistDB/utils/groupedby.h>
+#include <netlistDB/query/query_structural_compatible.h>
 
 #include <tuple>
 

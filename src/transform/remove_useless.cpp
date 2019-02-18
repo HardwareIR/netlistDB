@@ -1,10 +1,10 @@
-#include <parallel_utils/erase_if.h>
-#include "remove_useless.h"
-#include "../query/query_traverse.h"
-#include "../utils/chained_iterator.h"
-#include "remove_by_mask.h"
+#include <netlistDB/parallel_utils/erase_if.h>
+#include <netlistDB/transform/remove_useless.h>
+#include <netlistDB/transform/remove_by_mask.h>
+#include <netlistDB/query/query_traverse.h>
+#include <netlistDB/utils/chained_iterator.h>
 
-#include "../debug_utils/timer.h"
+//#include "../debug_utils/timer.h"
 
 #include <iostream>
 
@@ -26,14 +26,14 @@ bool TransformRemoveUseless::apply(Netlist & ctx) {
 		}
 	}
 
-	auto t = new Timer("traversing");
+	//auto t = new Timer("traversing");
 	// discover what was used
 	QueryTraverse q(ctx.nodes.size());
 	auto walk_all_drivers = [](iNode &n) {
 		return n.backward;
 	};
 	q.traverse(outputs, walk_all_drivers);
-	delete t;
+	//delete t;
 
 	// the items which was not visited have no effect on output;
 	// it the result signal is deleted the driver is deleted as well

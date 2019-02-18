@@ -1,4 +1,4 @@
-#include "query_path.h"
+#include <netlistDB/query/query_path.h>
 
 
 namespace netlistDB {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-#include "backtrack_context.h"
+#include <netlistDB/netlist.h>
 
 namespace netlistDB {
 namespace query {

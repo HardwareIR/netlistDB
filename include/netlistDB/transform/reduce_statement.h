@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../netlist.h"
-#include "../statement_assignment.h"
-#include "../statement_if.h"
+#include <netlistDB/netlist.h>
+#include <netlistDB/statement_assignment.h>
+#include <netlistDB/statement_if.h>
 
 namespace netlistDB {
 namespace transform {
