@@ -12,7 +12,7 @@ namespace query {
  **/
 class QueryStructuralCmp {
 public:
-	//  :return: True if all statements are same
+	//  :return: True if all statements have same branching structure same
 	static bool statements_are_same(Statement & reference,
 			const std::vector<Statement*> & statements);
 
