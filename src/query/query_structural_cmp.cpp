@@ -39,10 +39,11 @@ bool QueryStructuralCmp::is_same(const IfStatement & a, const IfStatement & b) {
 			for (size_t i = 0; i < a.elseIf.size(); i++) {
 				auto & ac = a.elseIf[i];
 				auto & bc = b.elseIf[i];
-				if (not (is_same_net(*ac.first, *bc.first)
-						or not is_same_statement_vec(ac.second, bc.second))) {
+				if (is_same_net(*ac.first, *bc.first)
+						and is_same_statement_vec(ac.second, bc.second))
+					continue;
+				else
 					return false;
-				}
 			}
 			return true;
 		}
@@ -89,8 +90,6 @@ bool QueryStructuralCmp::is_same_net_vec(const std::vector<Net*> & nets_a,
 	}
 	return true;
 }
-
-
 
 }
 }

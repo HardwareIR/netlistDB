@@ -12,6 +12,7 @@ tests = [
 	  ['query_enclosure', 'test for the QueryEnclosure'],
 	  ['query_flooding', 'tests for flooding query engine'],
 	  ['query_sensitivity', 'tests for QuerySensitivity'],
+	  ['query_structural_cmp', 'tests for QueryStructuralCmp'],
   	  ['query_traverse', 'tests for QueryTraverse'],
 	  ['erase_if', 'tests for erase if'],
 	  ['statement_assignment', 'test for statment Assignment object'],
