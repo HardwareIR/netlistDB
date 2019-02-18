@@ -49,7 +49,6 @@ bool QueryStructuralCmp::is_same(const IfStatement & a, const IfStatement & b) {
 		}
 	}
 	return false;
-
 }
 
 bool QueryStructuralCmp::is_same_statement_vec(
