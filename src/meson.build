@@ -69,5 +69,5 @@ netlistDB_lib = shared_library(
     cpp_args: EXTRA_CXX_ARGS,
     c_args: EXTRA_C_ARGS,
     #link_args: EXTRA_LINK_ARGS
-    
 )
+install_subdir('../include/netlistDB', install_dir : 'include')

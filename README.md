@@ -55,6 +55,12 @@ cd build
 ninja test
 ```
 
+install netlistDB
+```
+sudo ninja install # ninja uninstall is also available and DESTDIR=/path/to/staging/area ninja install also works
+```
+
+
 
 # Structure of NetlistDB
 
