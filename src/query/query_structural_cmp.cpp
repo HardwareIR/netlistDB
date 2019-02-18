@@ -28,35 +28,39 @@ bool QueryStructuralCmp::is_same(const IfStatement & a, const IfStatement & b) {
 	if (a.rank != b.rank)
 		return false;
 
-	if (is_same_net(*a.condition, *b.condition)) {
-		if (a.ifTrue.size() == b.ifTrue.size()
-				and a.ifFalse_specified == b.ifFalse_specified
-				and a.ifFalse.size() == b.ifFalse.size()
-				and a.elseIf.size() == b.elseIf.size()) {
-			if (not is_same_statement_vec(a.ifTrue, b.ifTrue)
-					or not is_same_statement_vec(a.ifFalse, b.ifFalse))
-				return false;
-			for (size_t i = 0; i < a.elseIf.size(); i++) {
-				auto & ac = a.elseIf[i];
-				auto & bc = b.elseIf[i];
-				if (is_same_net(*ac.first, *bc.first)
-						and is_same_statement_vec(ac.second, bc.second))
-					continue;
-				else
-					return false;
-			}
-			return true;
-		}
+	if (not is_same_net(*a.condition, *b.condition))
+		return false;
+	if (a.ifTrue.size() != b.ifTrue.size()
+			and a.ifFalse_specified != b.ifFalse_specified
+			and a.ifFalse.size() != b.ifFalse.size()
+			and a.elseIf.size() != b.elseIf.size()) {
+		return false;
 	}
-	return false;
+
+	if (not is_same_statement_vec(a.ifTrue, b.ifTrue)
+			or not is_same_statement_vec(a.ifFalse, b.ifFalse))
+		return false;
+
+	for (size_t i = 0; i < a.elseIf.size(); i++) {
+		auto & ac = a.elseIf[i];
+		auto & bc = b.elseIf[i];
+		if (is_same_net(*ac.first, *bc.first)
+				and is_same_statement_vec(ac.second, bc.second))
+			continue;
+		else
+			return false;
+	}
+	return true;
 }
 
 bool QueryStructuralCmp::is_same_statement_vec(
 		const vector<Statement*> & stmListA,
 		const vector<Statement*> & stmListB) {
-	if (&stmListA == &stmListB) {
+	if (&stmListA == &stmListB)
 		return true;
-	}
+
+	if (stmListA.size() != stmListB.size())
+		return false;
 
 	for (size_t i = 0; i < stmListA.size(); i++) {
 		if (not is_same(*stmListA[i], *stmListB[i]))
