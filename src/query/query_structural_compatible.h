@@ -26,7 +26,7 @@ public:
 			bool a_specified, const std::vector<Statement*> & stmsB,
 			bool b_specified);
 
-	// :return: first statement with rank > 1 or nullptr if iterator empty
+	// :return: first statement with rank > 0 or nullptr if iterator empty
 	static Statement * get_stm_with_branches(
 			std::vector<Statement*>::const_iterator & stm_it,
 			const std::vector<Statement*>::const_iterator & stm_it_end);

@@ -135,7 +135,7 @@ public:
 	size_t rank;
 
 	Statement() :
-			parent(nullptr), rank(1) {
+			parent(nullptr), rank(0) {
 	}
 
 	/*

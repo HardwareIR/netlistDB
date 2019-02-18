@@ -60,7 +60,7 @@ Statement * QueryStructuralComapatible::get_stm_with_branches(
 		vector<Statement*>::const_iterator & stm_it,
 		const vector<Statement*>::const_iterator & stm_it_end) {
 	while ((stm_it != stm_it_end)) {
-		if ((*stm_it)->rank > 1) {
+		if ((*stm_it)->rank > 0) {
 			return *stm_it;
 		}
 		stm_it++;
