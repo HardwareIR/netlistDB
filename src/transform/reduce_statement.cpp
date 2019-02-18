@@ -34,12 +34,12 @@ void TransformReduceStatement::merge_with_other_stm(Statement & a,
 	auto * ia = dynamic_cast<IfStatement*>(&a);
 	auto * ib = dynamic_cast<IfStatement*>(&b);
 	if (ia and ib)
-		return merge_with_other_stm(*ia, *ib);
+		return merge_other_to_this(*ia, *ib);
 
 	throw runtime_error("can not merge statements of this type");
 }
 
-void TransformReduceStatement::merge_with_other_stm(IfStatement & self,
+void TransformReduceStatement::merge_other_to_this(IfStatement & self,
 		IfStatement & other) {
 	self.ifTrue = merge_statements_vector(self.ifTrue, other.ifTrue);
 
@@ -89,7 +89,7 @@ vector<Statement*> TransformReduceStatement::merge_statements_vector(
 			if (a == nullptr) {
 				a_empty = true;
 				break;
-			} else if (a->rank == 1) {
+			} else if (a->rank == 0) {
 				// simple statement does not require merging
 				tmp.push_back(a);
 				a = nullptr;
@@ -107,7 +107,7 @@ vector<Statement*> TransformReduceStatement::merge_statements_vector(
 			if (b == nullptr) {
 				b_empty = true;
 				break;
-			} else if (b->rank == 1) {
+			} else if (b->rank == 0) {
 				// simple statement does not require merging
 				tmp.push_back(b);
 				b = nullptr;
@@ -140,7 +140,7 @@ size_t TransformReduceStatement::merge_statements(
 	}
 
 	size_t rank_decrease = 0;
-	auto new_begin = new_statements.end();
+	size_t original_new_size = new_statements.size();
 
 	for (auto & itm : groupedby<size_t, Statement*>(statements,
 			[](Statement* s) {return s->rank;})) {
@@ -180,10 +180,10 @@ size_t TransformReduceStatement::merge_statements(
 			}
 		}
 	}
-	sort(new_begin, new_statements.end(),
+	sort(new_statements.begin() + original_new_size, new_statements.end(),
 			[order](const Statement * a, const Statement * b) -> bool
 			{
-				return order.find(a)->second > order.find(b)->second;
+				return order.find(a)->second < order.find(b)->second;
 			});
 	return rank_decrease;
 
@@ -328,7 +328,7 @@ void TransformReduceStatement::on_merge(Statement & self, Statement & other) {
 
 	bool other_was_top = other.parent == nullptr;
 	if (other_was_top) {
-		other._get_context().unregister_node(other);
+		self._get_context().unregister_node(other);
 		for (auto s : other._inputs) {
 			s->endpoints.discard(&other);
 			s->endpoints.push_back(&self);

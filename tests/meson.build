@@ -5,7 +5,6 @@ tests = [
 	  ['basic', 'test of the core'],
 	  ['basic_query_match', 'basic test for query engine'],
 	  ['large_query_match', 'benchmarks for query engine'],
-
 	  ['transform_remove_useless', 'tests for TransformRemoveUseless'],
 	  ['chained_iter', 'tests for chained iterator'],
 	  ['ordered_set', 'tests for ordered set collection'],
@@ -14,7 +13,8 @@ tests = [
 	  ['query_sensitivity', 'tests for QuerySensitivity'],
 	  ['query_structural_cmp', 'tests for QueryStructuralCmp'],
   	  ['query_traverse', 'tests for QueryTraverse'],
-	  ['erase_if', 'tests for erase if'],
+  	  ['erase_if', 'tests for erase if'],
+	  ['reduce_statement', 'tests for TransformReduceStatement'],
 	  ['statement_assignment', 'test for statment Assignment object'],
 	  ['statement_if', 'test for IfStatemet object'],
 	  ['expr_sensitivity_probe', 'test for the epxression sensitivity probe'],

@@ -36,7 +36,7 @@ public:
 			std::vector<Statement*> & stmsA, std::vector<Statement*> & stmsB);
 
 	// :attention: statements has to be mergable (to check use _is_mergable method)
-	static void merge_with_other_stm(IfStatement & a, IfStatement & b);
+	static void merge_other_to_this(IfStatement & a, IfStatement & b);
 	static void merge_with_other_stm(Statement & a, Statement & b);
 
 	/*
@@ -65,10 +65,10 @@ public:
 	/*
 	 *  Update signal IO after reduce attempt
 	 *
-	 *  :param self_reduced: if True this object was reduced
-	 *  :param io_changed: if True IO of this object may changed
+	 *  @param self_reduced if true this object was reduced
+	 *  @param io_changed if true IO of this object may changed
 	 *      and has to be updated
-	 *  :param result_statements: list of statements which are result
+	 *  @param result_statements list of statements which are result
 	 *      of reduce operation on this statement
 	 */
 	static void on_reduce(Statement & stm, bool self_reduced, bool io_changed,
@@ -76,7 +76,9 @@ public:
 	/*
 	 * After merging statements update IO, sensitivity and context
 	 *
-	 * :attention: rank is not updated
+	 * @attention rank is not updated
+	 * @param self the statement which was merged to
+	 * @param other the statement which was merged in to "self"
 	 */
 	static void on_merge(Statement & self, Statement & other);
 
