@@ -24,6 +24,8 @@ src = [
 	'query/query_traverse.h',
 	'query/query_match.cpp',
 	'query/query_match.h',
+	'query/query_public_net.cpp',
+	'query/query_public_net.h',
 	'query/query_sensitivity.cpp',
 	'query/query_sensitivity.h',
 	'query/query_structural_cmp.cpp',
@@ -62,6 +64,8 @@ src = [
 	'operator_defs.cpp',
 	'statement_assignment.cpp',
 	'statement_assignment.h',
+	'statement_hwprocess.cpp',
+	'statement_hwprocess.h',
 	'statement_if.cpp',
 	'statement_if.h',
 ]

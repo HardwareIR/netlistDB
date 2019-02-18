@@ -6,7 +6,7 @@
 namespace netlistDB {
 
 /*
- * Hdl process the container for statements in HDL
+ * Hdl process - the container for statements in HDL
  *
  * @ivar name name used as id in target HDL
  * @ivar statements vector of statements in body of process
@@ -32,6 +32,9 @@ public:
 	HwProcess(const std::string & name, std::vector<Statement*> statements,
 			utils::OrderedSet<iNode*> sensitivityList,
 			utils::OrderedSet<Net*> inputs, utils::OrderedSet<Net*> outputs);
+
+	virtual utils::ChainedSequence<Statement*> _iter_stms() override;
+
 };
 
 }

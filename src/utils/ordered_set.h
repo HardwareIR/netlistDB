@@ -75,9 +75,23 @@ public:
 		throw std::runtime_error("NotImplemented");
 	}
 
+	bool contains(const value_type& __x) const {
+		bool use_set = vec_t::size() >= USE_SET_LOWER_LIMIT;
+		if (use_set) {
+			auto i = _set.find(__x);
+			return i != _set.end();
+		} else {
+			for (const value_type & i : *this) {
+				if (i == __x)
+					return true;
+			}
+			return false;
+		}
+	}
+
 	template<typename iterable>
 	void extend(const iterable & other) {
-		for (T i: other) {
+		for (T i : other) {
 			push_back(i);
 		}
 	}
