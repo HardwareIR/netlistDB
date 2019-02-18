@@ -1,3 +1,5 @@
+#pragma once
+
 #include <functional>
 
 #include "../statement_if.h"

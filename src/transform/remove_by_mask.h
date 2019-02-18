@@ -1,4 +1,5 @@
 #pragma once
+
 #include "transformation.h"
 #include "../query/query_traverse.h"
 

@@ -90,5 +90,7 @@ bool QueryStructuralCmp::is_same_net_vec(const std::vector<Net*> & nets_a,
 	return true;
 }
 
+
+
 }
 }

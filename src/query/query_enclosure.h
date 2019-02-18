@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../netlist.h"
 #include "../statement_if.h"
 #include "../statement_assignment.h"
