@@ -1,4 +1,5 @@
-#include "indexed_assignmet_to_assignment_of_concat.h"
+#include "indexed_assignment_to_assignment_of_concat.h"
+
 #include <exception>
 #include <thread>
 #include <tbb/tbb.h>
@@ -35,7 +36,7 @@ bool TransformIndexedAssignmentsToAssignmentOfConcat::is_result_of_indexed_assig
 				if (assig->dst_index.size() > 1)
 					throw std::runtime_error("not implemented");
 				auto range = net_val_as_range(*assig->dst_index[0]);
-				match.push_back( { range, assig->dst });
+				match.push_back( { range, &assig->dst });
 			}
 		} else {
 			break;

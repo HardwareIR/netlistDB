@@ -26,6 +26,8 @@ src = [
 	'query/query_match.h',
 	'query/query_sensitivity.cpp',
 	'query/query_sensitivity.h',
+	'query/query_structural_cmp.cpp',
+	'query/query_structural_cmp.h',
 	'query/query_path.cpp',
 	'query/query_path.cpp',
 	
@@ -33,11 +35,19 @@ src = [
 	'serializer/verilog.h',
 	'serializer/namescope.h',
 	'serializer/serializer.h',
-	
+	'transform/indexed_assignment_to_assignment_of_concat.cpp',
+	'transform/indexed_assignment_to_assignment_of_concat.h',
+	'transform/normalize.cpp',
+	'transform/normalize.h',
+	'transform/reduce_statement.cpp',
+	'transform/reduce_statement.h',
 	'transform/remove_by_mask.cpp',
 	'transform/remove_by_mask.h',
 	'transform/remove_useless.cpp',
 	'transform/remove_useless.h',
+	'transform/statement_to_hwprocess.cpp',
+	'transform/statement_to_hwprocess.h',
+	
 	'transform/transformation.h',
 	
 	'function_call.cpp',

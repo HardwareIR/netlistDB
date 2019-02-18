@@ -4,6 +4,7 @@
 #include "../statement_hwprocess.h"
 
 namespace netlistDB {
+namespace transform {
 
 class TransformStatementToHwProcess {
 
@@ -12,4 +13,5 @@ class TransformStatementToHwProcess {
 
 };
 
+}
 }
