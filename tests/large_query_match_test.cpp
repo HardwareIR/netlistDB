@@ -9,12 +9,12 @@
 #include <stdint.h>
 #include <random>
 
-#include "../src/netlist.h"
-#include "../src/statement_if.h"
-#include "../src/hw_type/common.h"
-#include "../src/query/query_match.h"
-#include "../src/operator_defs.h"
-#include "../src/query/query_traverse.h"
+#include <netlistDB/netlist.h>
+#include <netlistDB/statement_if.h>
+#include <netlistDB/hw_type/common.h>
+#include <netlistDB/query/query_match.h>
+#include <netlistDB/operator_defs.h>
+#include <netlistDB/query/query_traverse.h>
 #include "../src/debug_utils/timer.h"
 #include "test_graphs.h"
 

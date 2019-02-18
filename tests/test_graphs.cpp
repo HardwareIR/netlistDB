@@ -1,6 +1,6 @@
 #include "test_graphs.h"
-#include "../src/statement_if.h"
-#include "../src/hw_type/common.h"
+#include <netlistDB/statement_if.h>
+#include <netlistDB/hw_type/common.h>
 
 using namespace std;
 using namespace netlistDB;

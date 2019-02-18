@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <iostream>
 
-#include "query_match.h"
-#include "statement_if.h"
+#include <netlistDB/query/query_match.h>
+#include <netlistDB/statement_if.h>
 
 using namespace std;
 using namespace netlistDB::utils;

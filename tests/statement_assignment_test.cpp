@@ -8,10 +8,10 @@
 #include <fstream>
 #include <stdint.h>
 
-#include "../src/netlist.h"
-#include "../src/statement_if.h"
-#include "../src/statement_assignment.h"
-#include "../src/hw_type/common.h"
+#include <netlistDB/netlist.h>
+#include <netlistDB/statement_if.h>
+#include <netlistDB/statement_assignment.h>
+#include <netlistDB/hw_type/common.h>
 
 namespace tt = boost::test_tools;
 using namespace netlistDB;

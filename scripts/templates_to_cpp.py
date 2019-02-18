@@ -18,7 +18,7 @@ if __name__ == "__main__":
     dst_file = sys.argv[-1]
     print(dst_file)
     with open(dst_file, 'w') as of:
-        of.write('#include "serializer/verilog/verilog_templates.h"\n')
+        of.write('#include <netlistDB/serializer/verilog/verilog_templates.h>\n')
         of.write('namespace netlistDB { namespace serializer { namespace verilog {\n')
         for file_name in template_files:
             of.write('std::string template_' + os.path.basename(file_name).split(".")[0] + "=")

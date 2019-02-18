@@ -1,5 +1,4 @@
-#include "common.h"
-
+#include <netlistDB/hw_type/common.h>
 
 namespace netlistDB {
 namespace hw_type {

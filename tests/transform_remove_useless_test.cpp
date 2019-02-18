@@ -12,11 +12,11 @@
 #include <cstring>
 #include <atomic>
 #include <boost/range/join.hpp>
-
-#include "test_graphs.h"
-#include "../src/transform/remove_useless.h"
-#include "../src/debug_utils/timer.h"
 #include <tbb/tbb.h>
+
+#include <netlistDB/transform/remove_useless.h>
+#include "test_graphs.h"
+#include "../src/debug_utils/timer.h"
 
 using namespace netlistDB;
 using namespace netlistDB::transform;

@@ -1,4 +1,4 @@
-#include "statement_if.h"
+#include <netlistDB/statement_if.h>
 
 namespace netlistDB {
 
@@ -7,15 +7,18 @@ IfStatement::IfStatement(Net & condition) :
 
 	_inputs.push_back(&condition);
 	condition.endpoints.push_back(this);
-	condition.ctx.register_node(*this);
 	rank = 0;
 }
 
-IfStatement & IfStatement::operator() (Statement* statement){
-	return operator ()({statement});
+IfStatement & IfStatement::operator()(Statement* statement) {
+	return operator ()(std::vector<Statement*> { statement, });
 }
 IfStatement & IfStatement::operator()(
 		std::initializer_list<Statement*> statements) {
+	return operator ()(std::vector<Statement*>(statements));
+}
+IfStatement & IfStatement::operator()(
+		const std::vector<Statement*> & statements) {
 	assert(not ifTrue_specified);
 	assert(not ifFalse_specified);
 	assert(elseIf.size() == 0);
@@ -31,6 +34,11 @@ IfStatement & IfStatement::Elif(Net & cond, Statement* statement) {
 
 IfStatement & IfStatement::Elif(Net & cond,
 		std::initializer_list<Statement*> statements) {
+	return Elif(cond, std::vector<Statement*>(statements));
+}
+
+IfStatement & IfStatement::Elif(Net & cond,
+		const std::vector<Statement*> & statements) {
 	assert(ifTrue_specified);
 	assert(not ifFalse_specified);
 	assert(parent == nullptr);
@@ -47,10 +55,14 @@ IfStatement & IfStatement::Elif(Net & cond,
 }
 
 IfStatement & IfStatement::Else(Statement* statement) {
-	return Else( { statement });
+	return Else(std::vector<Statement*> { statement });
 }
 
 IfStatement & IfStatement::Else(std::initializer_list<Statement*> statements) {
+	return Else(std::vector<Statement*>(statements));
+}
+
+IfStatement & IfStatement::Else(const std::vector<Statement*> & statements) {
 	assert(not ifFalse_specified);
 	assert(parent == nullptr);
 	ifFalse_specified = true;
@@ -74,7 +86,9 @@ utils::ChainedSequence<Statement*> IfStatement::_iter_stms() {
 }
 
 IfStatement & If(Net & condition) {
-	return *new IfStatement(condition);
+	auto i = new IfStatement(condition);
+	condition.ctx.register_node(*i);
+	return *i;
 }
 
 }

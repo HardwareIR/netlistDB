@@ -1,4 +1,4 @@
-#include "normalize.h"
+#include <netlistDB/transform/normalize.h>
 #include <exception>
 
 namespace netlistDB {

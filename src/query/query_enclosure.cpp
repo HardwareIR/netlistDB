@@ -1,4 +1,4 @@
-#include "query_enclosure.h"
+#include <netlistDB/query/query_enclosure.h>
 
 namespace netlistDB {
 namespace query {

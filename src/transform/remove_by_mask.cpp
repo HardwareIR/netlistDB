@@ -1,8 +1,7 @@
-#include "remove_by_mask.h"
+#include <netlistDB/transform/remove_by_mask.h>
 
 #include <thread>
-#include "parallel_utils/erase_if.h"
-//#include "../debug_utils/timer.h"
+#include <netlistDB/parallel_utils/erase_if.h>
 
 using namespace netlistDB::parallel_utils;
 

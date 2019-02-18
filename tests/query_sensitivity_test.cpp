@@ -8,10 +8,10 @@
 #include <fstream>
 #include <stdint.h>
 
-#include "../src/netlist.h"
-#include "../src/statement_if.h"
-#include "../src/hw_type/common.h"
-#include "../src/query/query_sensitivity.h"
+#include <netlistDB/netlist.h>
+#include <netlistDB/statement_if.h>
+#include <netlistDB/hw_type/common.h>
+#include <netlistDB/query/query_sensitivity.h>
 
 using namespace std;
 using namespace netlistDB;

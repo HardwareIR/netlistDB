@@ -1,5 +1,5 @@
-#include "query_sensitivity.h"
-#include "expr_sensitivity_probe.h"
+#include <netlistDB/query/query_sensitivity.h>
+#include <netlistDB/query/expr_sensitivity_probe.h>
 
 using namespace std;
 

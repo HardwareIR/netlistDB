@@ -7,7 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <stdint.h>
-#include "../src/utils/chained_iterator.h"
+#include <netlistDB/utils/chained_iterator.h>
 
 using namespace netlistDB::utils;
 
