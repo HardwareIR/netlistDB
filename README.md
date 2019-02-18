@@ -57,7 +57,7 @@ ninja test
 
 install netlistDB
 ```
-sudo ninja install # ninja uninstall is also available and DESTDIR=/path/to/staging/area ninja install also works
+sudo ninja install # ninja uninstall is also available and DESTDIR=/staging ninja install also works
 ```
 
 
