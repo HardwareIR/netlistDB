@@ -21,7 +21,7 @@ using namespace netlistDB;
 using namespace netlistDB::hw_type;
 using namespace netlistDB::query;
 
-BOOST_AUTO_TEST_SUITE (netlistDB_statement_if_testsuite)
+BOOST_AUTO_TEST_SUITE (netlistDB_QueryStructuralCmp_testsuite)
 
 BOOST_AUTO_TEST_CASE( assignements ) {
 	Netlist ctx("test");
