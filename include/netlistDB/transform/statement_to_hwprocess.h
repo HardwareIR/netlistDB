@@ -8,8 +8,30 @@
 namespace netlistDB {
 namespace transform {
 
+/*
+ * The process is a wrapper around the statement list.
+ * It is possible just wrap each statement in to separate process, but this would
+ * result in to unreadable code. (And this transformation is meant to be used for the serialization of circuit
+ * in to readable format (Verilog etc.))
+ *
+ * The main source of the bloat and duplicated code are similar statements which have same branching structure
+ * but are using different signals. For example there can be multiple processes
+ * which are describing the RTL register, all this processes can be merged all together.
+ * However the combinational loops may appear and the process can not contain combinational loop inside.
+ *
+ *  1. Split statement in to groups which have same branching structure.
+ *  2. If group have combinational loop try to cut off the driver of the signal out.
+ *  3. Merge all statements with similar structure to a single statement.
+ *  4. Wrap result in to HwProcess instance.
+ *
+ * */
+
 class TransformStatementToHwProcess {
 public:
+	/*
+	 * @attention the statements does not have to stay same in circuit
+	 *    (they can be merged with something else or removed).
+	 * */
 	void apply(const std::vector<Statement*> & statements,
 			std::vector<HwProcess*> & res, bool try_solve_comb_loops);
 
@@ -60,7 +82,7 @@ public:
 	Statement * cut_off_drivers_of(IfStatement & self, Net* sig);
 
 	/* Clean informations about enclosure for outputs and sensitivity
-	 * of this statement
+	 * of this statement.
 	 */
 	void clean_signal_meta(Statement & self);
 };

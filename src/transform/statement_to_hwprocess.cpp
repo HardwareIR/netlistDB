@@ -123,6 +123,7 @@ void TransformStatementToHwProcess::apply(
 		TransformReduceStatement::apply(*_stm, proc_statements);
 	}
 
+	// collect IO and sensitivity
 	OrderedSet<Net*> outputs;
 	OrderedSet<Net*> _inputs;
 	OrderedSet<iNode*> sensitivity;
@@ -137,6 +138,8 @@ void TransformStatementToHwProcess::apply(
 		auto & ef = _stm->sens.enclosed_for;
 		enclosed_for.insert(ef.begin(), ef.end());
 	}
+
+	// collect nop values for the signals
 	std::map<Net*, Net*> enclosure_values;
 	for (Net * net : outputs) {
 		// inject nopVal if needed
@@ -144,6 +147,7 @@ void TransformStatementToHwProcess::apply(
 			enclosure_values[net] = net->nop_val;
 		}
 	}
+	// fill up with nop values if required
 	if (enclosure_values.size() > 0) {
 		OrderedSet<Net*> do_enclose_for;
 		for (Net * o : outputs) {
@@ -155,16 +159,21 @@ void TransformStatementToHwProcess::apply(
 		fill_stm_list_with_enclosure(nullptr, enclosed_for, proc_statements,
 				do_enclose_for, enclosure_values);
 	}
+
 	if (proc_statements.size()) {
 		for (Net* o : outputs) {
 			assert(not o->id.hidden);
 		}
-		set<Net*> seen;
+		// discover inputs (hidden signals are inside the expressions and are skipped)
 		OrderedSet<Net*> inputs;
-		for (Net *i : _inputs)
-			QueryPublicNet::walk(*i, seen,
-					[&inputs](Net &n) {inputs.push_back(&n);});
+		{
+			set<Net*> seen;
+			for (Net *i : _inputs)
+				QueryPublicNet::walk(*i, seen,
+						[&inputs](Net &n) {inputs.push_back(&n);});
+		}
 
+		// check if there is a combinational loop (the output is direct input)
 		set<Net*> intersect;
 		set_intersection(outputs.begin(), outputs.end(), sensitivity.begin(),
 				sensitivity.end(), std::inserter(intersect, intersect.begin()));
@@ -183,6 +192,7 @@ void TransformStatementToHwProcess::apply(
 			if (proc_statements.size())
 				apply(proc_statements, res, false);
 		} else {
+			// the group of the statements is in proper format and the process can be generated
 			auto p = new HwProcess(name_for_process(outputs), proc_statements,
 					sensitivity, inputs, outputs);
 			res.push_back(p);
@@ -270,17 +280,6 @@ void TransformStatementToHwProcess::fill_enclosure(IfStatement & self,
 	self.sens.enclosed_for.extend(enc);
 }
 
-/* Apply enclosure on list of statements
- * (fill all unused code branches with assignments from value specified by enclosure)
- *
- * :param parentStm: optional parent statement where this list is some branch
- * :param current_enclosure: list of signals for which this statement list is enclosed
- * :param statements: list of statements
- * :param do_enclose_for: selected signals for which enclosure should be used
- * :param enclosure: enclosure values for signals
- *
- * :attention: original statements parameter can be modified
- **/
 void TransformStatementToHwProcess::fill_stm_list_with_enclosure(
 		Statement * parentStm, set<Net*> current_enclosure,
 		vector<Statement*> statements, OrderedSet<Net*> do_enclose_for,
