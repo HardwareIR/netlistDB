@@ -104,6 +104,29 @@ public:
 	typename vec_t::iterator find(T item) {
 		return std::find(vec_t::begin(), vec_t::end(), item);
 	}
+	typename vec_t::const_iterator find(const T item) const {
+		return std::find(vec_t::begin(), vec_t::end(), item);
+	}
+
+	bool does_intersects(const OrderedSet & other) const {
+		const OrderedSet * smaller;
+		const OrderedSet * larger;
+
+		if (other.size() < vec_t::size()) {
+			smaller = &other;
+			larger = this;
+		} else {
+			smaller = this;
+			larger = &other;
+		}
+
+		for (auto & i : *smaller) {
+			if (larger->find(i) != larger->end())
+				return true;
+		}
+
+		return false;
+	}
 };
 
 }

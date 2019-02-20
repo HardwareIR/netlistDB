@@ -28,18 +28,25 @@ namespace transform {
 
 class TransformStatementToHwProcess {
 public:
+
+	// Statements are not comparable due incompatible structure
+	class IncompatibleStructure: public std::runtime_error {
+	public:
+		IncompatibleStructure(): std::runtime_error("") {}
+	};
+
 	/*
 	 * @attention the statements does not have to stay same in circuit
 	 *    (they can be merged with something else or removed).
 	 * */
-	void apply(const std::vector<Statement*> & statements,
+	static void apply(const std::vector<Statement*> & statements,
 			std::vector<HwProcess*> & res, bool try_solve_comb_loops);
 
 	/*
 	 * name is generated form the output signal with name specified lowest index
 	 * if there is no output returns "proc"
 	 * */
-	std::string name_for_process(const utils::OrderedSet<Net*> outputs);
+	static std::string name_for_process(const utils::OrderedSet<Net*> outputs);
 
 	/* Apply enclosure on list of statements
 	 * (fill all unused code branches with assignments from value specified by enclosure)
@@ -52,14 +59,16 @@ public:
 	 *
 	 * @attention original statements parameter can be modified
 	 **/
-	void fill_stm_list_with_enclosure(Statement * parentStm,
+	static void fill_stm_list_with_enclosure(Statement * parentStm,
 			std::set<Net*> current_enclosure,
 			std::vector<Statement*> statements,
 			utils::OrderedSet<Net*> do_enclose_for,
 			std::map<Net*, Net*> enclosure);
 
-	void fill_enclosure(Statement & self, std::map<Net*, Net*> enclosure);
-	void fill_enclosure(IfStatement & self, std::map<Net*, Net*> enclosure);
+	static void fill_enclosure(Statement & self,
+			std::map<Net*, Net*> enclosure);
+	static void fill_enclosure(IfStatement & self,
+			std::map<Net*, Net*> enclosure);
 
 	/*
 	 * Cut all logic from statements which drives signal sig.
@@ -72,19 +81,43 @@ public:
 	 *
 	 * @return True if all input statements were reduced
 	 **/
-	bool cut_off_drivers_of(Net * dstSignal,
+	static bool cut_off_drivers_of(Net * dstSignal,
 			std::vector<Statement*> & statements,
 			std::vector<Statement*> & separated);
 	/*
 	 * @return self if statement was not modified or new statement which are driving the sig
 	 **/
-	Statement * cut_off_drivers_of(Statement & self, Net* sig);
-	Statement * cut_off_drivers_of(IfStatement & self, Net* sig);
+	static Statement * cut_off_drivers_of(Statement & self, Net* sig);
+	static Statement * cut_off_drivers_of(IfStatement & self, Net* sig);
 
 	/* Clean informations about enclosure for outputs and sensitivity
 	 * of this statement.
 	 */
-	void clean_signal_meta(Statement & self);
+	static void clean_signal_meta(Statement & self);
+
+	// Get maximum _instId from all assignments in statement
+	static size_t max_stm_id(Statement & stm);
+
+	/* get max statement id,
+	 * used for sorting of processes in architecture
+	 */
+	static size_t max_stm_id(HwProcess & proc);
+
+	// Try to merge processes as much is possible
+	static void reduce_processes(std::vector<HwProcess*> & processes);
+
+	/* check if process is just unconditional assignments
+	 * and it is useless to merge them
+	 */
+	static bool checkIfIsTooSimple(HwProcess & proc);
+
+	/* Try merge procB into procA
+	 *
+	 * @raise IncompatibleStructure if merge is not possible
+	 * @attention procA is now result if merge has succeed
+	 * @return procA which is now result of merge
+	 */
+	static HwProcess * tryToMerge(HwProcess & procA, HwProcess & procB);
 };
 
 }

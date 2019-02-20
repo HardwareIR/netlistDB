@@ -23,7 +23,7 @@ namespace netlistDB {
  *     simple process which contains only unconditional assignment will
  *     be rendered just as assignment
  */
-class HwProcess: Statement {
+class HwProcess: public Statement {
 public:
 	std::string name;
 	std::vector<Statement*> statements;

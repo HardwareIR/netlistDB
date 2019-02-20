@@ -4,7 +4,9 @@
 #include <netlistDB/query/query_enclosure.h>
 #include <netlistDB/query/query_sensitivity.h>
 #include <netlistDB/query/query_public_net.h>
+#include <netlistDB/query/query_structural_compatible.h>
 #include <netlistDB/parallel_utils/erase_if.h>
+#include <netlistDB/utils/groupedby.h>
 
 using namespace std;
 using namespace netlistDB::utils;
@@ -310,6 +312,104 @@ void TransformStatementToHwProcess::fill_stm_list_with_enclosure(
 				a->_set_parent_stm(parentStm);
 		}
 	}
+}
+
+size_t TransformStatementToHwProcess::max_stm_id(Statement & stm) {
+	size_t maxId = 0;
+	auto a = dynamic_cast<Assignment*>(&stm);
+	if (a)
+		return a->index;
+
+	for (auto _stm : stm._iter_stms())
+		maxId = std::max(maxId, max_stm_id(*_stm));
+	return maxId;
+}
+
+size_t TransformStatementToHwProcess::max_stm_id(HwProcess & proc) {
+	size_t maxId = 0;
+	for (auto stm : proc.statements)
+		maxId = std::max(maxId, max_stm_id(*stm));
+	return maxId;
+}
+
+void TransformStatementToHwProcess::reduce_processes(
+		std::vector<HwProcess*> & processes) {
+	std::vector<HwProcess*> res;
+
+	//processes.sort(key=lambda x: (x.name, maxStmId(x)), reverse=True)
+	// now try to reduce processes with nearly same structure of statements into one
+	// to minimize number of processes
+	for (auto & g : groupedby<size_t, HwProcess*>(processes,
+			[](HwProcess* p) {return p->rank;})) {
+		auto & procs = g.second;
+
+		// sort to make order of merging same deterministic
+		std::sort(procs.begin(), procs.end(), [](HwProcess* a, HwProcess* b) {
+			if (a->name == b->name) {
+				// we are using the instance number of the first assignment
+				// to make the order to be deterministic and natural
+				return max_stm_id(*a) > max_stm_id(*b);
+			} else {
+				return a->name > b->name;
+			}
+		});
+
+		for (size_t iA = 0; iA < procs.size(); iA++) {
+			auto pA = procs[iA];
+			if (pA == nullptr) {
+				continue;
+			}
+			for (size_t iB = iA + 1; iB < procs.size(); iB++) {
+				auto pB = procs[iB];
+				if (pB == nullptr)
+					continue;
+
+				try {
+					pA = tryToMerge(*pA, *pB);
+				} catch (const IncompatibleStructure & e) {
+					continue;
+				}
+
+				procs[iB] = nullptr;
+			}
+		}
+		for (auto p : procs) {
+			if (p != nullptr)
+				res.push_back(p);
+		}
+	}
+}
+
+bool TransformStatementToHwProcess::checkIfIsTooSimple(HwProcess & proc) {
+	if (proc.statements.size() != 1)
+		return false;
+	auto a = dynamic_cast<Assignment*>(proc.statements[0]);
+	return bool(a);
+}
+
+bool does_intersect(const utils::OrderedSet<Net*> & a,
+		const utils::OrderedSet<iNode*> & b) {
+	return (reinterpret_cast<const utils::OrderedSet<iNode*>*>(&a))->does_intersects(b);
+}
+
+HwProcess * TransformStatementToHwProcess::tryToMerge(HwProcess & procA,
+		HwProcess & procB) {
+	if (checkIfIsTooSimple(procA) or checkIfIsTooSimple(procB)
+			or does_intersect(procA.outputs, procB.sensitivityList)
+			or does_intersect(procB.outputs, procA.sensitivityList)
+			or not QueryStructuralComapatible::is_mergable(procA.statements,
+					procB.statements)) {
+		throw IncompatibleStructure();
+	}
+
+	TransformReduceStatement::merge_statements_vector(procA.statements,
+			procB.statements);
+
+	procA.outputs.extend(procB.outputs);
+	procA.inputs.extend(procB.inputs);
+	procA.sensitivityList.extend(procB.sensitivityList);
+
+	return &procA;
 }
 
 }
