@@ -9,9 +9,10 @@ cache:
 python:
 - '3.6'
 
+// https://github.com/AMS21/Andres-Standard-Library/blob/master/.travis.yml
 matrix:
   include:
-    - env: COMPILER=g++-8 BUILD=Debug
+    - env: COMPILER=g++-7 BUILD=Debug
       compiler: gcc
       addons:
         apt:
@@ -20,7 +21,7 @@ matrix:
             - sourceline: 'ppa:mhier/libboost-latest'
             - ubuntu-toolchain-r-test
           packages:
-            - g++-8
+            - g++-7
             - boost1.67
             - ninja-build
             - python3-pip
