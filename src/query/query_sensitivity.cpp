@@ -27,8 +27,9 @@ void QuerySensitivity::apply(Statement & stm, set<iNode*> & seen) {
 	auto i = dynamic_cast<IfStatement*>(&stm);
 	if (i) {
 		apply(*i, seen);
+		return;
 	}
-	throw runtime_error("not implemented");
+	throw runtime_error("QuerySensitivity::apply not implemented for this data type");
 }
 
 void QuerySensitivity::apply(Assignment & assig, set<iNode*> & seen) {

@@ -19,6 +19,9 @@ namespace transform {
  * which are describing the RTL register, all this processes can be merged all together.
  * However the combinational loops may appear and the process can not contain combinational loop inside.
  *
+ * @attention the inter-process nets and IO has to have set id.hidden flag to false
+ * 			 otherwise sensitivity can not be discovered properly
+ *
  *  1. Split statement in to groups which have same branching structure.
  *  2. If group have combinational loop try to cut off the driver of the signal out.
  *  3. Merge all statements with similar structure to a single statement.
@@ -35,7 +38,17 @@ public:
 		IncompatibleStructure(): std::runtime_error("") {}
 	};
 
+	class CombinationalLoop: public std::runtime_error {
+	public:
+		CombinationalLoop(): std::runtime_error("") {}
+	};
+
 	/*
+	 * Try to pack all statements to a single process
+	 * If there is a combinational loop cut off the driver of inputs to a separate process iteratively
+	 *
+	 * @note the statements should have similar branching structure otherwise very large messy process can b generated
+	 *
 	 * @attention the statements does not have to stay same in circuit
 	 *    (they can be merged with something else or removed).
 	 * */
@@ -103,8 +116,8 @@ public:
 	 */
 	static size_t max_stm_id(HwProcess & proc);
 
-	// Try to merge processes as much is possible
-	static void reduce_processes(std::vector<HwProcess*> & processes);
+	// Try to merge statements with similar branching structure as much as possible
+	static void reduce(std::vector<HwProcess*> & processes);
 
 	/* check if process is just unconditional assignments
 	 * and it is useless to merge them

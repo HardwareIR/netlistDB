@@ -61,7 +61,9 @@ Statement * QueryStructuralComapatible::get_stm_with_branches(
 		const vector<Statement*>::const_iterator & stm_it_end) {
 	while ((stm_it != stm_it_end)) {
 		if ((*stm_it)->rank > 0) {
-			return *stm_it;
+			auto tmp = stm_it;
+			stm_it++;
+			return *tmp;
 		}
 		stm_it++;
 	}
@@ -85,9 +87,8 @@ bool QueryStructuralComapatible::is_mergable(const vector<Statement*> & stmsA,
 		a = get_stm_with_branches(a_it, a_end);
 		b = get_stm_with_branches(b_it, b_end);
 	}
-	// lists are empty
+	// lists are empty or only simple statements like assignments
 	return true;
-
 }
 
 bool QueryStructuralComapatible::if_cond_has_effect(

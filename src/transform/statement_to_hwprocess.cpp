@@ -181,7 +181,7 @@ void TransformStatementToHwProcess::apply(
 				sensitivity.end(), std::inserter(intersect, intersect.begin()));
 		if (intersect.size()) {
 			if (not try_solve_comb_loops) {
-				throw runtime_error(string("Combinational loop"));
+				throw CombinationalLoop();
 			}
 			// try to solve combinational loops by separating drivers of signals
 			// from statements
@@ -252,7 +252,7 @@ void TransformStatementToHwProcess::fill_enclosure(Statement & self,
 	if (i)
 		return fill_enclosure(*i, enclosure);
 
-	throw runtime_error("not implemented for statement of this type");
+	throw runtime_error("TransformStatementToHwProcess::fill_enclosure not implemented for statement of this type");
 }
 
 void TransformStatementToHwProcess::fill_enclosure(IfStatement & self,
@@ -332,9 +332,9 @@ size_t TransformStatementToHwProcess::max_stm_id(HwProcess & proc) {
 	return maxId;
 }
 
-void TransformStatementToHwProcess::reduce_processes(
-		std::vector<HwProcess*> & processes) {
+void TransformStatementToHwProcess::reduce(std::vector<HwProcess*> & processes) {
 	std::vector<HwProcess*> res;
+	res.reserve(processes.size());
 
 	//processes.sort(key=lambda x: (x.name, maxStmId(x)), reverse=True)
 	// now try to reduce processes with nearly same structure of statements into one
@@ -345,13 +345,13 @@ void TransformStatementToHwProcess::reduce_processes(
 
 		// sort to make order of merging same deterministic
 		std::sort(procs.begin(), procs.end(), [](HwProcess* a, HwProcess* b) {
-			if (a->name == b->name) {
+			//if (a->name == b->name) {
 				// we are using the instance number of the first assignment
 				// to make the order to be deterministic and natural
-				return max_stm_id(*a) > max_stm_id(*b);
-			} else {
-				return a->name > b->name;
-			}
+				return max_stm_id(*a) < max_stm_id(*b);
+			//} else {
+			//	return a->name > b->name;
+			//}
 		});
 
 		for (size_t iA = 0; iA < procs.size(); iA++) {
@@ -378,6 +378,7 @@ void TransformStatementToHwProcess::reduce_processes(
 				res.push_back(p);
 		}
 	}
+	processes = res;
 }
 
 bool TransformStatementToHwProcess::checkIfIsTooSimple(HwProcess & proc) {

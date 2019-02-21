@@ -19,6 +19,7 @@ src = [
 	
 	'serializer/verilog.cpp',
 	'transform/indexed_assignment_to_assignment_of_concat.cpp',
+	'transform/mark_inter_process_nets.cpp',
 	'transform/normalize.cpp',
 	'transform/reduce_statement.cpp',
 	'transform/remove_by_mask.cpp',

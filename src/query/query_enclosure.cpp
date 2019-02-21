@@ -24,8 +24,9 @@ void QueryEnclosure::apply(Statement & stm) {
 	auto i = dynamic_cast<IfStatement*>(&stm);
 	if (i) {
 		apply(*i);
+		return;
 	}
-	throw std::runtime_error("not implemented");
+	throw std::runtime_error("QueryEnclosure::apply not implemented for this statement type");
 }
 
 void QueryEnclosure::apply(Assignment & a) {
