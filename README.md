@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/HardwareIR/hardwareIr.svg?branch=master)](https://travis-ci.org/HardwareIR/hardwareIr)
 [![Coverage Status](https://coveralls.io/repos/github/HardwareIR/hardwareIr/badge.svg?branch=master)](https://coveralls.io/github/HardwareIR/hardwareIr?branch=master)
+[ROADMAP](https://drive.google.com/file/d/1zyegLIf7VaBRyb-ED5vgOMmHzW4SRZLp/view?usp=sharing)
 
 (Note that even the name is not in final version...)
 
