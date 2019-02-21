@@ -1,7 +1,7 @@
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
-#define BOOST_TEST_MODULE netlistDB_test
+#define BOOST_TEST_MODULE netlistDB_to_hdl_friendly_test
 
 #include <boost/test/unit_test.hpp>
 #include <functional>
@@ -19,7 +19,7 @@ using namespace netlistDB::hw_type;
 using namespace netlistDB::transform;
 
 
-BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
+BOOST_AUTO_TEST_SUITE( netlistDB_to_hdl_friendly_testsuite )
 
 BOOST_AUTO_TEST_CASE( simple_adder ) {
 	Netlist ctx("adder");
