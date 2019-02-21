@@ -25,6 +25,7 @@ src = [
 	'transform/remove_by_mask.cpp',
 	'transform/remove_useless.cpp',
 	'transform/statement_to_hwprocess.cpp',
+	'transform/to_hdl_friendly.cpp',
 	
 	'function_call.cpp',
 	'function_def.cpp',
