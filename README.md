@@ -1,6 +1,7 @@
 # NetlistDB
 
 [![Build Status](https://travis-ci.org/HardwareIR/hardwareIr.svg?branch=master)](https://travis-ci.org/HardwareIR/hardwareIr)
+[![Build status](https://ci.appveyor.com/api/projects/status/b8y6u2pwjm5eh8n4/branch/master?svg=true)](https://ci.appveyor.com/project/Nic3084362/hardwareir/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/HardwareIR/hardwareIr/badge.svg?branch=master)](https://coveralls.io/github/HardwareIR/hardwareIr?branch=master)
 [ROADMAP](https://drive.google.com/file/d/1zyegLIf7VaBRyb-ED5vgOMmHzW4SRZLp/view?usp=sharing)
 
