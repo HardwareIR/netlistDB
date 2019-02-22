@@ -1,0 +1,17 @@
+environment:
+
+  matrix:
+    #  DISTUTILS_USE_SDK: "1"
+    - PYTHON: "C:\\Python37-x64"
+
+install:
+  - "%PYTHON%\\python.exe -m pip install meson"
+    
+build: f
+  - "%PYTHON%\\python.exe -m meson build"
+  - "%PYTHON%\\python.exe -m meson install"
+
+test_script:
+  - "%PYTHON%\\python.exe -m ninja test "
+
+
