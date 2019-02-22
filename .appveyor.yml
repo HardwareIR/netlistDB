@@ -1,8 +1,11 @@
+image:
+  - Visual Studio 2017
+
+
 environment:
 
   matrix:
     - arch: x64
-      compiler: msvc2017
       PYTHON: "C:\\Python37-x64"
 
 platform:
@@ -11,17 +14,30 @@ platform:
 install:
   - cmd: mkdir C:\ninja-build
   - ps: (new-object net.webclient).DownloadFile('https://github.com/mesonbuild/cidata/raw/master/ninja.exe', 'C:\ninja-build\ninja.exe')
-  #- cmd: if %compiler%==msvc2017 ( call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %arch% )
+  - set CMAKE_MAKE_PROGRAM=ninja.exe
+  - set CMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
   # Print out dependency paths
   - cmd: echo Using Python at %PYTHON%
   # Add neccessary paths to PATH variable
   - cmd: set PATH=%cd%;C:\ninja-build;%PYTHON%;%PYTHON%\Scripts;%PATH%
   # Install meson the build tood
   - cmd: pip install meson
+  # Install make because TBB uses it
+  - choco install make
+  
+  - cd c:\tools\vcpkg
+  # Update ports
+  - git pull
+  - # Update vcpkg
+  - .\bootstrap-vcpkg.bat
+  # Enable integration for Visual Studio/MSBuild
+  - vcpkg integrate install
+  - vcpkg install tbb
+  
   # install conan the package manager
-  - cmd: pip install conan
-  - cmmd: conan user # Create the conan data directory
-  - cmd: conan install TBB/2019_U3@conan/stable
+  #- cmd: pip install conan
+  #- cmmd: conan user # Create the conan data directory
+  #- cmd: conan install TBB/2019_U3@conan/stable
 
 build_script:
   - cmd: echo Building on %arch% with %compiler%
