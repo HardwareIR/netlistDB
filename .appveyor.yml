@@ -20,9 +20,8 @@ install:
   - cmd: pip install meson
   # install conan the package manager
   - cmd: pip install conan
+  - cmmd: conan user # Create the conan data directory
   - cmd: conan install TBB/2019_U3@conan/stable
-  - cmd: mkdir cbuild && cd cbuild && conan install ..
-  - cmd: cd ..
 
 build_script:
   - cmd: echo Building on %arch% with %compiler%
