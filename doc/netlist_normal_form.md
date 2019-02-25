@@ -1,7 +1,10 @@
 # The netlist normal form
 The netlist normal form is simplified format of netlist where each process can be directly mapped to some type of component.
-I think that nearly all previous developers had to think about same thing, but I can not find definition anywhere.
-As I can not find any normal for for representation of circuit I decided to define working version of my own so I can continue.
+
+One of the normal forms is mentioned in this publication:
+http://www.academia.edu/12322605/Symbolic_verification_of_synthesized_RTL_using_Boolean_satisfiability_and_uninterpreted_RTL_transformations
+
+For now I am using custom definition below.
 
 The circuit is in normal form if each statement is primitive assignemt, demultiplexer, multiplexer, register, memory port, latch or latch with non separable mux.
 The circuit does not contain ternary operator.
