@@ -1,39 +1,57 @@
 #pragma once
 #include <exception>
 #include <string>
+#include <vector>
+#include <map>
 
 namespace netlistDB {
 namespace serializer {
 
 class NameOccupiedErr: public std::runtime_error {
-	void * usedOn;
-	NameOccupiedErr(void *usedOn);
+public:
+	const void * usedOn;
+	NameOccupiedErr(const void *usedOn) :
+			std::runtime_error("NameOccupiedErr"), usedOn(usedOn) {
+	}
+};
+
+// dummy object to reserver name for keyword
+class KeyWord {
 };
 
 class NameScope;
 /*
- * if name is discovered in scope it is converted to name_id
+ * If name is discovered in scope it is converted to name_id
  * where id is sequential number for prefix name\_
  */
-class NameScopeItem {
+class NameScopeItem: public std::map<const std::string, const void*> {
 	size_t myLvl;
 
+	/* some names are specified just as prefix and serializer
+	 * should resolve correct name for object
+	 * this happens for most of generated objects
+	 */
+	std::map<const std::string, int> cntrsForPrefixNames;
+
+public:
 	NameScopeItem(size_t myLvl);
-	NameScope * get_child(NameScope & parent);
-	NameScope * get_parent(NameScope & parent);
+	NameScopeItem * get_child(NameScope & parent);
+	NameScopeItem * get_parent(NameScope & parent);
 	std::string __incrPrefixCntrsForChilds(const std::string & prefix,
-			const std::string & currentVal, NameScope & parent);
-	void __registerName(const std::string & name, void *obj,
+			size_t currentVal, NameScope & parent);
+	void __registerName(const std::string & name, const void *obj,
 			NameScope & parent);
 	std::string get_usable_name(const std::string & suggestedName, void * obj,
 			NameScope & parent);
 };
 
-//Scope of used names in hdl
-class NameScope {
+// Scope of used names in HDL to prevent name collision
+class NameScope: public std::vector<NameScopeItem*> {
+public:
+	bool ignorecase;
 
 	NameScope(bool ignorecase);
-	NameScope & fork(size_t lvl);
+	NameScope * fork(size_t lvl);
 
 	/**
 	 *	Trim or extend scope
@@ -41,8 +59,9 @@ class NameScope {
 	 **/
 	void set_level(size_t lvl);
 
-	std::string checkedName(const std::string & actualName, void * actualObj,
-			bool isGlobal = false);
+	std::string checkedName(const std::string & actualName,
+			const void * actualObj, bool isGlobal = false);
 };
+
 }
 }
