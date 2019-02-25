@@ -6,7 +6,7 @@
 [![Gitter Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/netlistDB/community)
 [ROADMAP](https://drive.google.com/file/d/1zyegLIf7VaBRyb-ED5vgOMmHzW4SRZLp/view?usp=sharing)
 
-(Note that even the name is not in final version...)
+(State: pre alfa)
 
 NetlistDB is an experimental netlist database for hardware developement tools (hardware synthesis tools, simulators, code generators, ...).
 It is designed to allow efficient parallel processing of complex circut transofmation tasks while not sacrifising single thread performance.
