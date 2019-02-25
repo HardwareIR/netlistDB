@@ -8,15 +8,20 @@
 #include <iostream>
 #include <fstream>
 #include <stdint.h>
+#include <sstream>
 
 #include <netlistDB/netlist.h>
 #include <netlistDB/statement_if.h>
 #include <netlistDB/hw_type/common.h>
 #include <netlistDB/transform/to_hdl_friendly.h>
+#include <netlistDB/serializer/verilog.h>
 
+using namespace std;
 using namespace netlistDB;
 using namespace netlistDB::hw_type;
 using namespace netlistDB::transform;
+using namespace netlistDB::serializer;
+
 
 
 BOOST_AUTO_TEST_SUITE( netlistDB_to_hdl_friendly_testsuite )
@@ -30,6 +35,10 @@ BOOST_AUTO_TEST_CASE( simple_adder ) {
 
 	TransformToHdlFriendly t;
 	t.apply(ctx);
+
+	stringstream str;
+	Verilog2001 ser;
+	ser.serialize(ctx, str);
 
 }
 
