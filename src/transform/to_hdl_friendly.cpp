@@ -1,5 +1,3 @@
-#pragma once
-
 #include <netlistDB/transform/to_hdl_friendly.h>
 #include <netlistDB/statement_hwprocess.h>
 #include <netlistDB/transform/mark_inter_process_nets.h>
