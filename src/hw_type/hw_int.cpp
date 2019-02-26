@@ -19,7 +19,8 @@ bool HwInt::operator==(const iHwType & _other) const {
 }
 
 HwInt::HwInt(size_t bit_length, bool is_signed, bool has_to_be_vector) :
-		_M_bit_length(bit_length), is_signed(is_signed), has_to_be_vector(
+		all_mask((boost::multiprecision::cpp_int(1) << bit_length) - 1), _M_bit_length(
+				bit_length), is_signed(is_signed), has_to_be_vector(
 				has_to_be_vector) {
 }
 

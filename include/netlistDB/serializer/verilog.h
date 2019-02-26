@@ -65,6 +65,7 @@ public:
 	virtual void tmpl_if();
 
 	virtual ~Verilog2001();
+	void indent(size_t cnt, std::ostream & str);
 
 };
 

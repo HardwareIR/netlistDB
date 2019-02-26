@@ -105,5 +105,12 @@ void Verilog2001::serialize(const IfStatement & stm, std::ostream & str) {
 	}
 }
 
+void Verilog2001::indent(size_t cnt, std::ostream & str) {
+//	for (size_t i = 0; i < cnt; i++) {
+//		str << INDENT;
+//	}
+}
+
+
 }
 }

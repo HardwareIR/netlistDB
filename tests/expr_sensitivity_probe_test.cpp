@@ -49,11 +49,11 @@ BOOST_AUTO_TEST_CASE( single_signal ) {
 		auto & b = ctx.sig_in("b", hw_bit);
 		auto & c = ctx.sig_in("c", hw_bit);
 
-		auto & expr = a & b & c;
+		auto & expr = (a & b) & c;
 		SensitivityCtx sens;
 		set<iNode*> seen;
 		ExprSensitivityProbe::apply(expr, seen, sens);
-		BOOST_TEST(sens == vector<iNode*>({&c, &a, &b, }), tt::per_element());
+		BOOST_TEST(sens == vector<iNode*>({&b, &a, &c, }), tt::per_element());
 	}
 }
 

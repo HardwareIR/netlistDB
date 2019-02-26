@@ -19,6 +19,7 @@ tests = [
 	  ['statement_if', 'test for IfStatemet object'],
 	  ['expr_sensitivity_probe', 'test for the epxression sensitivity probe'],
 	  ['statement_to_hwprocess', 'test for TransformStatementToHwProcess'],
+	  ['unsigned_val', 'tests for unsigned arithmetic'],
 	  ['verilog_basic', 'basic tests for verilog serializer'],
 ]
 
