@@ -38,7 +38,7 @@ Net & Netlist::sig_out(const std::string & name, hw_type::iHwType & t) {
 }
 
 Net & Netlist::sig(hw_type::iHwType & t) {
-	return sig("", t);
+	return sig("sig_", t);
 }
 
 Net & Netlist::sig(const std::string & name, hw_type::iHwType & t) {
