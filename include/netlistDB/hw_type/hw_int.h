@@ -39,6 +39,8 @@ class HwInt: public iHwType {
 	const size_t _M_bit_length;
 
 public:
+	const boost::multiprecision::cpp_int all_mask;
+
 	using value_type = HwIntValue;
 	// true if the value is signed integer
 	const size_t is_signed;
