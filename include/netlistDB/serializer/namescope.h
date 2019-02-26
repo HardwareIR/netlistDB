@@ -41,7 +41,15 @@ public:
 			size_t currentVal, NameScope & parent);
 	void __registerName(const std::string & name, const void *obj,
 			NameScope & parent);
-	std::string get_usable_name(const std::string & suggestedName, void * obj,
+
+	/*
+	 * Get name for the object which does not collide with anything else
+	 *
+	 * @param suggested_name the desired name for this object
+	 * @param obj the object which is the name for
+	 * @param parent the parent NameScope object
+	 * */
+	std::string get_usable_name(const std::string & suggestedName, const void * obj,
 			NameScope & parent);
 };
 

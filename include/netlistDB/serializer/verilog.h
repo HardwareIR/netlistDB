@@ -34,7 +34,7 @@ public:
 	 * @param reserved an additional map of reserved names which can not be used
 	 * 		  in target verilog code
 	 */
-	Verilog2001(std::map<const std::string &, const void*> reserved_names = { });
+	Verilog2001(std::map<const std::string, const void*> reserved_names = { });
 
 	virtual void serialize_type_usage(const hw_type::iHwType & t,
 			std::ostream & str) override;

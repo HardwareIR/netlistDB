@@ -75,7 +75,7 @@ void NameScopeItem::__registerName(const string & name, const void *obj,
 	}
 }
 
-string NameScopeItem::get_usable_name(const string & _suggestedName, void * obj,
+string NameScopeItem::get_usable_name(const string & _suggestedName, const void * obj,
 		NameScope & parent) {
 	assert(
 			_suggestedName.size() > 0

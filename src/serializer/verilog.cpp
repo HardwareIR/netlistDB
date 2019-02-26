@@ -6,7 +6,7 @@ namespace netlistDB {
 namespace serializer {
 
 Verilog2001::Verilog2001(
-		std::map<const std::string &, const void*> reserved_names) :
+		std::map<const std::string, const void*> reserved_names) :
 		name_scope(true) {
 	name_scope.set_level(1);
 	auto & scope = *name_scope[0];
@@ -100,7 +100,8 @@ void Verilog2001::serialize(const IfStatement & stm, std::ostream & str) {
 	if (stm.ifTrue.size() > 0) {
 		str << " begin" << std::endl;
 		for (auto s : stm.ifTrue) {
-
+			throw std::runtime_error(
+					"not implemented Verilog2001::serialize(const IfStatement & stm, std::ostream & str) IO");
 		}
 	}
 }

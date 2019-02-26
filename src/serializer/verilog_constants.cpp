@@ -6,7 +6,7 @@ using namespace std;
 namespace netlistDB {
 namespace serializer {
 
-const set<string> Verilog2001::keywords = { "always"
+const vector<string> Verilog2001::keywords = { "always"
 		"and", "assign", "begin", "buf", "bufif0", "bufif1", "case", "casex",
 		"casez", "cmos", "deassign", "default", "defparam", "disable", "edge",
 		"else", "end", "endcase", "endfunction", "endmodule", "endprimitive",

@@ -71,11 +71,11 @@ public:
 	/*
 	 * Template for component instance
 	 * */
-	virtual void tmpl_component_instance(const std::string & module_name,
+	virtual void serialize_component_instance(const std::string & module_name,
 				const std::string & instance_name,
 				std::vector<Net*> & params, std::map<Net*, Net*> param_map,
 				std::vector<Net*> & io, std::map<Net*, Net*> io_map,
-				std::ostream & str);
+				std::ostream & str) = 0;
 
 	virtual ~Serializer() {
 	}
