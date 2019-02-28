@@ -4,6 +4,7 @@
 #include <set>
 #include <map>
 #include <functional>
+#include <vector>
 
 #include <netlistDB/netlist.h>
 #include <netlistDB/serializer/serializer.h>
@@ -20,6 +21,13 @@ namespace serializer {
 class Verilog2001: public Serializer {
 public:
 	NameScope name_scope;
+	size_t indent_cnt;
+
+	enum VERILOG_NET_TYPE {
+		VERILOG_WIRE,
+		VERILOG_REG,
+		//VERILOG_PORT,
+	};
 
 	static const std::vector<std::string> keywords;
 	static const std::string DEFAULT_FILE_EXT;
@@ -37,15 +45,15 @@ public:
 	Verilog2001(std::map<const std::string, const void*> reserved_names = { });
 
 	virtual void serialize_type_usage(const hw_type::iHwType & t,
-			std::ostream & str) override;
+			std::ostream & str) override {};
 	virtual void serialize_net_usage(const Net & n, std::ostream & str)
-			override;
-	virtual void serialize_net_def(const Net & n, std::ostream & str) override;
+			override {};
+	virtual void serialize_net_def(const Net & n, std::ostream & str) override {};
 	virtual void serialize(const FunctionCall & fncall, std::ostream & str)
-			override;
-	virtual void serialize_io(const Net & io_net, std::ostream & str) override;
-
-	virtual void serialize(const Statement & stm, std::ostream & str) override;
+			override {};
+	virtual void serialize_io(const Net & io_net, std::ostream & str) override {};
+	virtual void serialize(const Statement & stm, std::ostream & str) override {};
+	virtual void serialize_block(const std::vector<Statement*> & stms, std::ostream & str);
 	virtual void serialize(const IfStatement & stm, std::ostream & str)
 			override;
 	virtual void serialize(const Assignment & stm, std::ostream & str) override;
@@ -62,11 +70,10 @@ public:
 			std::vector<Net*> & io, std::map<Net*, Net*> io_map,
 			std::ostream & str) override;
 
-	virtual void tmpl_if();
+	std::ostream & indent(std::ostream & str);
+	enum VERILOG_NET_TYPE verilogTypeOfSig(const Net & n) const;
 
 	virtual ~Verilog2001();
-	void indent(size_t cnt, std::ostream & str);
-
 };
 
 }

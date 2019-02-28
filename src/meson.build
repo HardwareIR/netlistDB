@@ -17,10 +17,10 @@ src = [
 	'query/query_structural_compatible.cpp',
 	'query/query_path.cpp',
 	
+	'serializer/namescope.cpp',
+	'serializer/serializer.cpp',
 	'serializer/verilog_constants.cpp',
 	'serializer/verilog.cpp',
-	'serializer/namescope.cpp',
-	
 	
 	'transform/indexed_assignment_to_assignment_of_concat.cpp',
 	'transform/mark_inter_process_nets.cpp',

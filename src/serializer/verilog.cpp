@@ -7,7 +7,7 @@ namespace serializer {
 
 Verilog2001::Verilog2001(
 		std::map<const std::string, const void*> reserved_names) :
-		name_scope(true) {
+		name_scope(true), indent_cnt(0) {
 	name_scope.set_level(1);
 	auto & scope = *name_scope[0];
 	for (auto & kw : keywords) {
@@ -51,14 +51,18 @@ void Verilog2001::serialize_component_instance(const std::string & module_name,
 	 *{{indent}}    );
 	 *{% endif %}
 	 */
-	str << INDENT << module_name << " ";
+	indent(str) << module_name << " ";
 	if (params.size()) {
 		str << "#(";
+		indent_cnt++;
 		for (auto p : params) {
 			auto src = param_map[p];
 			throw std::runtime_error(
 					"not implemented Verilog2001::tmpl_component_instance param");
 		}
+		str << std::endl;
+		indent_cnt--;
+		indent(str);
 		str << ") ";
 	}
 	if (io.size()) {
@@ -68,8 +72,74 @@ void Verilog2001::serialize_component_instance(const std::string & module_name,
 			throw std::runtime_error(
 					"not implemented Verilog2001::tmpl_component_instance IO");
 		}
+		str << std::endl;
+		indent(str);
 		str << ")";
 	}
+	str << ";";
+}
+
+void Verilog2001::serialize_block(const vector<Statement*> & stms,
+		std::ostream & str) {
+	if (stms.size() == 1) {
+		str << std::endl;
+		indent_cnt++;
+		Serializer::serialize(*stms[0], str);
+		indent_cnt--;
+	} else {
+		str << " begin" << std::endl;
+
+		indent_cnt++;
+		for (auto s : stms) {
+			Serializer::serialize(*s, str);
+		}
+		indent_cnt--;
+
+		indent(str) << "end";
+	}
+}
+
+void Verilog2001::serialize(const Assignment & a, std::ostream & str) {
+	assert(a.dst.val == nullptr);
+
+	indent(str);
+	// resolve if should use procedural assignment
+	auto ver_sig_t = verilogTypeOfSig(a.dst);
+	if (ver_sig_t == VERILOG_NET_TYPE::VERILOG_WIRE and a.parent == nullptr)
+		str << "assign ";
+
+	// resolve the destination
+	serialize_net_usage(a.dst, str);
+	for (size_t i = a.dst_index.size(); i > 0; i--) {
+		str << "[";
+		serialize_net_usage(*a.dst_index[i], str);
+		str << "]";
+	}
+
+	// resolve symbol of assignment
+	if (ver_sig_t == VERILOG_NET_TYPE::VERILOG_REG) {
+		bool evDep = false;
+		for (auto d : a.dst.drivers) {
+			auto driver = dynamic_cast<Statement*>(d);
+			// results of operators etc. should not be declared as hidden
+			// ant thus all drivers should be only assignments
+			if (driver->sens.now_is_event_dependent) {
+				evDep = true;
+				break;
+			}
+		}
+
+		if (not evDep) // or _dst.virtualOnly
+			str << "=";
+		else
+			str << "<=";
+	} else if (ver_sig_t == VERILOG_NET_TYPE::VERILOG_WIRE) {
+		str << "=";
+	} else {
+		throw std::runtime_error(
+				"can not determine type of the Verilog signal");
+	}
+	serialize_net_usage(a.src, str);
 	str << ";";
 }
 
@@ -94,24 +164,50 @@ void Verilog2001::serialize(const IfStatement & stm, std::ostream & str) {
 	 * endif %}
 	 */
 
-	str << INDENT << "if (";
+	indent(str) << "if (";
 	serialize(*stm.condition, str);
 	str << ")";
 	if (stm.ifTrue.size() > 0) {
-		str << " begin" << std::endl;
-		for (auto s : stm.ifTrue) {
-			throw std::runtime_error(
-					"not implemented Verilog2001::serialize(const IfStatement & stm, std::ostream & str) IO");
+		serialize_block(stm.ifTrue, str);
+	}
+	if (stm.elseIf.size() > 0) {
+		for (auto & elif : stm.elseIf) {
+			str << " else if (";
+			serialize_net_usage(*elif.first, str);
+			str << ")";
+			serialize_block(elif.second, str);
 		}
+	}
+
+	if (stm.ifFalse.size() > 0) {
+		indent(str) << "else";
+		serialize_block(stm.ifFalse, str);
 	}
 }
 
-void Verilog2001::indent(size_t cnt, std::ostream & str) {
-//	for (size_t i = 0; i < cnt; i++) {
-//		str << INDENT;
-//	}
+std::ostream & Verilog2001::indent(std::ostream & str) {
+	for (size_t i = 0; i < indent_cnt; i++) {
+		str << INDENT;
+	}
+	return str;
 }
 
+enum Verilog2001::VERILOG_NET_TYPE Verilog2001::verilogTypeOfSig(
+		const Net & n) const {
+	size_t driver_cnt = n.drivers.size();
+	if (n.direction != Direction::DIR_UNKNOWN) {
+		// is port
+		return VERILOG_NET_TYPE::VERILOG_WIRE;
+	} else if (driver_cnt == 1) {
+		auto d = dynamic_cast<Assignment*>(n.drivers[0]);
+		if (d and d->parent and not d->dst_index.size()
+				and not d->sens.now_is_event_dependent and not d->src.id.hidden)
+			// primitive assignment
+			return VERILOG_NET_TYPE::VERILOG_WIRE;
+	}
+
+	return VERILOG_NET_TYPE::VERILOG_REG;
+}
 
 }
 }

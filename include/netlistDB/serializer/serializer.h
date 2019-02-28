@@ -43,7 +43,7 @@ public:
 	/*
 	 * Proxy for serialization methods of all statements
 	 * */
-	virtual void serialize(const Statement & stm, std::ostream & str) = 0;
+	virtual void serialize(const Statement & stm, std::ostream & str);
 	/*
 	 * Serialize if statement to target HDL
 	 **/
