@@ -3,10 +3,10 @@
 #include <netlistDB/netlist.h>
 #include <netlistDB/statement_assignment.h>
 #include <netlistDB/statement_if.h>
+#include <netlistDB/statement_hwprocess.h>
 
 namespace netlistDB {
 namespace serializer {
-
 
 /*
  * The Serializers are converting the Netlist instance to target HDL or other format
@@ -21,8 +21,10 @@ public:
 
 	/*
 	 * Serialize the type id
+	 *
+	 * @return true if there was something added to str
 	 * */
-	virtual void serialize_type_usage(const hw_type::iHwType & t,
+	virtual bool serialize_type_usage(const hw_type::iHwType & t,
 			std::ostream & str) = 0;
 	/*
 	 * Serialize the id of the net in expression
@@ -49,6 +51,10 @@ public:
 	 **/
 	virtual void serialize(const IfStatement & stm, std::ostream & str) = 0;
 	/*
+	 * Serialize if statement to target HDL
+	 **/
+	virtual void serialize(const HwProcess & stm, std::ostream & str) = 0;
+	/*
 	 * Serialize assignment statement to target HDL
 	 * */
 	virtual void serialize(const Assignment & stm, std::ostream & str) = 0;
@@ -72,10 +78,9 @@ public:
 	 * Template for component instance
 	 * */
 	virtual void serialize_component_instance(const std::string & module_name,
-				const std::string & instance_name,
-				std::vector<Net*> & params, std::map<Net*, Net*> param_map,
-				std::vector<Net*> & io, std::map<Net*, Net*> io_map,
-				std::ostream & str) = 0;
+			const std::string & instance_name, std::vector<Net*> & params,
+			std::map<Net*, Net*> param_map, std::vector<Net*> & io,
+			std::map<Net*, Net*> io_map, std::ostream & str) = 0;
 
 	/*
 	 * Serialize the operand, optionally wrap in to braces
@@ -83,9 +88,9 @@ public:
 	 * @param expr_requires_braces if true and the operand is any form of expression
 	 * 			the braces will be added
 	 * */
-	virtual void serialize_operand(const Net & operand, const FunctionCall & oper,
-			bool expr_requires_braces, std::ostream & str);
-
+	virtual void serialize_operand(const Net & operand,
+			const FunctionCall & oper, bool expr_requires_braces,
+			std::ostream & str);
 
 	virtual const std::map<const FunctionDef*, int> & get_operator_precedence() = 0;
 

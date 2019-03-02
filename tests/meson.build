@@ -21,6 +21,7 @@ tests = [
 	  ['statement_to_hwprocess', 'test for TransformStatementToHwProcess'],
 	  ['unsigned_val', 'tests for unsigned arithmetic'],
 	  ['verilog_basic', 'basic tests for verilog serializer'],
+	  ['verilog_simple_modules', 'verilog serializer tests with simple modules'],
 ]
 
 test_common_src = [

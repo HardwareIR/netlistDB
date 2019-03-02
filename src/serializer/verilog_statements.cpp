@@ -1,13 +1,15 @@
 #include <netlistDB/serializer/verilog.h>
 
+using namespace std;
+
 namespace netlistDB {
 namespace serializer {
 
-void Verilog2001::serialize(const Statement & stm, std::ostream & str) {
+void Verilog2001::serialize(const Statement & stm, ostream & str) {
 	Serializer::serialize(stm, str);
 }
 
-void Verilog2001::serialize(const Assignment & a, std::ostream & str) {
+void Verilog2001::serialize(const Assignment & a, ostream & str) {
 	assert(a.dst.val == nullptr);
 
 	indent(str);
@@ -44,14 +46,13 @@ void Verilog2001::serialize(const Assignment & a, std::ostream & str) {
 	} else if (ver_sig_t == VERILOG_NET_TYPE::VERILOG_WIRE) {
 		str << " = ";
 	} else {
-		throw std::runtime_error(
-				"can not determine type of the Verilog signal");
+		throw runtime_error("can not determine type of the Verilog signal");
 	}
 	serialize_net_usage(a.src, str);
 	str << ";";
 }
 
-void Verilog2001::serialize(const IfStatement & stm, std::ostream & str) {
+void Verilog2001::serialize(const IfStatement & stm, ostream & str) {
 	/* {{indent}}if({{ cond }}){%
 	 * if ifTrue|length >0 %} begin
 	 * {%    for s in ifTrue %}{{s}}
@@ -103,6 +104,34 @@ void Verilog2001::serialize(const IfStatement & stm, std::ostream & str) {
 		str << "else";
 		serialize_block(stm.ifFalse, str);
 	}
+}
+
+void Verilog2001::serialize(const HwProcess & stm, ostream & str) {
+	// {% if hasToBeProcess
+	//    %}{{indent}}{%
+	//     if sensitivityList|length>0
+	//          %}always @({{ sensitivityList}}){%
+	//     else %}always_comb
+	// {%  endif%} begin: {{ name }}{%
+	//     if extraVars %}{%
+	//         for ev in extraVars%}
+	// {{           indent}}{{ev}};{%      endfor%}{%
+	//     endif %}{%
+	//     for s in statements %}
+	// {{       s}}{%
+	//     endfor %}
+	// {{  indent}}end
+	// {% else %}{%
+	//     if extraVars %}{%
+	//         for ev in extraVars%}
+	// {{            ev}};
+	// {%      endfor%}{%
+	//     endif %}{%
+	//     for s in statements
+	//        %}{{s}}{%
+	//     endfor %}{%
+	//  endif %}
+	throw runtime_error(std::string("Not implemented ") + __PRETTY_FUNCTION__);
 }
 
 }

@@ -85,6 +85,7 @@ enum Verilog2001::VERILOG_NET_TYPE Verilog2001::verilogTypeOfSig(
 
 	return VERILOG_NET_TYPE::VERILOG_REG;
 }
+
 const std::map<const FunctionDef*, int> & Verilog2001::get_operator_precedence() {
 	return opPrecedence;
 }

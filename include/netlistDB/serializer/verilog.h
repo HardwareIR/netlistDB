@@ -45,8 +45,9 @@ public:
 	 */
 	Verilog2001(std::map<const std::string, const void*> reserved_names = { });
 
-	virtual void serialize_type_usage(const hw_type::iHwType & t,
+	virtual bool serialize_type_usage(const hw_type::iHwType & t,
 			std::ostream & str) override {
+		return false;
 	}
 
 	virtual void serialize_net_usage(const Net & n, std::ostream & str)
@@ -55,14 +56,16 @@ public:
 	}
 	virtual void serialize(const FunctionCall & fncall, std::ostream & str)
 			override;
-	virtual void serialize_io(const Net & io_net, std::ostream & str) override {
-	}
+	virtual void serialize_io(const Net & io_net, std::ostream & str) override;
+
 	virtual void serialize(const Statement & stm, std::ostream & str) override;
 	virtual void serialize_block(const std::vector<Statement*> & stms,
 			std::ostream & str);
 	virtual void serialize(const IfStatement & stm, std::ostream & str)
 			override;
 	virtual void serialize(const Assignment & stm, std::ostream & str) override;
+	virtual void serialize(const HwProcess & stm, std::ostream & str) override;
+
 	virtual void serialize_module_head(const Netlist & netlist,
 			std::ostream & str) override;
 	virtual void serialize_module_body(const Netlist & netlist,
@@ -88,6 +91,7 @@ public:
 	enum VERILOG_NET_TYPE verilogTypeOfSig(const Net & n) const;
 	virtual const std::map<const FunctionDef*, int> & get_operator_precedence()
 			override;
+	void serialize_direction(Direction d, std::ostream & str);
 	virtual ~Verilog2001();
 };
 
