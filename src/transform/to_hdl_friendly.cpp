@@ -12,8 +12,10 @@ bool TransformToHdlFriendly::apply(Netlist & ctx) {
 	vector<Statement*> stms;
 	for (auto n : ctx.nodes) {
 		auto s = dynamic_cast<Statement*>(n);
-		if (s)
+		if (s) {
 			stms.push_back(s);
+			ctx.unregister_node(*s);
+		}
 	}
 	if (stms.size() == 0)
 		return false;
@@ -25,6 +27,8 @@ bool TransformToHdlFriendly::apply(Netlist & ctx) {
 		TransformStatementToHwProcess::apply( { stm }, res, true);
 
 	TransformStatementToHwProcess::reduce(res);
+	for (auto p: res)
+		ctx.register_node(*p);
 
 	return true;
 }
