@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE( single_signal ) {
 		SensitivityCtx sens;
 		set<iNode*> seen;
 		ExprSensitivityProbe::apply(expr, seen, sens);
-		BOOST_TEST(sens == vector<iNode*>({&b, &a, &c, }), tt::per_element());
+		BOOST_TEST(sens == set<iNode*>({&a, &b, &c, }), tt::per_element());
 	}
 }
 
