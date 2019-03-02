@@ -270,23 +270,6 @@ public:
  **/
 class Netlist {
 public:
-	/*
-	 * Add node in to nodes on place specified by index and
-	 * optionally to nets as well
-	 **/
-	void register_node(iNode & n);
-	void register_node(Net & n);
-
-	/*
-	 * Remove node from nodes on place specified by index and
-	 * optionally from nets as well
-	 *
-	 * @note thread safe, but requires compaction to reduce memory footprint
-	 **/
-	void unregister_node(iNode & n);
-	void unregister_node(Net & n);
-
-public:
 	// name for debugging purposes
 	std::string name;
 	std::vector<Net*> nets;
@@ -311,6 +294,22 @@ public:
 	Net & sig(hw_type::iHwType & t);
 	// create internal signal with name specified
 	Net & sig(const std::string & name, hw_type::iHwType & t);
+
+	/*
+	 * Add node in to nodes on place specified by index and
+	 * optionally to nets as well
+	 **/
+	void register_node(iNode & n);
+	void register_node(Net & n);
+
+	/*
+	 * Remove node from nodes on place specified by index and
+	 * optionally from nets as well
+	 *
+	 * @note thread safe, but requires compaction to reduce memory footprint
+	 **/
+	void unregister_node(iNode & n);
+	void unregister_node(Net & n);
 
 	void integrty_assert();
 
