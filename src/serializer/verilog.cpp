@@ -43,9 +43,10 @@ Verilog2001::~Verilog2001() {
 void Verilog2001::serialize_block(const vector<Statement*> & stms,
 		std::ostream & str) {
 	if (stms.size() == 1) {
-		str << std::endl;
+		str << endl;
 		indent_cnt++;
 		Serializer::serialize(*stms[0], str);
+		str << endl;
 		indent_cnt--;
 	} else {
 		str << " begin" << std::endl;
@@ -53,6 +54,7 @@ void Verilog2001::serialize_block(const vector<Statement*> & stms,
 		indent_cnt++;
 		for (auto s : stms) {
 			Serializer::serialize(*s, str);
+			str << endl;
 		}
 		indent_cnt--;
 

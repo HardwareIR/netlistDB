@@ -73,22 +73,34 @@ void Verilog2001::serialize(const IfStatement & stm, std::ostream & str) {
 	 */
 
 	indent(str) << "if (";
-	serialize(*stm.condition, str);
+	serialize_net_usage(*stm.condition, str);
 	str << ")";
 	if (stm.ifTrue.size() > 0) {
 		serialize_block(stm.ifTrue, str);
 	}
+	bool last_is_begin_end_block = stm.ifTrue.size() != 1;
 	if (stm.elseIf.size() > 0) {
 		for (auto & elif : stm.elseIf) {
-			str << " else if (";
+			if (last_is_begin_end_block)
+				str << " ";
+			else
+				indent(str);
+
+			str << "else if (";
 			serialize_net_usage(*elif.first, str);
 			str << ")";
 			serialize_block(elif.second, str);
+
+			last_is_begin_end_block = elif.second.size() != 1;
 		}
 	}
 
 	if (stm.ifFalse.size() > 0) {
-		indent(str) << "else";
+		if (last_is_begin_end_block)
+			str << " ";
+		else
+			indent(str);
+		str << "else";
 		serialize_block(stm.ifFalse, str);
 	}
 }

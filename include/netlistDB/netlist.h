@@ -120,7 +120,7 @@ public:
  * @ivar rank sum of numbers of used branches in statement, used as prefilter
  *     for statement comparing
  *
- * @attention the sensitivity has to be discovered explicitely
+ * @attention the sensitivity has to be discovered explicitly
  */
 class Statement: public OperationNode {
 public:
