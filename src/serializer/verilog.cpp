@@ -15,18 +15,22 @@ Verilog2001::Verilog2001(
 	}
 }
 
-void Verilog2001::serialize_module_head(const Netlist & netlist,
-		ostream & str) {
-}
-
-void Verilog2001::serialize_module_body(const Netlist & netlist,
-		ostream & str) {
-
-}
-
-void Verilog2001::serialize(const Netlist & netlist, ostream & str) {
-	serialize_module_head(netlist, str);
-	serialize_module_body(netlist, str);
+void Verilog2001::serialize_net_usage(const Net & n, std::ostream & str) {
+	if (n.id.hidden) {
+		if (n.val) {
+			assert(n.drivers.size() == 0);
+			throw std::runtime_error(
+					std::string("Not implemented ") + __PRETTY_FUNCTION__);
+		} else {
+			assert(n.drivers.size() == 1);
+			auto op = dynamic_cast<const FunctionCall*>(n.drivers[0]);
+			assert(n.drivers.size() == 1);
+			assert(op);
+			serialize(*op, str);
+		}
+	} else {
+		str << name_scope.checkedName(n.id.name, &n);
+	}
 }
 
 Verilog2001::~Verilog2001() {
@@ -34,49 +38,6 @@ Verilog2001::~Verilog2001() {
 	for (auto & kw : keywords) {
 		delete reinterpret_cast<const KeyWord*>(scope[kw]);
 	}
-}
-
-void Verilog2001::serialize_component_instance(const std::string & module_name,
-		const std::string & instance_name, std::vector<Net*> & params,
-		std::map<Net*, Net*> param_map, std::vector<Net*> & io,
-		std::map<Net*, Net*> io_map, std::ostream & str) {
-	/*
-	 *{{indent}}{{ module_name }} {%
-	 *	if paramsMap|length >0 %}#({{
-	 *		paramsMap|join(',\n    ' + indent)}}
-	 *{{indent}}    ) {%
-	 *  endif %}{{ instanceName }}{%
-	 *  if portMaps|length >0 %} ({{
-	 *      portMaps|join(',\n    ' + indent)}}
-	 *{{indent}}    );
-	 *{% endif %}
-	 */
-	indent(str) << module_name << " ";
-	if (params.size()) {
-		str << "#(";
-		indent_cnt++;
-		for (auto p : params) {
-			auto src = param_map[p];
-			throw std::runtime_error(
-					"not implemented Verilog2001::tmpl_component_instance param");
-		}
-		str << std::endl;
-		indent_cnt--;
-		indent(str);
-		str << ") ";
-	}
-	if (io.size()) {
-		str << " (" << std::endl;
-		for (auto p : io) {
-			auto src = io_map[p];
-			throw std::runtime_error(
-					"not implemented Verilog2001::tmpl_component_instance IO");
-		}
-		str << std::endl;
-		indent(str);
-		str << ")";
-	}
-	str << ";";
 }
 
 void Verilog2001::serialize_block(const vector<Statement*> & stms,
@@ -96,92 +57,6 @@ void Verilog2001::serialize_block(const vector<Statement*> & stms,
 		indent_cnt--;
 
 		indent(str) << "end";
-	}
-}
-
-void Verilog2001::serialize(const Assignment & a, std::ostream & str) {
-	assert(a.dst.val == nullptr);
-
-	indent(str);
-	// resolve if should use procedural assignment
-	auto ver_sig_t = verilogTypeOfSig(a.dst);
-	if (ver_sig_t == VERILOG_NET_TYPE::VERILOG_WIRE and a.parent == nullptr)
-		str << "assign ";
-
-	// resolve the destination
-	serialize_net_usage(a.dst, str);
-	for (size_t i = a.dst_index.size(); i > 0; i--) {
-		str << "[";
-		serialize_net_usage(*a.dst_index[i], str);
-		str << "]";
-	}
-
-	// resolve symbol of assignment
-	if (ver_sig_t == VERILOG_NET_TYPE::VERILOG_REG) {
-		bool evDep = false;
-		for (auto d : a.dst.drivers) {
-			auto driver = dynamic_cast<Statement*>(d);
-			// results of operators etc. should not be declared as hidden
-			// ant thus all drivers should be only assignments
-			if (driver->sens.now_is_event_dependent) {
-				evDep = true;
-				break;
-			}
-		}
-
-		if (not evDep) // or _dst.virtualOnly
-			str << "=";
-		else
-			str << "<=";
-	} else if (ver_sig_t == VERILOG_NET_TYPE::VERILOG_WIRE) {
-		str << "=";
-	} else {
-		throw std::runtime_error(
-				"can not determine type of the Verilog signal");
-	}
-	serialize_net_usage(a.src, str);
-	str << ";";
-}
-
-void Verilog2001::serialize(const IfStatement & stm, std::ostream & str) {
-	/* {{indent}}if({{ cond }}){%
-	 * if ifTrue|length >0 %} begin
-	 * {%    for s in ifTrue %}{{s}}
-	 * {%
-	 *     endfor%}{{indent}}end{%
-	 * endif %}{%
-	 * if elIfs|length >0 %}{%
-	 *     for c, stms in elIfs
-	 *        %} else if({{c}}) begin
-	 * {%     for s in stms %}{{s}}
-	 * {%     endfor%}{{indent}}end{%
-	 *     endfor%}{%
-	 * endif %}{%
-	 * if ifFalse|length >0 %} else begin
-	 * {%  for s in ifFalse %}{{s}}
-	 * {%  endfor
-	 * %}{{indent}}end{%
-	 * endif %}
-	 */
-
-	indent(str) << "if (";
-	serialize(*stm.condition, str);
-	str << ")";
-	if (stm.ifTrue.size() > 0) {
-		serialize_block(stm.ifTrue, str);
-	}
-	if (stm.elseIf.size() > 0) {
-		for (auto & elif : stm.elseIf) {
-			str << " else if (";
-			serialize_net_usage(*elif.first, str);
-			str << ")";
-			serialize_block(elif.second, str);
-		}
-	}
-
-	if (stm.ifFalse.size() > 0) {
-		indent(str) << "else";
-		serialize_block(stm.ifFalse, str);
 	}
 }
 
@@ -208,6 +83,10 @@ enum Verilog2001::VERILOG_NET_TYPE Verilog2001::verilogTypeOfSig(
 
 	return VERILOG_NET_TYPE::VERILOG_REG;
 }
+const std::map<const FunctionDef*, int> & Verilog2001::get_operator_precedence() {
+	return opPrecedence;
+}
+
 
 }
 }

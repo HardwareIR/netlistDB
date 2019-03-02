@@ -20,6 +20,9 @@ src = [
 	'serializer/namescope.cpp',
 	'serializer/serializer.cpp',
 	'serializer/verilog_constants.cpp',
+	'serializer/verilog_ops.cpp',
+	'serializer/verilog_statements.cpp',
+	'serializer/verilog_structural.cpp',
 	'serializer/verilog.cpp',
 	
 	'transform/indexed_assignment_to_assignment_of_concat.cpp',

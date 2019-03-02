@@ -50,61 +50,47 @@ const map<const FunctionDef*, int> Verilog2001::opPrecedence = {
     //{OpCALL, 2},        //
 };
 
-const map<const FunctionDef*, function<void(const string&, ostream &)>> Verilog2001::_unaryOps = {
-    {&OpNeg, [](const string& a, ostream & str) {
-    	str << "~" << a;
-    }},
+const map<const FunctionDef*, const string> Verilog2001::_unaryOps = {
+    {&OpNeg, "~"},
     //{&OpBitsAsSigned, "$signed(%s)"},
     //{&OpBitsToInt, "%s"},
     //{&OpIntToBits, "%s"},
 };
 
-const map<const FunctionDef*, function<void(const string&, const string&, ostream &)>> Verilog2001::_binOps = {
-    {&OpAnd, [](const string& a, const string& b, ostream & str) {
-    	str << a << " & " << b;
-    }},
-    {&OpOr, [](const string& a, const string& b, ostream & str) {
-    	str << a << " | " << b;
-    }},
-    {&OpXor, [](const string& a, const string& b, ostream & str) {
-    	str << a << " ^ " << b;
-    }},
-    {&OpConcat, [](const string& a, const string& b, ostream & str) {
-    	str << "{" << a << ", " << b << "}";
-    }},
-    {&OpDiv, [](const string& a, const string& b, ostream & str) {
-    	str << a << " / " << b;
-    }},
-    //{&OpDownto, '%s:%s'},
-    //{&OpTo, '%s:%s'},
-    {&OpEq, [](const string& a, const string& b, ostream & str) {
-    	str << a << " == " << b;
-    }},
-    {&OpGt, [](const string& a, const string& b, ostream & str) {
-    	str << a << " > " << b;
-    }},
-    {&OpGE, [](const string& a, const string& b, ostream & str) {
-    	str << a << " >= " << b;
-    }},
-    {&OpLE, [](const string& a, const string& b, ostream & str) {
-    	str << a << " <= " << b;
-    }},
-    {&OpLt, [](const string& a, const string& b, ostream & str) {
-    	str << a << " < " << b;
-    }},
-    {&OpSub, [](const string& a, const string& b, ostream & str) {
-    	str << a << " - " << b;
-    }},
-    {&OpMul, [](const string& a, const string& b, ostream & str) {
-    	str << a << " * " << b;
-    }},
-    {&OpNeq, [](const string& a, const string& b, ostream & str) {
-    	str << a << " != " << b;
-    }},
-    {&OpAdd, [](const string& a, const string& b, ostream & str) {
-    	str << a << " + " << b;
-    }},
+const map<const FunctionDef*, const std::string> Verilog2001::_binOps = {
+    {&OpAnd, "&"},
+    {&OpOr, "|"},
+    {&OpXor, "^"},
+    {&OpDiv, "/"},
+    //{&OpDownto, ':'},
+    //{&OpTo, ':'},
+    {&OpEq, "=="},
+    {&OpGt, ">"},
+    {&OpGE, ">="},
+    {&OpLE, "<="},
+    {&OpLt, "<"},
+    {&OpSub, "-"},
+    {&OpMul, "*"},
+    {&OpNeq, "!="},
+    {&OpAdd, "+"},
+
     //{&OpPow, '%s ** %s'},
+};
+
+const map<const FunctionDef*, function<void(Verilog2001&, const FunctionCall &, ostream & str)>> Verilog2001::_specialOp = {
+	{&OpConcat, [](Verilog2001 & s, const FunctionCall & o, ostream & str) {
+		str << "{";
+		s.serialize_operand(*o.args[0], o, true, str);
+		str << ", ";
+		s.serialize_operand(*o.args[1], o, true, str);
+		str << "}";
+	}},
+	{&OpSlice, [](Verilog2001 & s, const FunctionCall & o, ostream & str) {
+		s.serialize_operand(*o.args[0], o, true, str);
+		str << "[" ;
+		s.serialize_operand(*o.args[1], o, false, str);
+		str << "]";
+	}},
 };
 
 

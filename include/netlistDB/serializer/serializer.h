@@ -77,6 +77,18 @@ public:
 				std::vector<Net*> & io, std::map<Net*, Net*> io_map,
 				std::ostream & str) = 0;
 
+	/*
+	 * Serialize the operand, optionally wrap in to braces
+	 *
+	 * @param expr_requires_braces if true and the operand is any form of expression
+	 * 			the braces will be added
+	 * */
+	virtual void serialize_operand(const Net & operand, const FunctionCall & oper,
+			bool expr_requires_braces, std::ostream & str);
+
+
+	virtual const std::map<const FunctionDef*, int> & get_operator_precedence() = 0;
+
 	virtual ~Serializer() {
 	}
 };

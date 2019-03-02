@@ -1,4 +1,3 @@
-
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
 #define BOOST_TEST_MODULE netlistDB_to_hdl_friendly_test
@@ -22,29 +21,52 @@ using namespace netlistDB::hw_type;
 using namespace netlistDB::transform;
 using namespace netlistDB::serializer;
 
-
-
 BOOST_AUTO_TEST_SUITE( netlistDB_to_hdl_friendly_testsuite )
 
-BOOST_AUTO_TEST_CASE( simple_adder ) {
+BOOST_AUTO_TEST_CASE( simple_bin_ops ) {
 	Netlist ctx("adder");
 	auto &a = ctx.sig_in("a", hw_int32);
 	auto &b = ctx.sig_in("b", hw_int32);
 	auto &c = ctx.sig_out("c", hw_int32);
-	c(a + b);
+	auto &c2 = ctx.sig_out("c2", hw_int64);
+	HwInt int4_t(4);
+	auto &a1 = ctx.sig_in("a1", int4_t);
+	auto &c3 = ctx.sig_out("c3", hw_bit);
+
+
+	auto & a_p = c(a + b);
+	auto & a_m = c(a - b);
+	auto & a_mul = c(a * b);
+	auto & a_div = c(a / b);
+	auto & a_xor = c(a ^ b);
+	auto & a_or = c(a | b);
+	auto & a_and = c(a & b);
+	auto & a_conc = c2(a.concat(b));
+	auto & a_index = c3(a[a1]);
 
 	TransformToHdlFriendly t;
 	t.apply(ctx);
 
-	stringstream str;
 	Verilog2001 ser;
-	ser.serialize(ctx, str);
+	vector<pair<Statement*, string>> expected = {
+			{&a_p  , "assign c = a + b;"},
+			{&a_m  , "assign c = a - b;"},
+			{&a_mul, "assign c = a * b;"},
+			{&a_div, "assign c = a / b;"},
+			{&a_xor, "assign c = a ^ b;"},
+			{&a_or , "assign c = a | b;"},
+			{&a_and, "assign c = a & b;"},
+			{&a_conc, "assign c2 = {a, b};"},
+			{&a_index, "assign c3 = a[a1];"},
+	};
+	for (auto & t: expected) {
+		stringstream str;
+		ser.serialize(*t.first, str);
+		BOOST_CHECK_EQUAL(str.str(), t.second);
+	}
+	//ser.serialize(ctx, str);
 
 }
-
-
-
-
 
 //____________________________________________________________________________//
 
