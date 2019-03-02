@@ -12,13 +12,11 @@
 #include <netlistDB/netlist.h>
 #include <netlistDB/statement_if.h>
 #include <netlistDB/hw_type/common.h>
-#include <netlistDB/transform/to_hdl_friendly.h>
 #include <netlistDB/serializer/verilog.h>
 
 using namespace std;
 using namespace netlistDB;
 using namespace netlistDB::hw_type;
-using namespace netlistDB::transform;
 using namespace netlistDB::serializer;
 
 BOOST_AUTO_TEST_SUITE( netlistDB_to_hdl_friendly_testsuite )
@@ -42,9 +40,6 @@ BOOST_AUTO_TEST_CASE( simple_bin_ops ) {
 	auto & a_and = c(a & b);
 	auto & a_conc = c2(a.concat(b));
 	auto & a_index = c3(a[a1]);
-
-	TransformToHdlFriendly t;
-	t.apply(ctx);
 
 	Verilog2001 ser;
 	vector<pair<Statement*, string>> expected = {
@@ -74,9 +69,6 @@ BOOST_AUTO_TEST_CASE( simple_un_ops ) {
 	auto & a_n = c(~a);
 	auto & a_r = c(a.rising());
 	auto & a_f = c(a.falling());
-
-	TransformToHdlFriendly t;
-	t.apply(ctx);
 
 	Verilog2001 ser;
 	{
@@ -114,8 +106,6 @@ BOOST_AUTO_TEST_CASE( simple_if ) {
 	});
 
 	auto ind = Verilog2001::INDENT;
-	TransformToHdlFriendly t;
-	t.apply(ctx);
 
 	Verilog2001 ser;
 	{
