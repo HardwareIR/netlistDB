@@ -19,8 +19,8 @@ Verilog2001::Verilog2001(
 	}
 }
 
-void Verilog2001::serialize_value(const hw_type::HwInt::value_type & val,
-		const hw_type::HwInt & t, std::ostream & str) {
+void Verilog2001::serialize_value(const typename hw_type::HwInt::value_type & val, std::ostream & str) {
+	auto & t = val.t;
 	str << t.bit_length();
 	str << "'";
 
@@ -64,24 +64,13 @@ void Verilog2001::serialize_value(const hw_type::HwInt::value_type & val,
 	str.flags(str_flags);
 }
 
-void Verilog2001::serialize_value(const iHwTypeValue & val, const iHwType & t,
-		std::ostream & str) {
-	auto int_t = dynamic_cast<const HwInt*>(&t);
-	if (int_t) {
-		serialize_value(*dynamic_cast<const HwInt::value_type*>(&val), *int_t,
-				str);
-		return;
-	}
-	throw runtime_error(string("not implemented") + __PRETTY_FUNCTION__);
-}
-
 void Verilog2001::serialize_net_usage(const Net & n, std::ostream & str) {
 	if (n.id.hidden) {
 		if (n.val) {
 			assert(
 					n.drivers.size() == 0
 							&& "constant net should not have any other driver");
-			serialize_value(*n.val, n.t, str);
+			serialize_value(*n.val, str);
 		} else {
 			assert(n.drivers.size() == 1);
 			auto op = dynamic_cast<const FunctionCall*>(n.drivers[0]);

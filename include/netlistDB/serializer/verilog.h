@@ -49,15 +49,13 @@ public:
 
 	using Serializer::serialize;
 	using Serializer::serialize_stm;
+	using Serializer::serialize_value;
 
 	virtual bool serialize_type_usage(const hw_type::iHwType & t,
 			std::ostream & str) override {
 		return false;
 	}
-	virtual void serialize_value(const hw_type::iHwTypeValue & val,
-			const hw_type::iHwType & t, std::ostream & str) override;
-	virtual void serialize_value(const hw_type::HwInt::value_type & val,
-				const hw_type::HwInt & t, std::ostream & str) override;
+	virtual void serialize_value(const typename hw_type::HwInt::value_type & val, std::ostream & str) override;
 	virtual void serialize_net_usage(const Net & n, std::ostream & str)
 			override;
 	virtual void serialize_net_def(const Net & n, std::ostream & str) override {

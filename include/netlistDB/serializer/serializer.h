@@ -30,10 +30,8 @@ public:
 	/*
 	 * Serialize the value of specified type
 	 * */
-	virtual void serialize_value(const hw_type::iHwTypeValue & val,
-			const hw_type::iHwType & t, std::ostream & str) = 0;
-	virtual void serialize_value(const hw_type::HwInt::value_type & val,
-			const hw_type::HwInt & t, std::ostream & str) = 0;
+	virtual void serialize_value(const hw_type::iHwTypeValue & val, std::ostream & str);
+	virtual void serialize_value(const typename hw_type::HwInt::value_type & val, std::ostream & str) = 0;
 
 	/*
 	 * Serialize the id of the net in expression
