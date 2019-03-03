@@ -112,8 +112,9 @@ BOOST_AUTO_TEST_CASE( mux_module ) {
 		ref << "    input a_in3," << endl;
 		ref << "    output reg a_out," << endl;
 		ref << "    input sel);" << endl;
-        ref << endl;
-		ref << "    always @(sel or a_in0 or a_in1 or a_in2 or a_in3) begin: diver_of_a_out" << endl;
+		ref << endl;
+		ref << "    always @(sel or a_in0 or a_in1 or a_in2 or a_in3) begin: diver_of_a_out"
+			<< endl;
 		ref << "        if (sel == 8'h00)" << endl;
 		ref << "            a_out = a_in0;" << endl;
 		ref << "        else if (sel == 8'h01)" << endl;
@@ -124,7 +125,7 @@ BOOST_AUTO_TEST_CASE( mux_module ) {
 		ref << "            a_out = a_in3;" << endl;
 		ref << endl;
 		ref << "    end" << endl;
-        ref << endl;
+		ref << endl;
 		ref << "endmodule";
 
 		ser.serialize(ctx, str);
