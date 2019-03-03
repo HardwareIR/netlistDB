@@ -72,7 +72,6 @@ void Verilog2001::serialize(const IfStatement & stm, ostream & str) {
 	 * %}{{indent}}end{%
 	 * endif %}
 	 */
-
 	indent(str) << "if (";
 	serialize_net_usage(*stm.condition, str);
 	str << ")";
@@ -105,8 +104,14 @@ void Verilog2001::serialize(const IfStatement & stm, ostream & str) {
 		serialize_block(stm.ifFalse, str);
 	}
 }
+void Verilog2001::serialize_tmp_vars(ostream & str) {
+	for (auto & v : tmp_extractor.replacements) {
+		throw std::runtime_error(
+				string(__PRETTY_FUNCTION__) + ": Not implemented");
+	}
+}
 
-void Verilog2001::serialize(const HwProcess & stm, ostream & str) {
+void Verilog2001::serialize(const HwProcess & proc, ostream & str) {
 	// {% if hasToBeProcess
 	//    %}{{indent}}{%
 	//     if sensitivityList|length>0
@@ -131,7 +136,56 @@ void Verilog2001::serialize(const HwProcess & stm, ostream & str) {
 	//        %}{{s}}{%
 	//     endfor %}{%
 	//  endif %}
-	throw runtime_error(std::string("Not implemented ") + __PRETTY_FUNCTION__);
+	tmp_extractor.visit(proc);
+
+	bool anyIsEventDependnt = false;
+	for (auto s : proc.sensitivityList) {
+		if (dynamic_cast<const FunctionCall*>(s)) {
+			anyIsEventDependnt = true;
+			break;
+		}
+	}
+
+	bool hasToBeProcess = tmp_extractor.replacements.size() > 0;
+	if (not hasToBeProcess) {
+		for (auto o : proc.outputs)
+			if (verilogTypeOfSig(*o) == VERILOG_NET_TYPE::VERILOG_REG) {
+				hasToBeProcess = true;
+				break;
+			}
+	}
+	if (hasToBeProcess) {
+		indent(str);
+		if (proc.sensitivityList.size()) {
+			str << "always @(";
+			const iNode* last = proc.sensitivityList.back();
+			for (const iNode* si : proc.sensitivityList) {
+				serialize_sensitivity_list_item(*si, anyIsEventDependnt, proc, str);
+				if (si != last) {
+					str << " or ";
+				}
+			}
+			str << ")";
+		} else {
+			str << "always_comb";
+		}
+		str << " begin: " << name_scope.checkedName(proc.name, &proc) << endl;
+		indent_cnt++;
+		serialize_tmp_vars(str);
+		for (auto s : proc.statements) {
+			serialize(*s, str);
+			str << endl;
+		}
+		indent_cnt--;
+		indent(str) << "end";
+	} else {
+		for (auto stm: proc.statements) {
+			serialize(*stm, str);
+			str << endl;
+		}
+
+	}
+	tmp_extractor.clear();
 }
 
 }

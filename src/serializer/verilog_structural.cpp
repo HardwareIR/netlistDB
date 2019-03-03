@@ -107,14 +107,19 @@ void Verilog2001::serialize_module_body(const Netlist & netlist,
 				// [TODO] proper name allocation for the processes with same name
 				return name_scope.checkedName(a->name, a) < name_scope.checkedName(b->name, b);
 			});
+	indent_cnt++;
 	for (auto p: processes) {
 		serialize(*p, str);
 	}
+	indent_cnt--;
+	str << endl;
 	indent(str) << "endmodule";
 }
 
 void Verilog2001::serialize(const Netlist & netlist, ostream & str) {
 	serialize_module_head(netlist, str);
+	str << endl;
+	str << endl;
 	serialize_module_body(netlist, str);
 }
 
@@ -138,7 +143,7 @@ void Verilog2001::serialize_component_instance(const std::string & module_name,
 		str << "#(";
 		indent_cnt++;
 		for (auto p : params) {
-			auto src = param_map[p];
+			// auto src = param_map[p];
 			throw std::runtime_error(
 					"not implemented Verilog2001::tmpl_component_instance param");
 		}
@@ -149,12 +154,15 @@ void Verilog2001::serialize_component_instance(const std::string & module_name,
 	}
 	if (io.size()) {
 		str << " (" << std::endl;
+
+		indent_cnt++;
 		for (auto p : io) {
-			auto src = io_map[p];
+			// auto src = io_map[p];
 			throw std::runtime_error(
 					"not implemented Verilog2001::tmpl_component_instance IO");
 		}
 		str << std::endl;
+		indent_cnt--;
 		indent(str);
 		str << ")";
 	}

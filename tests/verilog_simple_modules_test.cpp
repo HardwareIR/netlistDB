@@ -21,7 +21,6 @@ using namespace netlistDB::hw_type;
 using namespace netlistDB::serializer;
 using namespace netlistDB::transform;
 
-
 BOOST_AUTO_TEST_SUITE( netlistDB_to_hdl_friendly_testsuite )
 
 BOOST_AUTO_TEST_CASE( simple_wire_module ) {
@@ -36,12 +35,42 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 	Verilog2001 ser;
 	{
 		stringstream str;
-		//ser.serialize(ctx, str);
-		//std::cerr << str.str() << std::endl;
-		//BOOST_CHECK_EQUAL(str.str(), "[TODO]");
+		stringstream ref;
+		ref << "module wire_module(" << endl;
+		ref << "    input a_in," << endl;
+		ref << "    output a_out);" << endl;
+		ref << endl;
+		ref << "    assign a_out = a_in;" << endl;
+		ref << endl;
+		ref << "endmodule";
+		ser.serialize(ctx, str);
+		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}
 }
 
+//BOOST_AUTO_TEST_CASE( simple_ff_module ) {
+//	Netlist ctx("ff_module");
+//
+//	auto &clk = ctx.sig_in("clk", hw_bit);
+//	auto &a_in = ctx.sig_in("a_in", hw_int32);
+//	auto &a_out = ctx.sig_out("a_out", hw_int32);
+//	If(clk.rising()) (
+//			&a_out(a_in)
+//	);
+//	a_out(a_in);
+//
+//	TransformToHdlFriendly t;
+//	t.apply(ctx);
+//
+//	Verilog2001 ser;
+//	{
+//		stringstream str;
+//		stringstream ref;
+//		ser.serialize(ctx, str);
+//		cerr << str.str() << endl;
+//		BOOST_CHECK_EQUAL(str.str(), ref.str());
+//	}
+//}
 
 //____________________________________________________________________________//
 

@@ -9,6 +9,8 @@
 #include <netlistDB/netlist.h>
 #include <netlistDB/serializer/serializer.h>
 #include <netlistDB/serializer/namescope.h>
+#include <netlistDB/serializer/verilog_tmp_var_extractor.h>
+
 
 namespace netlistDB {
 namespace serializer {
@@ -20,6 +22,7 @@ namespace serializer {
 class Verilog2001: public Serializer {
 public:
 	NameScope name_scope;
+	VerilogTmpVarExtractor tmp_extractor;
 	size_t indent_cnt;
 
 	enum VERILOG_NET_TYPE {
@@ -91,7 +94,10 @@ public:
 	enum VERILOG_NET_TYPE verilogTypeOfSig(const Net & n) const;
 	virtual const std::map<const FunctionDef*, int> & get_operator_precedence()
 			override;
+	void serialize_tmp_vars(std::ostream & str);
 	void serialize_direction(Direction d, std::ostream & str);
+	void serialize_sensitivity_list_item(const iNode & item,
+			bool anyIsEventDependent, const HwProcess & proc, std::ostream & str);
 	virtual ~Verilog2001();
 };
 

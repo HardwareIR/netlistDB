@@ -16,6 +16,7 @@ src = [
 	'query/query_structural_cmp.cpp',
 	'query/query_structural_compatible.cpp',
 	'query/query_path.cpp',
+	'query/statement_visitor.cpp',
 	
 	'serializer/namescope.cpp',
 	'serializer/serializer.cpp',
@@ -23,6 +24,7 @@ src = [
 	'serializer/verilog_ops.cpp',
 	'serializer/verilog_statements.cpp',
 	'serializer/verilog_structural.cpp',
+	'serializer/verilog_tmp_var_extractor.cpp',
 	'serializer/verilog.cpp',
 	
 	'transform/indexed_assignment_to_assignment_of_concat.cpp',

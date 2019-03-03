@@ -3,40 +3,46 @@
 #include <exception>
 #include <netlistDB/operator_defs.h>
 
+using namespace std;
+
 namespace netlistDB {
 namespace serializer {
 
-bool _operandIsAnotherOperand(const Net & operand) {
-	return (operand.val == nullptr and operand.id.hidden
-			and operand.drivers.size() == 0
-			and dynamic_cast<const FunctionCall*>(operand.drivers[0]));
-}
+void Verilog2001::serialize_sensitivity_list_item(const iNode & item,
+		bool anyIsEventDependent, const HwProcess & proc, ostream & str) {
+	auto op = dynamic_cast<const FunctionCall*>(&item);
+	auto n = dynamic_cast<const Net*>(&item);
+	if (op) {
+		auto o = &op->fn;
+		assert(op->args.size() == 1);
+		if (o == &OpRising)
+			str << "posedge ";
+		else if (o == &OpFalling)
+			str << "negedge ";
+		else
+			throw std::runtime_error("wrong operator in sensitivity list");
 
-Net & extract_as_tmp_var(Net & n) {
-	throw std::runtime_error(
-			std::string("Not implemented ") + __PRETTY_FUNCTION__);
-	//Net & tmpVar = createTmpVarFn("tmp_concat_", n.t);
-	//tmpVar.def_val = n;
-	//return tmpVar;
+		serialize_net_usage(*op->args[0], str);
+		return;
+	} else if (anyIsEventDependent) {
+		// async reset etc.
+		throw std::runtime_error("[TODO] search usage of net in process and check if negedge or posedge is used");
+
+		//if (n->t.negated) {
+		//	str << "negedge ";
+		//} else {
+		//	str << "posedge ";
+		//}
+		serialize_net_usage(*n, str);
+		return;
+	} else
+		serialize_net_usage(*n, str);
 }
 
 void Verilog2001::serialize_operand(const Net & _operand, const FunctionCall & oper,
 		bool expr_requires_braces, std::ostream & str) {
-	// [TODO] if operand is concatenation and parent operator
-	//        is not concatenation operand should be extracted
-	//        as tmp variable
-	//        * maybe flatten the concatenations
-	auto operand = &_operand;
-	if (&oper.fn != &OpConcat and _operandIsAnotherOperand(_operand)
-			and _operand.drivers.size() == 1) {
-		auto d = dynamic_cast<const FunctionCall*>(_operand.drivers[0]);
-		if (d and &d->fn == &OpConcat) {
-			throw std::runtime_error(
-					std::string("Not implemented ") + __PRETTY_FUNCTION__);
-			//operand = &extract_as_tmp_var(_operand);
-		}
-	}
-	Serializer::serialize_operand(*operand, oper, true, str);
+	auto & operand = tmp_extractor.checked(_operand);
+	Serializer::serialize_operand(operand, oper, expr_requires_braces, str);
 }
 
 void Verilog2001::serialize_generic_binOp(const std::string & op_str,
