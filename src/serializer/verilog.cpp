@@ -1,6 +1,10 @@
 #include <netlistDB/serializer/verilog.h>
+#include <netlistDB/hw_type/hw_int.h>
+#include <netlistDB/bit_utils.h>
 
 using namespace std;
+using namespace netlistDB::hw_type;
+using namespace netlistDB::bit_utils;
 
 namespace netlistDB {
 namespace serializer {
@@ -15,12 +19,69 @@ Verilog2001::Verilog2001(
 	}
 }
 
+void Verilog2001::serialize_value(const hw_type::HwInt::value_type & val,
+		const hw_type::HwInt & t, std::ostream & str) {
+	str << t.bit_length();
+	str << "'";
+
+	auto str_flags = str.flags();
+
+	if ((val.mask != 0 and val.mask != t.all_mask) or t.bit_length() == 1) {
+		// base = 2
+		str << "b";
+		for (int b = int(t.bit_length()) - 1; b >= 0; b--) {
+			auto m = select_bits(val.mask, b, 1);
+			auto v = select_bits(val.value, b, 1);
+			if (m) {
+				if (v) {
+					str << "1";
+				} else {
+					str << "0";
+				}
+			} else {
+				str << "X";
+			}
+		}
+	} else {
+		// base = 16
+		str << "h";
+		constexpr size_t bits_per_char = 4;
+		size_t rounded_size = t.bit_length() / bits_per_char;
+		if (rounded_size * bits_per_char < t.bit_length()) {
+			rounded_size++;
+		}
+		for (int B = rounded_size - 1; B >= 0; B--) {
+			auto m = select_bits(val.mask, B * bits_per_char, bits_per_char);
+			auto v = select_bits(val.value, B * bits_per_char, bits_per_char);
+			if (m) {
+				str << hex << int(v);
+			} else {
+				str << "X";
+			}
+		}
+	}
+
+	str.flags(str_flags);
+}
+
+void Verilog2001::serialize_value(const iHwTypeValue & val, const iHwType & t,
+		std::ostream & str) {
+	auto int_t = dynamic_cast<const HwInt*>(&t);
+	if (int_t) {
+		serialize_value(*dynamic_cast<const HwInt::value_type*>(&val), *int_t,
+				str);
+		return;
+	}
+	throw runtime_error(string("not implemented") + __PRETTY_FUNCTION__);
+}
+
 void Verilog2001::serialize_net_usage(const Net & n, std::ostream & str) {
 	if (n.id.hidden) {
 		if (n.val) {
-			assert(n.drivers.size() == 0);
-			throw std::runtime_error(
-					std::string("Not implemented ") + __PRETTY_FUNCTION__);
+			assert(
+					n.drivers.size() == 0
+							&& "constant net should not have any other driver");
+			serialize_value(*n.val, n.t, str);
 		} else {
 			assert(n.drivers.size() == 1);
 			auto op = dynamic_cast<const FunctionCall*>(n.drivers[0]);
@@ -45,7 +106,7 @@ void Verilog2001::serialize_block(const vector<Statement*> & stms,
 	if (stms.size() == 1) {
 		str << endl;
 		indent_cnt++;
-		Serializer::serialize(*stms[0], str);
+		serialize_stm(*stms[0], str);
 		str << endl;
 		indent_cnt--;
 	} else {
@@ -53,7 +114,7 @@ void Verilog2001::serialize_block(const vector<Statement*> & stms,
 
 		indent_cnt++;
 		for (auto s : stms) {
-			Serializer::serialize(*s, str);
+			serialize_stm(*s, str);
 			str << endl;
 		}
 		indent_cnt--;
@@ -89,7 +150,6 @@ enum Verilog2001::VERILOG_NET_TYPE Verilog2001::verilogTypeOfSig(
 const std::map<const FunctionDef*, int> & Verilog2001::get_operator_precedence() {
 	return opPrecedence;
 }
-
 
 }
 }

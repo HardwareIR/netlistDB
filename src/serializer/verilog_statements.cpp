@@ -5,7 +5,7 @@ using namespace std;
 namespace netlistDB {
 namespace serializer {
 
-void Verilog2001::serialize(const Assignment & a, ostream & str) {
+void Verilog2001::serialize_stm(const Assignment & a, ostream & str) {
 	assert(a.dst.val == nullptr);
 
 	indent(str);
@@ -48,7 +48,7 @@ void Verilog2001::serialize(const Assignment & a, ostream & str) {
 	str << ";";
 }
 
-void Verilog2001::serialize(const IfStatement & stm, ostream & str) {
+void Verilog2001::serialize_stm(const IfStatement & stm, ostream & str) {
 	/* {{indent}}if({{ cond }}){%
 	 * if ifTrue|length >0 %} begin
 	 * {%    for s in ifTrue %}{{s}}
@@ -74,7 +74,7 @@ void Verilog2001::serialize(const IfStatement & stm, ostream & str) {
 		assert(stm.ifFalse_specified == false);
 		auto last = stm.ifTrue.back();
 		for (auto s : stm.ifTrue) {
-			Serializer::serialize(*s, str);
+			serialize_stm(*s, str);
 			if (s != last) {
 				str << endl;
 			}
@@ -131,7 +131,7 @@ void Verilog2001::serialize_tmp_vars(ostream & str) {
 	}
 }
 
-void Verilog2001::serialize(const HwProcess & proc, ostream & str) {
+void Verilog2001::serialize_stm(const HwProcess & proc, ostream & str) {
 	// {% if hasToBeProcess
 	//    %}{{indent}}{%
 	//     if sensitivityList|length>0
@@ -193,7 +193,7 @@ void Verilog2001::serialize(const HwProcess & proc, ostream & str) {
 		indent_cnt++;
 		serialize_tmp_vars(str);
 		for (auto s : proc.statements) {
-			serialize(*s, str);
+			serialize_stm(*s, str);
 			str << endl;
 		}
 		indent_cnt--;
@@ -201,7 +201,7 @@ void Verilog2001::serialize(const HwProcess & proc, ostream & str) {
 	} else {
 		auto last = proc.statements.back();
 		for (auto stm: proc.statements) {
-			serialize(*stm, str);
+			serialize_stm(*stm, str);
 			if (stm != last)
 				str << endl;
 		}

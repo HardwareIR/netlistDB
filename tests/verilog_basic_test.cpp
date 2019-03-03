@@ -21,6 +21,33 @@ using namespace netlistDB::serializer;
 
 BOOST_AUTO_TEST_SUITE( netlistDB_verilog_basic_testsuite )
 
+BOOST_AUTO_TEST_CASE( hwint_values ) {
+	Netlist ctx("test");
+	HwInt hw_uint128(128);
+
+	vector<pair<Net*, string>> expected = {
+			{&ctx.const_net(hw_bit, 1), "1'b1"},
+			{&ctx.const_net(hw_bit, 0), "1'b0"},
+			{&ctx.const_net(hw_bit, 0, 0), "1'bX"},
+			{&ctx.const_net(hw_bit, 0, 1), "1'b0"},
+			{&ctx.const_net(hw_uint128,
+			 (HwInt::value_type::aint_t(1) << 128) -1),
+			 "128'hffffffffffffffffffffffffffffffff"},
+			{&ctx.const_net(hw_uint128,
+			 (HwInt::value_type::aint_t(1) << 128) -1, 0),
+			 "128'hXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"},
+			{&ctx.const_net(hw_uint32, 0x0123DEAD), "32'h0123dead"}
+	};
+
+	Verilog2001 ser;
+	for (auto & t: expected) {
+		stringstream str;
+		ser.serialize_net_usage(*t.first, str);
+		BOOST_CHECK_EQUAL(str.str(), t.second);
+	}
+
+}
+
 BOOST_AUTO_TEST_CASE( simple_bin_ops ) {
 	Netlist ctx("test");
 	auto &a = ctx.sig_in("a", hw_int32);
@@ -63,7 +90,7 @@ BOOST_AUTO_TEST_CASE( simple_bin_ops ) {
 
 	for (auto & t: expected) {
 		stringstream str;
-		ser.serialize(*t.first, str);
+		ser.serialize_stm(*t.first, str);
 		BOOST_CHECK_EQUAL(str.str(), t.second);
 	}
 }
@@ -82,13 +109,13 @@ BOOST_AUTO_TEST_CASE( simple_un_ops ) {
 	Verilog2001 ser;
 	{
 		stringstream str;
-		ser.serialize(a_n, str);
+		ser.serialize_stm(a_n, str);
 		BOOST_CHECK_EQUAL(str.str(), "assign c = ~a;");
 	}
 	{
 		stringstream str;
-		BOOST_CHECK_THROW(ser.serialize(a_r, str), std::runtime_error);
-		BOOST_CHECK_THROW(ser.serialize(a_f, str), std::runtime_error);
+		BOOST_CHECK_THROW(ser.serialize_stm(a_r, str), std::runtime_error);
+		BOOST_CHECK_THROW(ser.serialize_stm(a_f, str), std::runtime_error);
 	}
 }
 
@@ -125,7 +152,7 @@ BOOST_AUTO_TEST_CASE( simple_if ) {
 		ref << "else" << std::endl;
 		ref << ind << "c0 = ~b;" << std::endl;
 
-		ser.serialize(if0, str);
+		ser.serialize_stm(if0, str);
 		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}
 	{
@@ -139,7 +166,7 @@ BOOST_AUTO_TEST_CASE( simple_if ) {
 		ref << ind << "d1 = ~b;" << std::endl;
 		ref << "end";
 
-		ser.serialize(if1, str);
+		ser.serialize_stm(if1, str);
 		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}
 }

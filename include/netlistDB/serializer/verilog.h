@@ -11,7 +11,6 @@
 #include <netlistDB/serializer/namescope.h>
 #include <netlistDB/serializer/verilog_tmp_var_extractor.h>
 
-
 namespace netlistDB {
 namespace serializer {
 
@@ -49,15 +48,21 @@ public:
 	Verilog2001(std::map<const std::string, const void*> reserved_names = { });
 
 	using Serializer::serialize;
+	using Serializer::serialize_stm;
 
 	virtual bool serialize_type_usage(const hw_type::iHwType & t,
 			std::ostream & str) override {
 		return false;
 	}
-
+	virtual void serialize_value(const hw_type::iHwTypeValue & val,
+			const hw_type::iHwType & t, std::ostream & str) override;
+	virtual void serialize_value(const hw_type::HwInt::value_type & val,
+				const hw_type::HwInt & t, std::ostream & str) override;
 	virtual void serialize_net_usage(const Net & n, std::ostream & str)
 			override;
 	virtual void serialize_net_def(const Net & n, std::ostream & str) override {
+		throw std::runtime_error(
+				std::string(__PRETTY_FUNCTION__) + "not implemented");
 	}
 	virtual void serialize(const FunctionCall & fncall, std::ostream & str)
 			override;
@@ -66,10 +71,10 @@ public:
 	virtual void serialize_block(const std::vector<Statement*> & stms,
 			std::ostream & str);
 
-	virtual void serialize(const IfStatement & stm, std::ostream & str)
+	virtual void serialize_stm(const Assignment & stm, std::ostream & str) override;
+	virtual void serialize_stm(const IfStatement & stm, std::ostream & str)
 			override;
-	virtual void serialize(const Assignment & stm, std::ostream & str) override;
-	virtual void serialize(const HwProcess & stm, std::ostream & str) override;
+	virtual void serialize_stm(const HwProcess & stm, std::ostream & str) override;
 
 	virtual void serialize_module_head(const Netlist & netlist,
 			std::ostream & str) override;
@@ -99,7 +104,8 @@ public:
 	void serialize_tmp_vars(std::ostream & str);
 	void serialize_direction(Direction d, std::ostream & str);
 	void serialize_sensitivity_list_item(const iNode & item,
-			bool anyIsEventDependent, const HwProcess & proc, std::ostream & str);
+			bool anyIsEventDependent, const HwProcess & proc,
+			std::ostream & str);
 	virtual ~Verilog2001();
 };
 

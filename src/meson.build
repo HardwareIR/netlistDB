@@ -36,6 +36,7 @@ src = [
 	'transform/statement_to_hwprocess.cpp',
 	'transform/to_hdl_friendly.cpp',
 	
+	'bit_utils.cpp',
 	'function_call.cpp',
 	'function_def.cpp',
 	'istatement.cpp',

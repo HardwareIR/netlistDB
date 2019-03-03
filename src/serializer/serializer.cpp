@@ -3,15 +3,15 @@
 namespace netlistDB {
 namespace serializer {
 
-void Serializer::serialize(const Statement & stm, std::ostream & str) {
+void Serializer::serialize_stm(const Statement & stm, std::ostream & str) {
 	auto a = dynamic_cast<const Assignment*>(&stm);
 	if (a) {
-		serialize(*a, str);
+		serialize_stm(*a, str);
 		return;
 	}
 	auto i = dynamic_cast<const IfStatement*>(&stm);
 	if (i) {
-		serialize(*i, str);
+		serialize_stm(*i, str);
 		return;
 	}
 	throw std::runtime_error(

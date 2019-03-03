@@ -283,6 +283,9 @@ public:
 	// create output signal
 	Net & sig_out(const std::string & name, hw_type::iHwType & t);
 
+	/* create constant net in this Netlist
+	 * @param v value of the constant net
+	 */
 	template<typename hw_type_t>
 	Net & const_net(hw_type_t & t, typename hw_type_t::value_type::aint_t v) {
 		Net & n = sig("const_", t);
@@ -290,6 +293,18 @@ public:
 		return n;
 	}
 
+	/* create constant net in this Netlist
+	 * @param v value of the constant net
+	 * @param mask mask for the value
+	 */
+	template<typename hw_type_t>
+	Net & const_net(hw_type_t & t,
+			typename hw_type_t::value_type::aint_t v,
+			typename hw_type_t::value_type::aint_t mask) {
+		Net & n = sig("const_", t);
+		n.val = new typename hw_type_t::value_type(t, v, mask);
+		return n;
+	}
 	// create internal signals without specified name
 	Net & sig(hw_type::iHwType & t);
 	// create internal signal with name specified

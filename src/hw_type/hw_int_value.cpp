@@ -13,7 +13,7 @@ HwIntValue::HwIntValue(const HwInt & t, uint64_t value, uint64_t mask) :
 
 HwIntValue::HwIntValue(const HwInt & t, const aint_t & value,
 		const aint_t & mask) :
-		t(t), value(value), mask(t.all_mask) {
+		t(t), value(value), mask(mask) {
 }
 
 }

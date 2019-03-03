@@ -4,6 +4,7 @@
 #include <netlistDB/statement_assignment.h>
 #include <netlistDB/statement_if.h>
 #include <netlistDB/statement_hwprocess.h>
+#include <netlistDB/hw_type/hw_int.h>
 
 namespace netlistDB {
 namespace serializer {
@@ -27,6 +28,14 @@ public:
 	virtual bool serialize_type_usage(const hw_type::iHwType & t,
 			std::ostream & str) = 0;
 	/*
+	 * Serialize the value of specified type
+	 * */
+	virtual void serialize_value(const hw_type::iHwTypeValue & val,
+			const hw_type::iHwType & t, std::ostream & str) = 0;
+	virtual void serialize_value(const hw_type::HwInt::value_type & val,
+			const hw_type::HwInt & t, std::ostream & str) = 0;
+
+	/*
 	 * Serialize the id of the net in expression
 	 * */
 	virtual void serialize_net_usage(const Net & n, std::ostream & str) = 0;
@@ -45,19 +54,19 @@ public:
 	/*
 	 * Proxy for serialization methods of all statements
 	 * */
-	virtual void serialize(const Statement & stm, std::ostream & str);
-	/*
-	 * Serialize if statement to target HDL
-	 **/
-	virtual void serialize(const IfStatement & stm, std::ostream & str) = 0;
-	/*
-	 * Serialize if statement to target HDL
-	 **/
-	virtual void serialize(const HwProcess & stm, std::ostream & str) = 0;
+	virtual void serialize_stm(const Statement & stm, std::ostream & str);
 	/*
 	 * Serialize assignment statement to target HDL
 	 * */
-	virtual void serialize(const Assignment & stm, std::ostream & str) = 0;
+	virtual void serialize_stm(const Assignment & stm, std::ostream & str) = 0;
+	/*
+	 * Serialize if statement to target HDL
+	 **/
+	virtual void serialize_stm(const IfStatement & stm, std::ostream & str) = 0;
+	/*
+	 * Serialize if statement to target HDL
+	 **/
+	virtual void serialize_stm(const HwProcess & stm, std::ostream & str) = 0;
 	/*
 	 * Serialize module header with IO specification to target HDL
 	 * */
