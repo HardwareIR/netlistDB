@@ -197,8 +197,10 @@ public:
 	~Netlist();
 };
 
-/**
- * Hyperedge which connects the the statements, expressions, etc.
+/** The net in Netlist instance also the hyperedge which connects
+ *  the statements, expressions, etc.
+ *
+ *  @note The overloaded operators are building the expression in the netlist
  * */
 class Net: public iNode {
 public:
@@ -237,25 +239,84 @@ public:
 	bool is_const();
 
 	Net & operator!() = delete;
+	// bitwise operators
 	Net & operator~();
 	Net & operator|(Net & other);
+	template<typename T>
+	Net & operator|(T val) {
+		return (*this) | wrap_val_to_const_net(val);
+	}
 	Net & operator&(Net & other);
+	template<typename T>
+	Net & operator&(T val) {
+		return (*this) & wrap_val_to_const_net(val);
+	}
 	Net & operator^(Net & other);
-
+	template<typename T>
+	Net & operator^(T val) {
+		return (*this) ^ wrap_val_to_const_net(val);
+	}
+	// cmp operators
 	Net & operator<=(Net & other);
+	template<typename T>
+	Net & operator<=(T val) {
+		return (*this) <= wrap_val_to_const_net(val);
+	}
 	Net & operator<(Net & other);
+	template<typename T>
+	Net & operator<(T val) {
+		return (*this) < wrap_val_to_const_net(val);
+	}
 	Net & operator>=(Net & other);
+	template<typename T>
+	Net & operator>=(T val) {
+		return (*this) >= wrap_val_to_const_net(val);
+	}
 	Net & operator>(Net & other);
+	template<typename T>
+	Net & operator>(T val) {
+		return (*this) > wrap_val_to_const_net(val);
+	}
 	Net & operator==(Net & other);
+	template<typename T>
+	Net & operator==(T val) {
+		return (*this) == wrap_val_to_const_net(val);
+	}
 	Net & operator!=(Net & other);
+	template<typename T>
+	Net & operator!=(T val) {
+		return (*this) != wrap_val_to_const_net(val);
+	}
 
+	// arithmetic operators
 	Net & operator-();
 	Net & operator+(Net & other);
+	template<typename T>
+	Net & operator+(T val) {
+		return (*this) + wrap_val_to_const_net(val);
+	}
 	Net & operator-(Net & other);
+	template<typename T>
+	Net & operator-(T val) {
+		return (*this) - wrap_val_to_const_net(val);
+	}
 	Net & operator*(Net & other);
+	template<typename T>
+	Net & operator*(T val) {
+		return (*this) * wrap_val_to_const_net(val);
+	}
 	Net & operator/(Net & other);
+	template<typename T>
+	Net & operator/(T val) {
+		return (*this) / wrap_val_to_const_net(val);
+	}
 
 	Net & operator[](Net & index);
+	template<typename T>
+	Net & operator[](T val) {
+		return (*this)[wrap_val_to_const_net(val)];
+	}
+
 	Net & concat(Net & other);
 	Net & rising();
 	Net & falling();
@@ -289,10 +350,6 @@ Net & Netlist::const_net(hw_type_t & t,
 	return n;
 }
 
-/* create constant net in this Netlist
- * @param v value of the constant net
- * @param mask mask for the value
- */
 template<typename hw_type_t>
 Net & Netlist::const_net(hw_type_t & t,
 		typename hw_type_t::value_type::aint_t v,
