@@ -78,7 +78,7 @@ enum Verilog2001::VERILOG_NET_TYPE Verilog2001::verilogTypeOfSig(
 	} else if (driver_cnt == 1) {
 		auto d = dynamic_cast<Assignment*>(n.drivers[0]);
 		if (d and not d->parent and not d->dst_index.size()
-				and not d->sens.now_is_event_dependent and not d->src.id.hidden)
+				and not d->sens.now_is_event_dependent)
 			// primitive assignment
 			return VERILOG_NET_TYPE::VERILOG_WIRE;
 	}

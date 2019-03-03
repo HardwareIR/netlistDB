@@ -1,6 +1,6 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
-#define BOOST_TEST_MODULE netlistDB_to_hdl_friendly_test
+#define BOOST_TEST_MODULE netlistDB_verilog_basic_test
 
 #include <boost/test/unit_test.hpp>
 #include <functional>
@@ -19,39 +19,46 @@ using namespace netlistDB;
 using namespace netlistDB::hw_type;
 using namespace netlistDB::serializer;
 
-BOOST_AUTO_TEST_SUITE( netlistDB_to_hdl_friendly_testsuite )
+BOOST_AUTO_TEST_SUITE( netlistDB_verilog_basic_testsuite )
 
 BOOST_AUTO_TEST_CASE( simple_bin_ops ) {
 	Netlist ctx("test");
 	auto &a = ctx.sig_in("a", hw_int32);
 	auto &b = ctx.sig_in("b", hw_int32);
-	auto &c = ctx.sig_out("c", hw_int32);
-	auto &c2 = ctx.sig_out("c2", hw_int64);
 	HwInt int4_t(4);
 	auto &a1 = ctx.sig_in("a1", int4_t);
-	auto &c3 = ctx.sig_out("c3", hw_bit);
 
-	auto & a_p = c(a + b);
-	auto & a_m = c(a - b);
-	auto & a_mul = c(a * b);
-	auto & a_div = c(a / b);
-	auto & a_xor = c(a ^ b);
-	auto & a_or = c(a | b);
-	auto & a_and = c(a & b);
-	auto & a_conc = c2(a.concat(b));
-	auto & a_index = c3(a[a1]);
+	auto & c_p     = ctx.sig_out("c_p", hw_int32);
+	auto & c_m     = ctx.sig_out("c_m", hw_int32);
+	auto & c_mul   = ctx.sig_out("c_mul", hw_int32);
+	auto & c_div   = ctx.sig_out("c_div", hw_int32);
+	auto & c_xor   = ctx.sig_out("c_xor", hw_int32);
+	auto & c_or    = ctx.sig_out("c_or", hw_int32);
+	auto & c_and   = ctx.sig_out("c_and", hw_int32);
+	auto & c_conc  = ctx.sig_out("c_conc", hw_int64);
+	auto & c_index = ctx.sig_out("c_index", hw_bit);
+
+	auto & a_p =     c_p(a + b);
+	auto & a_m =     c_m(a - b);
+	auto & a_mul =   c_mul(a * b);
+	auto & a_div =   c_div(a / b);
+	auto & a_xor =   c_xor(a ^ b);
+	auto & a_or =    c_or(a | b);
+	auto & a_and =   c_and(a & b);
+	auto & a_conc =  c_conc(a.concat(b));
+	auto & a_index = c_index(a[a1]);
 
 	Verilog2001 ser;
 	vector<pair<Statement*, string>> expected = {
-	    {&a_p,   "assign c = a + b;"},
-	    {&a_m,   "assign c = a - b;"},
-	    {&a_mul, "assign c = a * b;"},
-	    {&a_div, "assign c = a / b;"},
-	    {&a_xor, "assign c = a ^ b;"},
-	    {&a_or,  "assign c = a | b;"},
-	    {&a_and, "assign c = a & b;"},
-	    {&a_conc, "assign c2 = {a, b};"},
-	    {&a_index, "assign c3 = a[a1];"},
+	    {&a_p,   "assign c_p = a + b;"},
+	    {&a_m,   "assign c_m = a - b;"},
+	    {&a_mul, "assign c_mul = a * b;"},
+	    {&a_div, "assign c_div = a / b;"},
+	    {&a_xor, "assign c_xor = a ^ b;"},
+	    {&a_or,  "assign c_or = a | b;"},
+	    {&a_and, "assign c_and = a & b;"},
+	    {&a_conc, "assign c_conc = {a, b};"},
+	    {&a_index, "assign c_index = a[a1];"},
 	};
 
 	for (auto & t: expected) {
@@ -65,10 +72,12 @@ BOOST_AUTO_TEST_CASE( simple_un_ops ) {
 	Netlist ctx("test");
 	auto &a = ctx.sig_in("a", hw_int32);
 	auto &c = ctx.sig_out("c", hw_int32);
+	auto &c0 = ctx.sig_in("c0", hw_bit);
+	auto &c1 = ctx.sig_in("c1", hw_bit);
 
 	auto & a_n = c(~a);
-	auto & a_r = c(a.rising());
-	auto & a_f = c(a.falling());
+	auto & a_r = c0(a.rising());
+	auto & a_f = c1(a.falling());
 
 	Verilog2001 ser;
 	{
