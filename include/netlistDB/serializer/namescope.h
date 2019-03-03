@@ -38,7 +38,7 @@ public:
 	NameScopeItem * get_child(NameScope & parent);
 	NameScopeItem * get_parent(NameScope & parent);
 	std::string __incrPrefixCntrsForChilds(const std::string & prefix,
-			size_t currentVal, NameScope & parent);
+			int currentVal, NameScope & parent);
 	void __registerName(const std::string & name, const void *obj,
 			NameScope & parent);
 
@@ -49,8 +49,8 @@ public:
 	 * @param obj the object which is the name for
 	 * @param parent the parent NameScope object
 	 * */
-	std::string get_usable_name(const std::string & suggestedName, const void * obj,
-			NameScope & parent);
+	std::string get_usable_name(const std::string & suggestedName,
+			const void * obj, NameScope & parent);
 };
 
 // Scope of used names in HDL to prevent name collision

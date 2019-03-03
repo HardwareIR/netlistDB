@@ -1,6 +1,6 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
-#define BOOST_TEST_MODULE netlistDB_to_hdl_friendly_test
+#define BOOST_TEST_MODULE netlistDB_verilog_simple_modules_test
 
 #include <boost/test/unit_test.hpp>
 #include <functional>
@@ -21,7 +21,7 @@ using namespace netlistDB::hw_type;
 using namespace netlistDB::serializer;
 using namespace netlistDB::transform;
 
-BOOST_AUTO_TEST_SUITE( netlistDB_to_hdl_friendly_testsuite )
+BOOST_AUTO_TEST_SUITE( netlistDB_verilog_simple_modules_testsuite )
 
 BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 	Netlist ctx("wire_module");
@@ -48,29 +48,39 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 	}
 }
 
-//BOOST_AUTO_TEST_CASE( simple_ff_module ) {
-//	Netlist ctx("ff_module");
-//
-//	auto &clk = ctx.sig_in("clk", hw_bit);
-//	auto &a_in = ctx.sig_in("a_in", hw_int32);
-//	auto &a_out = ctx.sig_out("a_out", hw_int32);
-//	If(clk.rising()) (
-//			&a_out(a_in)
-//	);
-//	a_out(a_in);
-//
-//	TransformToHdlFriendly t;
-//	t.apply(ctx);
-//
-//	Verilog2001 ser;
-//	{
-//		stringstream str;
-//		stringstream ref;
-//		ser.serialize(ctx, str);
-//		cerr << str.str() << endl;
-//		BOOST_CHECK_EQUAL(str.str(), ref.str());
-//	}
-//}
+BOOST_AUTO_TEST_CASE( simple_ff_module ) {
+	Netlist ctx("ff_module");
+
+	auto &clk = ctx.sig_in("clk", hw_bit);
+	auto &a_in = ctx.sig_in("a_in", hw_int32);
+	auto &a_out = ctx.sig_out("a_out", hw_int32);
+	If(clk.rising()) (
+		&a_out(a_in)
+	);
+
+	TransformToHdlFriendly t;
+	t.apply(ctx);
+
+	Verilog2001 ser;
+	{
+		stringstream str;
+		stringstream ref;
+		ref << "module ff_module(" << endl;
+	    ref << "    input a_in,"<< endl;
+	    ref << "    output reg a_out,"<< endl;
+	    ref << "    input clk);"<< endl;
+        ref << endl;
+	    ref << "    always @(posedge clk) begin: diver_of_a_out"<< endl;
+	    ref << "        a_out <= a_in;"<< endl;
+	    ref << "    end"<< endl;
+		ref << endl;
+		ref << "endmodule";
+
+		ser.serialize(ctx, str);
+		//cerr << str.str() << endl;
+		BOOST_CHECK_EQUAL(str.str(), ref.str());
+	}
+}
 
 //____________________________________________________________________________//
 

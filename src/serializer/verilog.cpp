@@ -72,12 +72,12 @@ std::ostream & Verilog2001::indent(std::ostream & str) {
 enum Verilog2001::VERILOG_NET_TYPE Verilog2001::verilogTypeOfSig(
 		const Net & n) const {
 	size_t driver_cnt = n.drivers.size();
-	if (n.direction != Direction::DIR_UNKNOWN) {
-		// is port
+	if (n.direction == Direction::DIR_IN) {
+		// is input port
 		return VERILOG_NET_TYPE::VERILOG_WIRE;
 	} else if (driver_cnt == 1) {
 		auto d = dynamic_cast<Assignment*>(n.drivers[0]);
-		if (d and d->parent and not d->dst_index.size()
+		if (d and not d->parent and not d->dst_index.size()
 				and not d->sens.now_is_event_dependent and not d->src.id.hidden)
 			// primitive assignment
 			return VERILOG_NET_TYPE::VERILOG_WIRE;

@@ -1,11 +1,13 @@
 #include <netlistDB/serializer/verilog_tmp_var_extractor.h>
 #include <netlistDB/operator_defs.h>
+#include <netlistDB/hw_type/common.h>
 
 namespace netlistDB {
 namespace serializer {
 
 VerilogTmpVarExtractor::VerilogTmpVarExtractor() :
 		replacement_ctx("VerilogTmpExtractor_replacement_ctx") {
+	unused = &replacement_ctx.sig("__unused__", hw_type::hw_bit);
 }
 
 void VerilogTmpVarExtractor::clear() {
@@ -15,6 +17,7 @@ void VerilogTmpVarExtractor::clear() {
 	replacement_ctx.nodes.clear();
 	replacement_ctx.nets.clear();
 	replacements.clear();
+	unused = &replacement_ctx.sig("__unused__", hw_type::hw_bit);
 }
 
 const Net & VerilogTmpVarExtractor::checked(const Net & n) {
@@ -25,6 +28,11 @@ const Net & VerilogTmpVarExtractor::checked(const Net & n) {
 		return *f->second;
 	}
 }
+
+bool VerilogTmpVarExtractor::is_unused(const Net & n) {
+	return &checked(n) == unused;
+}
+
 
 bool VerilogTmpVarExtractor::operand_is_another_operand(const Net & operand) {
 	return (operand.val == nullptr and operand.id.hidden
@@ -42,6 +50,11 @@ void VerilogTmpVarExtractor::extract_as_tmp_var(const Net & n,
 }
 
 void VerilogTmpVarExtractor::visit(const FunctionCall & c) {
+	if (&c.fn == &OpRising or &c.fn == &OpFalling) {
+		replacements[&c.res] = unused;
+		return;
+	}
+
 	// if operand is concatenation and parent operator
 	// is not concatenation operand should be extracted
 	// as tmp variable
@@ -51,8 +64,10 @@ void VerilogTmpVarExtractor::visit(const FunctionCall & c) {
 			auto d = dynamic_cast<const FunctionCall*>(operand->drivers[0]);
 			if (d and &d->fn == &OpConcat) {
 				extract_as_tmp_var(*operand, "tmp_concat_");
+				continue;
 			}
 		}
+		visit(*operand);
 	}
 }
 

@@ -110,6 +110,7 @@ void Verilog2001::serialize_module_body(const Netlist & netlist,
 	indent_cnt++;
 	for (auto p: processes) {
 		serialize(*p, str);
+		str << endl;
 	}
 	indent_cnt--;
 	str << endl;

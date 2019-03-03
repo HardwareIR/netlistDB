@@ -27,7 +27,7 @@ NameScopeItem * NameScopeItem::get_parent(NameScope & parent) {
 }
 
 string NameScopeItem::__incrPrefixCntrsForChilds(const string & prefix,
-		size_t currentVal, NameScope & parent) {
+		int currentVal, NameScope & parent) {
 	// [TODO] check if new name is not defined in any direction
 	currentVal += 1;
 	cntrsForPrefixNames[prefix] = currentVal;

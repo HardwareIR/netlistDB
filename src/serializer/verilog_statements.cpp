@@ -5,10 +5,6 @@ using namespace std;
 namespace netlistDB {
 namespace serializer {
 
-void Verilog2001::serialize(const Statement & stm, ostream & str) {
-	Serializer::serialize(stm, str);
-}
-
 void Verilog2001::serialize(const Assignment & a, ostream & str) {
 	assert(a.dst.val == nullptr);
 
@@ -72,6 +68,20 @@ void Verilog2001::serialize(const IfStatement & stm, ostream & str) {
 	 * %}{{indent}}end{%
 	 * endif %}
 	 */
+	if (tmp_extractor.is_unused(*stm.condition)) {
+		assert(stm.elseIf.size() == 0);
+		assert(stm.ifFalse.size() == 0);
+		assert(stm.ifFalse_specified == false);
+		auto last = stm.ifTrue.back();
+		for (auto s : stm.ifTrue) {
+			Serializer::serialize(*s, str);
+			if (s != last) {
+				str << endl;
+			}
+		}
+		return;
+	}
+
 	indent(str) << "if (";
 	serialize_net_usage(*stm.condition, str);
 	str << ")";
@@ -86,7 +96,15 @@ void Verilog2001::serialize(const IfStatement & stm, ostream & str) {
 			else
 				indent(str);
 
-			str << "else if (";
+			str << "else";
+			if (tmp_extractor.is_unused(*elif.first)) {
+				assert(&stm.elseIf.back() == &elif);
+				assert(stm.ifFalse.size() == 0);
+				assert(stm.ifFalse_specified == false);
+				serialize_block(elif.second, str);
+				return;
+			}
+			str << " if (";
 			serialize_net_usage(*elif.first, str);
 			str << ")";
 			serialize_block(elif.second, str);
@@ -106,6 +124,8 @@ void Verilog2001::serialize(const IfStatement & stm, ostream & str) {
 }
 void Verilog2001::serialize_tmp_vars(ostream & str) {
 	for (auto & v : tmp_extractor.replacements) {
+		if (v.second == tmp_extractor.unused)
+			continue;
 		throw std::runtime_error(
 				string(__PRETTY_FUNCTION__) + ": Not implemented");
 	}
@@ -146,7 +166,7 @@ void Verilog2001::serialize(const HwProcess & proc, ostream & str) {
 		}
 	}
 
-	bool hasToBeProcess = tmp_extractor.replacements.size() > 0;
+	bool hasToBeProcess = anyIsEventDependnt or tmp_extractor.replacements.size() > 0;
 	if (not hasToBeProcess) {
 		for (auto o : proc.outputs)
 			if (verilogTypeOfSig(*o) == VERILOG_NET_TYPE::VERILOG_REG) {
@@ -179,9 +199,11 @@ void Verilog2001::serialize(const HwProcess & proc, ostream & str) {
 		indent_cnt--;
 		indent(str) << "end";
 	} else {
+		auto last = proc.statements.back();
 		for (auto stm: proc.statements) {
 			serialize(*stm, str);
-			str << endl;
+			if (stm != last)
+				str << endl;
 		}
 
 	}

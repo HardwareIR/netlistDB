@@ -48,6 +48,8 @@ public:
 	 */
 	Verilog2001(std::map<const std::string, const void*> reserved_names = { });
 
+	using Serializer::serialize;
+
 	virtual bool serialize_type_usage(const hw_type::iHwType & t,
 			std::ostream & str) override {
 		return false;
@@ -61,9 +63,9 @@ public:
 			override;
 	virtual void serialize_io(const Net & io_net, std::ostream & str) override;
 
-	virtual void serialize(const Statement & stm, std::ostream & str) override;
 	virtual void serialize_block(const std::vector<Statement*> & stms,
 			std::ostream & str);
+
 	virtual void serialize(const IfStatement & stm, std::ostream & str)
 			override;
 	virtual void serialize(const Assignment & stm, std::ostream & str) override;
