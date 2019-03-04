@@ -9,7 +9,7 @@
 (State: pre alfa)
 
 NetlistDB is an experimental netlist database for hardware developement tools (hardware synthesis tools, simulators, code generators, ...).
-It is designed to allow efficient parallel processing of complex circut transofmation tasks while not sacrifising single thread performance.
+It is designed to allow efficient parallel processing of complex circut transformation tasks while not sacrificing single thread performance.
 
 ## The purpose of NetlistDB
 
