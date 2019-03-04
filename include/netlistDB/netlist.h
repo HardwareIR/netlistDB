@@ -13,16 +13,17 @@
 #include <assert.h>
 #include <vector>
 #include <unordered_map>
-#include <atomic>
 
+#include <netlistDB/inode.h>
 #include <netlistDB/utils/ordered_set.h>
 #include <netlistDB/varId.h>
 #include <netlistDB/constants.h>
-#include <netlistDB/pointer_container.h>
 #include <netlistDB/function_def.h>
-#include <netlistDB/utils/chained_iterator.h>
 #include <netlistDB/hw_type/ihw_type.h>
 #include <netlistDB/hw_type/ihw_type_value.h>
+#include <netlistDB/hw_type/hw_int.h>
+#include <netlistDB/utils/sensitivity_ctx.h>
+#include "usage_cache_key.h"
 
 namespace netlistDB {
 
@@ -30,64 +31,7 @@ class Net;
 class Netlist;
 class Statement;
 
-/**
- * Inteface for nodes in database
- *
- **/
-class iNode {
-public:
-	// sequential number used as a id during serialization
-	// and as a index in main list of iNode instances in Netlist.nodes
-	size_t index;
-
-	using iterator = utils::ChainedSequence<iNode*>;
-	using predicate_t = std::function<bool(iNode*)>;
-
-	// iterator of endpoints for Net or outputs for statement or result for expression
-	iterator forward;
-	// iterator of drivers for net or inputs for statement or args for expression
-	iterator backward;
-
-	virtual ~iNode() {
-	}
-};
-
 class OperationNode: public iNode {
-};
-
-/*
- * Sensitivity list used for resolution of sensitivity for hw statement instances
- *
- * @ivar contains_event_dep: true if this contains event dependent
- *    sensitivity
- */
-
-class SensitivityCtx: public utils::OrderedSet<iNode*> {
-public:
-	bool contains_event_dep;
-	SensitivityCtx() :
-			contains_event_dep(false) {
-	}
-
-	template<typename iterable>
-	void extend(const iterable & other) {
-		_extend<iterable>(other);
-	}
-
-	void clear() {
-		utils::OrderedSet<iNode*>::clear();
-		contains_event_dep = false;
-	}
-private:
-	template<typename iterable>
-	void _extend(const iterable & other) {
-		utils::OrderedSet<iNode*>::extend(other);
-	}
-	void _extend(const SensitivityCtx & other) {
-		utils::OrderedSet<iNode*>::extend(other);
-		contains_event_dep |= other.contains_event_dep;
-	}
-
 };
 
 /*
@@ -120,7 +64,7 @@ public:
  * @ivar rank sum of numbers of used branches in statement, used as prefilter
  *     for statement comparing
  *
- * @attention the sensitivity has to be discovered explicitely
+ * @attention the sensitivity has to be discovered explicitly
  */
 class Statement: public OperationNode {
 public:
@@ -183,72 +127,23 @@ public:
 	FunctionCall(FunctionDef & fn, Net & op0, Net & op1, Net & res);
 };
 
-/**
- * Hyperedge which connects the the statements, expressions, etc.
+/*
+ * Code construct which connects the nets to the ports of the child component
  * */
-class Net: public iNode {
+class ComponentMap: public iNode {
 public:
-	// container of name and type
-	VarId id;
-	// netlist which is the owner of this signal
-	Netlist & ctx;
+	// backward reference to the Netlist instance
+	// where this component is instantiated
+	Netlist & parent;
+	// ptr on Netlist which is instantiated
+	// @note you can create shared_ptr from local variable using null_deleter
+	const std::shared_ptr<Netlist> component;
+	std::map<Net*, Net*> parent_to_child;
+	std::map<Net*, Net*> child_to_parent;
 
-	// the index of this net in Netlist.nets
-	size_t net_index;
+	ComponentMap(Netlist & parent, std::shared_ptr<Netlist> component);
 
-	// type of value of this signal
-	hw_type::iHwType & t;
-	// the optional value of this signal
-	// if the value is specified the signal is constant
-	hw_type::iHwTypeValue * val;
-	// the value used if signal does not have any explicit driver
-	Net * nop_val;
-
-	// direction of the signal if signal is used in IO
-	Direction direction;
-	// operators/ statements which are driving the value of this signal
-	utils::OrderedSet<OperationNode*> drivers;
-	utils::OrderedSet<OperationNode*> endpoints;
-	using UsageCacheKey = _UsageCacheKey<FunctionDef, Net>;
-	std::unordered_map<UsageCacheKey, Net*> usage_cache;
-	// index used for last priority ordering
-	// represent the sequential number of the signal generated in parent context
-
-	Net(const Net & other) = delete;
-	// use methods from Netlist
-	Net(Netlist & ctx, hw_type::iHwType & t, const std::string & name,
-			Direction direction);
-	bool is_const();
-
-	Net & operator!() = delete;
-	Net & operator~();
-	Net & operator|(Net & other);
-	Net & operator&(Net & other);
-	Net & operator^(Net & other);
-
-	Net & operator<=(Net & other);
-	Net & operator<(Net & other);
-	Net & operator>=(Net & other);
-	Net & operator>(Net & other);
-	Net & operator==(Net & other);
-	Net & operator!=(Net & other);
-
-	Net & operator-();
-	Net & operator+(Net & other);
-	Net & operator-(Net & other);
-	Net & operator*(Net & other);
-	Net & operator/(Net & other);
-
-	Net & operator[](Net & index);
-	Net & concat(Net & other);
-	Net & rising();
-	Net & falling();
-
-	// as assignment
-	Statement & operator()(Net & other);
-
-	// disconnect the selected endpoints
-	void forward_disconnect(iNode::predicate_t pred);
+	void add(Net * parent_net, Net * component_port);
 };
 
 /**
@@ -268,6 +163,39 @@ public:
  **/
 class Netlist {
 public:
+	// name for serialization and debugging
+	std::string name;
+	// nets (and ports) in this netlist (children netlists not included)
+	std::vector<Net*> nets;
+	// all nets, statements, operators, etc.
+	std::vector<iNode*> nodes;
+
+	Netlist(const Netlist & other) = delete;
+	Netlist(const std::string & name);
+
+	// create input signal
+	Net & sig_in(const std::string & name, hw_type::iHwType & t);
+	// create output signal
+	Net & sig_out(const std::string & name, hw_type::iHwType & t);
+
+	/* create constant net in this Netlist
+	 * @param v value of the constant net
+	 */
+	template<typename hw_type_t>
+	Net & const_net(hw_type_t & t, typename hw_type_t::value_type::aint_t v);
+
+	/* create constant net in this Netlist
+	 * @param v value of the constant net
+	 * @param mask mask for the value
+	 */
+	template<typename hw_type_t>
+	Net & const_net(hw_type_t & t, typename hw_type_t::value_type::aint_t v,
+			typename hw_type_t::value_type::aint_t mask);
+	// create internal signals without specified name
+	Net & sig(hw_type::iHwType & t);
+	// create internal signal with name specified
+	Net & sig(const std::string & name, hw_type::iHwType & t);
+
 	/*
 	 * Add node in to nodes on place specified by index and
 	 * optionally to nets as well
@@ -284,29 +212,176 @@ public:
 	void unregister_node(iNode & n);
 	void unregister_node(Net & n);
 
-public:
-	// name for debugging purposes
-	std::string name;
-	std::vector<Net*> nets;
-	std::vector<iNode*> nodes;
-
-	Netlist(const Netlist & other) = delete;
-	Netlist(const std::string & name);
-
-	// create input signal
-	Net & sig_in(const std::string & name, hw_type::iHwType & t);
-	// create output signal
-	Net & sig_out(const std::string & name, hw_type::iHwType & t);
-
-	// create internal signals without specified name
-	Net & sig(hw_type::iHwType & t);
-	// create internal signal with name specified
-	Net & sig(const std::string & name, hw_type::iHwType & t);
-
 	void integrty_assert();
 
 	~Netlist();
 };
+
+/** The net in Netlist instance also the hyperedge which connects
+ *  the statements, expressions, etc.
+ *
+ *  @note The overloaded operators are building the expression in the netlist
+ * */
+class Net: public iNode {
+public:
+	// container of name and type
+	VarId id;
+	// netlist which is the owner of this signal
+	Netlist & ctx;
+
+	// the index of this net in Netlist.nets
+	size_t net_index;
+
+	// type of value of this signal
+	hw_type::iHwType & t;
+	// the optional value of this signal
+	// if the value is specified the signal is constant
+	hw_type::iHwTypeValue * val;
+	// the value used if net does not have any explicit driver
+	Net * nop_val;
+	// the value after reset
+	Net * def_val;
+
+	// direction of the signal if signal is used in IO
+	Direction direction;
+	// operators/ statements which are driving the value of this signal
+	utils::OrderedSet<OperationNode*> drivers;
+	utils::OrderedSet<OperationNode*> endpoints;
+	using UsageCacheKey = _UsageCacheKey<FunctionDef, Net>;
+	std::unordered_map<UsageCacheKey, Net*> usage_cache;
+	// index used for last priority ordering
+	// represent the sequential number of the signal generated in parent context
+
+	Net(const Net & other) = delete;
+	// use methods from Netlist
+	Net(Netlist & ctx, hw_type::iHwType & t, const std::string & name,
+			Direction direction);
+	bool is_const();
+
+	Net & operator!() = delete;
+	// bitwise operators
+	Net & operator~();
+	Net & operator|(Net & other);
+	template<typename T>
+	Net & operator|(T val) {
+		return (*this) | wrap_val_to_const_net(val);
+	}
+	Net & operator&(Net & other);
+	template<typename T>
+	Net & operator&(T val) {
+		return (*this) & wrap_val_to_const_net(val);
+	}
+	Net & operator^(Net & other);
+	template<typename T>
+	Net & operator^(T val) {
+		return (*this) ^ wrap_val_to_const_net(val);
+	}
+	// cmp operators
+	Net & operator<=(Net & other);
+	template<typename T>
+	Net & operator<=(T val) {
+		return (*this) <= wrap_val_to_const_net(val);
+	}
+	Net & operator<(Net & other);
+	template<typename T>
+	Net & operator<(T val) {
+		return (*this) < wrap_val_to_const_net(val);
+	}
+	Net & operator>=(Net & other);
+	template<typename T>
+	Net & operator>=(T val) {
+		return (*this) >= wrap_val_to_const_net(val);
+	}
+	Net & operator>(Net & other);
+	template<typename T>
+	Net & operator>(T val) {
+		return (*this) > wrap_val_to_const_net(val);
+	}
+	Net & operator==(Net & other);
+	template<typename T>
+	Net & operator==(T val) {
+		return (*this) == wrap_val_to_const_net(val);
+	}
+	Net & operator!=(Net & other);
+	template<typename T>
+	Net & operator!=(T val) {
+		return (*this) != wrap_val_to_const_net(val);
+	}
+
+	// arithmetic operators
+	Net & operator-();
+	Net & operator+(Net & other);
+	template<typename T>
+	Net & operator+(T val) {
+		return (*this) + wrap_val_to_const_net(val);
+	}
+	Net & operator-(Net & other);
+	template<typename T>
+	Net & operator-(T val) {
+		return (*this) - wrap_val_to_const_net(val);
+	}
+	Net & operator*(Net & other);
+	template<typename T>
+	Net & operator*(T val) {
+		return (*this) * wrap_val_to_const_net(val);
+	}
+	Net & operator/(Net & other);
+	template<typename T>
+	Net & operator/(T val) {
+		return (*this) / wrap_val_to_const_net(val);
+	}
+
+	Net & operator[](Net & index);
+	template<typename T>
+	Net & operator[](T val) {
+		return (*this)[wrap_val_to_const_net(val)];
+	}
+
+	Net & concat(Net & other);
+	Net & rising();
+	Net & falling();
+
+	// as assignment
+	Statement & operator()(Net & other);
+	template<typename T>
+	Statement & operator()(T val) {
+		return (*this)(wrap_val_to_const_net(val));
+	}
+
+	// disconnect the selected endpoints
+	void forward_disconnect(iNode::predicate_t pred);
+private:
+	/*
+	 * Wrap c-constant to constant net in parent netlist
+	 * */
+	template<typename T>
+	Net & wrap_val_to_const_net(T val) {
+		auto int_t = dynamic_cast<typename hw_type::HwInt*>(&t);
+		if (int_t) {
+			return ctx.const_net(*int_t, val);
+		}
+		throw std::runtime_error(
+				std::string(__PRETTY_FUNCTION__)
+						+ "unknown type for automatic const instantiation");
+	}
+};
+
+template<typename hw_type_t>
+Net & Netlist::const_net(hw_type_t & t,
+		typename hw_type_t::value_type::aint_t v) {
+	Net & n = sig("const_", t);
+	n.val = new typename hw_type_t::value_type(t, v, t.all_mask);
+	return n;
+}
+
+template<typename hw_type_t>
+Net & Netlist::const_net(hw_type_t & t,
+		typename hw_type_t::value_type::aint_t v,
+		typename hw_type_t::value_type::aint_t mask) {
+	Net & n = sig("const_", t);
+	n.val = new typename hw_type_t::value_type(t, v, mask);
+	return n;
+}
 
 }
 

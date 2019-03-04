@@ -1,14 +1,15 @@
 # NetlistDB
 
-[![Build Status](https://travis-ci.org/HardwareIR/hardwareIr.svg?branch=master)](https://travis-ci.org/HardwareIR/hardwareIr)
-[![Build status](https://ci.appveyor.com/api/projects/status/b8y6u2pwjm5eh8n4/branch/master?svg=true)](https://ci.appveyor.com/project/Nic3084362/hardwareir/branch/master)
+[![Build Status](https://travis-ci.org/HardwareIR/netlistDB.svg?branch=master)](https://travis-ci.org/HardwareIR/netlistDB)
+[![Build status](https://ci.appveyor.com/api/projects/status/b8y6u2pwjm5eh8n4/branch/master?svg=true)](https://ci.appveyor.com/project/Nic3084362/netlistDB/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/HardwareIR/hardwareIr/badge.svg?branch=master)](https://coveralls.io/github/HardwareIR/hardwareIr?branch=master)
+[![Gitter Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/netlistDB/community)
 [ROADMAP](https://drive.google.com/file/d/1zyegLIf7VaBRyb-ED5vgOMmHzW4SRZLp/view?usp=sharing)
 
-(Note that even the name is not in final version...)
+(State: pre alfa)
 
 NetlistDB is an experimental netlist database for hardware developement tools (hardware synthesis tools, simulators, code generators, ...).
-It is designed to allow efficient parallel processing of complex circut transofmation tasks while not sacrifising single thread performance.
+It is designed to allow efficient parallel processing of complex circut transformation tasks while not sacrificing single thread performance.
 
 ## The purpose of NetlistDB
 
@@ -92,3 +93,8 @@ r.direction = Direction::DIR_OUT;
 std::vector<QueryMatch::match_t> qres = query_add.search(ctx);
 ```
 
+# Similar libraries
+
+* [chisel3.FIRRTL](https://github.com/freechipsproject/firrtl) Hardware circuit description language for Chisel3
+* [Yosys.RTLIL](https://github.com/YosysHQ/yosys) Verilog AST like IR in Yosys
+* [thorin](https://github.com/AnyDSL/thorin) The Higher-Order Intermediate Representation for LLVM

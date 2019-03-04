@@ -15,7 +15,6 @@ void QuerySensitivity::apply(Netlist & ctx) {
 			seen.clear();
 		}
 	}
-
 }
 
 void QuerySensitivity::apply(Statement & stm, set<iNode*> & seen) {
@@ -60,7 +59,7 @@ void QuerySensitivity::apply(IfStatement & ifstm, set<iNode*> & seen) {
 		ctx.extend(stm->sens.sensitivity);
 	}
 
-	// elseifs
+	// else ifs
 	for (auto & c : ifstm.elseIf) {
 		Net *cond = c.first;
 		auto & stms = c.second;
@@ -90,7 +89,6 @@ void QuerySensitivity::apply(IfStatement & ifstm, set<iNode*> & seen) {
 			apply(*stm, seen);
 			ctx.extend(stm->sens.sensitivity);
 		}
-
 	}
 }
 

@@ -29,16 +29,18 @@ void Netlist::unregister_node(Net & n) {
 
 Net & Netlist::sig_in(const std::string & name, hw_type::iHwType & t) {
 	auto s = new Net(*this, t, name, DIR_IN);
+	s->id.hidden = false;
 	return *s;
 }
 
 Net & Netlist::sig_out(const std::string & name, hw_type::iHwType & t) {
 	auto s = new Net(*this, t, name, DIR_OUT);
+	s->id.hidden = false;
 	return *s;
 }
 
 Net & Netlist::sig(hw_type::iHwType & t) {
-	return sig("", t);
+	return sig("sig_", t);
 }
 
 Net & Netlist::sig(const std::string & name, hw_type::iHwType & t) {

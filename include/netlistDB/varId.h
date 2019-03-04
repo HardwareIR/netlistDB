@@ -5,7 +5,7 @@
 namespace netlistDB {
 
 /**
- * Container for the id od the variable
+ * Container for the id of the variable
  *
  **/
 class VarId {

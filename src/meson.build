@@ -16,8 +16,17 @@ src = [
 	'query/query_structural_cmp.cpp',
 	'query/query_structural_compatible.cpp',
 	'query/query_path.cpp',
+	'query/statement_visitor.cpp',
 	
+	'serializer/namescope.cpp',
+	'serializer/serializer.cpp',
+	'serializer/verilog_constants.cpp',
+	'serializer/verilog_ops.cpp',
+	'serializer/verilog_statements.cpp',
+	'serializer/verilog_structural.cpp',
+	'serializer/verilog_tmp_var_extractor.cpp',
 	'serializer/verilog.cpp',
+	
 	'transform/indexed_assignment_to_assignment_of_concat.cpp',
 	'transform/mark_inter_process_nets.cpp',
 	'transform/normalize.cpp',
@@ -27,6 +36,8 @@ src = [
 	'transform/statement_to_hwprocess.cpp',
 	'transform/to_hdl_friendly.cpp',
 	
+	'bit_utils.cpp',
+	'component_map.cpp',
 	'function_call.cpp',
 	'function_def.cpp',
 	'istatement.cpp',
@@ -40,25 +51,12 @@ src = [
 
 # pack all verilog template files in to single cpp with defined strings
 ver_dir = 'serializer/verilog/'
-templates_to_cpp = find_program('../scripts/templates_to_cpp.py')
-templates_as_cpp = custom_target(
-	'convert_templates_to_cpp',
-    input: [ver_dir + 'component_instance.v', ver_dir + 'if.v',
-            ver_dir + 'module_body.v', ver_dir + 'module_head.v',
-            ver_dir + 'process.v', ver_dir + 'switch.v'],
-    output: ['verilog_templates.cpp'],
-    command: [templates_to_cpp, '@INPUT@', '@OUTPUT@'])
-src += templates_as_cpp
 
 EXTRA_CXX_ARGS = [
 	'-std=c++17',
- 	#'-fopenmp',
 ]
 EXTRA_C_ARGS = []
 
-#cc = meson.get_compiler('c')
-#libgomp = cc.find_library('gomp')
-#boost_thread = dependency('boost', modules: ['thread', 'system'])
 thread_dep = dependency('threads')
 tbb_dep = dependency('tbb')
 netlistDB_incldir = include_directories('../include/')
