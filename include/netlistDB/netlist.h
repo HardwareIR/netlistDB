@@ -13,18 +13,17 @@
 #include <assert.h>
 #include <vector>
 #include <unordered_map>
-#include <atomic>
 
 #include <netlistDB/inode.h>
 #include <netlistDB/utils/ordered_set.h>
 #include <netlistDB/varId.h>
 #include <netlistDB/constants.h>
-#include <netlistDB/pointer_container.h>
 #include <netlistDB/function_def.h>
 #include <netlistDB/hw_type/ihw_type.h>
 #include <netlistDB/hw_type/ihw_type_value.h>
 #include <netlistDB/hw_type/hw_int.h>
 #include <netlistDB/utils/sensitivity_ctx.h>
+#include "usage_cache_key.h"
 
 namespace netlistDB {
 
@@ -128,6 +127,25 @@ public:
 	FunctionCall(FunctionDef & fn, Net & op0, Net & op1, Net & res);
 };
 
+/*
+ * Code construct which connects the nets to the ports of the child component
+ * */
+class ComponentMap: public iNode {
+public:
+	// backward reference to the Netlist instance
+	// where this component is instantiated
+	Netlist & parent;
+	// ptr on Netlist which is instantiated
+	// @note you can create shared_ptr from local variable using null_deleter
+	const std::shared_ptr<Netlist> component;
+	std::map<Net*, Net*> parent_to_child;
+	std::map<Net*, Net*> child_to_parent;
+
+	ComponentMap(Netlist & parent, std::shared_ptr<Netlist> component);
+
+	void add(Net * parent_net, Net * component_port);
+};
+
 /**
  * Circuit graph representation
  *
@@ -145,9 +163,11 @@ public:
  **/
 class Netlist {
 public:
-	// name for debugging purposes
+	// name for serialization and debugging
 	std::string name;
+	// nets (and ports) in this netlist (children netlists not included)
 	std::vector<Net*> nets;
+	// all nets, statements, operators, etc.
 	std::vector<iNode*> nodes;
 
 	Netlist(const Netlist & other) = delete;

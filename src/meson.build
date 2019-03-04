@@ -37,6 +37,7 @@ src = [
 	'transform/to_hdl_friendly.cpp',
 	
 	'bit_utils.cpp',
+	'component_map.cpp',
 	'function_call.cpp',
 	'function_def.cpp',
 	'istatement.cpp',
