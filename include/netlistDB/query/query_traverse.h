@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <netlistDB/netlist.h>
 
 namespace netlistDB {
