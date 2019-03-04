@@ -93,3 +93,8 @@ r.direction = Direction::DIR_OUT;
 std::vector<QueryMatch::match_t> qres = query_add.search(ctx);
 ```
 
+# Similar libraries
+
+* [chisel3.FIRRTL](https://github.com/freechipsproject/firrtl) Hardware circuit description language for Chisel3
+* [Yosys.RTLIL](https://github.com/YosysHQ/yosys) Verilog AST like IR in Yosys
+* [thorin](https://github.com/AnyDSL/thorin) The Higher-Order Intermediate Representation for LLVM
