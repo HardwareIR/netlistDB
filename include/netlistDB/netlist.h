@@ -323,6 +323,10 @@ public:
 
 	// as assignment
 	Statement & operator()(Net & other);
+	template<typename T>
+	Statement & operator()(T val) {
+		return (*this)(wrap_val_to_const_net(val));
+	}
 
 	// disconnect the selected endpoints
 	void forward_disconnect(iNode::predicate_t pred);
