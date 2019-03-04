@@ -9,6 +9,8 @@ namespace netlistDB {
 namespace transform {
 
 bool TransformToHdlFriendly::apply(Netlist & ctx) {
+	TransformMarkInterProcessNets mp;
+	bool modified = mp.apply(ctx);
 	vector<Statement*> stms;
 	for (auto n : ctx.nodes) {
 		auto s = dynamic_cast<Statement*>(n);
@@ -18,11 +20,11 @@ bool TransformToHdlFriendly::apply(Netlist & ctx) {
 		}
 	}
 	if (stms.size() == 0)
-		return false;
+		return modified;
+
+	modified = true;
 
 	vector<HwProcess*> res;
-	TransformMarkInterProcessNets mp;
-	mp.apply(ctx);
 	for (auto stm : stms)
 		TransformStatementToHwProcess::apply( { stm }, res, true);
 
@@ -30,7 +32,7 @@ bool TransformToHdlFriendly::apply(Netlist & ctx) {
 	for (auto p: res)
 		ctx.register_node(*p);
 
-	return true;
+	return modified;
 }
 
 }
