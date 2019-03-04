@@ -75,8 +75,8 @@ void NameScopeItem::__registerName(const string & name, const void *obj,
 	}
 }
 
-string NameScopeItem::get_usable_name(const string & _suggestedName, const void * obj,
-		NameScope & parent) {
+string NameScopeItem::get_usable_name(const string & _suggestedName,
+		const void * obj, NameScope & parent) {
 	assert(
 			_suggestedName.size() > 0
 					&& "at least some part of name has to be specified");
@@ -105,7 +105,12 @@ string NameScopeItem::get_usable_name(const string & _suggestedName, const void 
 }
 
 NameScope::NameScope(bool ignorecase) :
-		ignorecase(ignorecase) {
+		ignorecase(ignorecase), all_names(_all_names) {
+}
+
+NameScope::NameScope(bool ignorecase,
+		std::map<const void*, std::string> & all_names) :
+		ignorecase(ignorecase), all_names(all_names) {
 }
 
 NameScope * NameScope::fork(size_t lvl) {
@@ -127,13 +132,21 @@ void NameScope::set_level(size_t lvl) {
 
 string NameScope::checkedName(const string & actualName, const void * actualObj,
 		bool isGlobal) {
+	auto f = all_names.find(actualObj);
+	if (f != all_names.end()) {
+		// the name was already checked
+		return f->second;
+	}
+
 	NameScopeItem * ch;
 	if (isGlobal) {
 		ch = this->front();
 	} else {
 		ch = this->back();
 	}
-	return ch->get_usable_name(actualName, actualObj, *this);
+	auto n = ch->get_usable_name(actualName, actualObj, *this);
+	all_names[actualObj] = n;
+	return n;
 }
 
 }

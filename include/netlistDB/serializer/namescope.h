@@ -55,10 +55,13 @@ public:
 
 // Scope of used names in HDL to prevent name collision
 class NameScope: public std::vector<NameScopeItem*> {
+	std::map<const void*, std::string> _all_names;
 public:
 	bool ignorecase;
+	std::map<const void*, std::string> & all_names;
 
 	NameScope(bool ignorecase);
+	NameScope(bool ignorecase, std::map<const void*, std::string> & all_names);
 	NameScope * fork(size_t lvl);
 
 	/**

@@ -82,6 +82,45 @@ BOOST_AUTO_TEST_CASE( simple_ff_module ) {
 	}
 }
 
+BOOST_AUTO_TEST_CASE( simple_ff_intern_sig_module ) {
+	Netlist ctx("ff_intern_sig_module");
+
+	auto &clk = ctx.sig_in("clk", hw_bit);
+	auto &a_in = ctx.sig_in("a_in", hw_int32);
+	auto &a_out = ctx.sig_out("a_out", hw_int32);
+	auto &reg = ctx.sig("reg", hw_int32);
+
+	If(clk.rising()) (
+		&reg(a_in)
+	);
+	a_out(reg);
+
+	TransformToHdlFriendly t;
+	t.apply(ctx);
+
+	Verilog2001 ser;
+	{
+		stringstream str;
+		stringstream ref;
+		ref << "module ff_intern_sig_module(" << endl;
+		ref << "    input signed [32-1:0] a_in," << endl;
+		ref << "    output signed [32-1:0] a_out," << endl;
+		ref << "    input clk);" << endl;
+		ref << endl;
+		ref << "    reg signed [32-1:0] reg_0;" << endl;
+		ref << endl;
+		ref << "    assign a_out = reg_0;" << endl;
+		ref << "    always @(posedge clk) begin: diver_of_reg" << endl;
+		ref << "        reg_0 <= a_in;" << endl;
+		ref << "    end" << endl;
+		ref << endl;
+		ref << "endmodule";
+
+		ser.serialize(ctx, str);
+		//cerr << str.str() << endl;
+		BOOST_CHECK_EQUAL(str.str(), ref.str());
+	}
+}
 
 BOOST_AUTO_TEST_CASE( mux_module ) {
 	Netlist ctx("mux_module");

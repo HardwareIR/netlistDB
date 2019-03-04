@@ -90,6 +90,18 @@ void Verilog2001::serialize_module_body(const Netlist & netlist,
 	//{% endfor %}{% for c in componentInstances %}{{c}}
 	//{% endfor %}{% for p in processes %}{{p}}
 	//{% endfor %}{{indent}}endmodule
+	indent_cnt++;
+	bool any_net_def = false;
+	for (auto n: netlist.nets) {
+		if (not n->id.hidden and n->direction == Direction::DIR_UNKNOWN) {
+			serialize_net_def(*n, str);
+			str << endl;
+			any_net_def = true;
+		}
+	}
+	if (any_net_def)
+		str << endl;
+
 	vector<HwProcess*> processes;
 	for (auto n: netlist.nodes) {
 		auto stm = dynamic_cast<Statement*>(n);
@@ -107,7 +119,7 @@ void Verilog2001::serialize_module_body(const Netlist & netlist,
 				// [TODO] proper name allocation for the processes with same name
 				return name_scope.checkedName(a->name, a) < name_scope.checkedName(b->name, b);
 			});
-	indent_cnt++;
+
 	for (auto p: processes) {
 		serialize_stm(*p, str);
 		str << endl;

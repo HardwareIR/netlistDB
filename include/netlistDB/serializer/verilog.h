@@ -56,10 +56,7 @@ public:
 	virtual void serialize_value(const typename hw_type::HwInt::value_type & val, std::ostream & str) override;
 	virtual void serialize_net_usage(const Net & n, std::ostream & str)
 			override;
-	virtual void serialize_net_def(const Net & n, std::ostream & str) override {
-		throw std::runtime_error(
-				std::string(__PRETTY_FUNCTION__) + "not implemented");
-	}
+	virtual void serialize_net_def(const Net & n, std::ostream & str) override;
 	virtual void serialize(const FunctionCall & fncall, std::ostream & str)
 			override;
 	virtual void serialize_io(const Net & io_net, std::ostream & str) override;

@@ -19,6 +19,20 @@ Verilog2001::Verilog2001(
 	}
 }
 
+void Verilog2001::serialize_net_def(const Net & n, std::ostream & str) {
+	indent(str);
+	auto v_t = verilogTypeOfSig(n);
+	if (v_t == VERILOG_NET_TYPE::VERILOG_REG) {
+		str << "reg ";
+	} else {
+		str << "wire ";
+	}
+	if (serialize_type_usage(n.t, str))
+		str << " ";
+
+	str << name_scope.checkedName(n.id.name, &n) << ";";
+}
+
 bool Verilog2001::serialize_type_usage(const hw_type::iHwType & t,
 		std::ostream & str) {
 	auto int_t = dynamic_cast<const HwInt*>(&t);
