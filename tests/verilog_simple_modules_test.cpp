@@ -66,13 +66,13 @@ BOOST_AUTO_TEST_CASE( simple_ff_module ) {
 		stringstream str;
 		stringstream ref;
 		ref << "module ff_module(" << endl;
-	    ref << "    input a_in,"<< endl;
-	    ref << "    output reg a_out,"<< endl;
-	    ref << "    input clk);"<< endl;
-        ref << endl;
-	    ref << "    always @(posedge clk) begin: diver_of_a_out"<< endl;
-	    ref << "        a_out <= a_in;"<< endl;
-	    ref << "    end"<< endl;
+		ref << "    input a_in," << endl;
+		ref << "    output reg a_out," << endl;
+		ref << "    input clk);" << endl;
+		ref << endl;
+		ref << "    always @(posedge clk) begin: diver_of_a_out" << endl;
+		ref << "        a_out <= a_in;" << endl;
+		ref << "    end" << endl;
 		ref << endl;
 		ref << "endmodule";
 
