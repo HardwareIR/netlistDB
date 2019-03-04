@@ -37,8 +37,8 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 		stringstream str;
 		stringstream ref;
 		ref << "module wire_module(" << endl;
-		ref << "    input a_in," << endl;
-		ref << "    output a_out);" << endl;
+		ref << "    input signed [32-1:0] a_in," << endl;
+		ref << "    output signed [32-1:0] a_out);" << endl;
 		ref << endl;
 		ref << "    assign a_out = a_in;" << endl;
 		ref << endl;
@@ -66,8 +66,8 @@ BOOST_AUTO_TEST_CASE( simple_ff_module ) {
 		stringstream str;
 		stringstream ref;
 		ref << "module ff_module(" << endl;
-		ref << "    input a_in," << endl;
-		ref << "    output reg a_out," << endl;
+		ref << "    input signed [32-1:0] a_in," << endl;
+		ref << "    output reg signed [32-1:0] a_out," << endl;
 		ref << "    input clk);" << endl;
 		ref << endl;
 		ref << "    always @(posedge clk) begin: diver_of_a_out" << endl;
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE( simple_ff_module ) {
 BOOST_AUTO_TEST_CASE( mux_module ) {
 	Netlist ctx("mux_module");
 
-	auto &sel = ctx.sig_in("sel", hw_int8);
+	auto &sel = ctx.sig_in("sel", hw_uint8);
 	auto &a_in0 = ctx.sig_in("a_in0", hw_int32);
 	auto &a_in1 = ctx.sig_in("a_in1", hw_int32);
 	auto &a_in2 = ctx.sig_in("a_in2", hw_int32);
@@ -96,7 +96,8 @@ BOOST_AUTO_TEST_CASE( mux_module ) {
 	If(sel == 0) (&a_out(a_in0))
 	.Elif(sel == 1, &a_out(a_in1))
 	.Elif(sel == 2, &a_out(a_in2))
-	.Elif(sel == 3, &a_out(a_in3));
+	.Elif(sel == 3, &a_out(a_in3))
+	.Else(&a_out(0));
 
 	TransformToHdlFriendly t;
 	t.apply(ctx);
@@ -106,12 +107,12 @@ BOOST_AUTO_TEST_CASE( mux_module ) {
 		stringstream str;
 		stringstream ref;
 		ref << "module mux_module(" << endl;
-		ref << "    input a_in0," << endl;
-		ref << "    input a_in1," << endl;
-		ref << "    input a_in2," << endl;
-		ref << "    input a_in3," << endl;
-		ref << "    output reg a_out," << endl;
-		ref << "    input sel);" << endl;
+		ref << "    input signed [32-1:0] a_in0," << endl;
+		ref << "    input signed [32-1:0] a_in1," << endl;
+		ref << "    input signed [32-1:0] a_in2," << endl;
+		ref << "    input signed [32-1:0] a_in3," << endl;
+		ref << "    output reg signed [32-1:0] a_out," << endl;
+		ref << "    input [8-1:0] sel);" << endl;
 		ref << endl;
 		ref << "    always @(sel or a_in0 or a_in1 or a_in2 or a_in3) begin: diver_of_a_out"
 			<< endl;
@@ -123,6 +124,8 @@ BOOST_AUTO_TEST_CASE( mux_module ) {
 		ref << "            a_out = a_in2;" << endl;
 		ref << "        else if (sel == 8'h03)" << endl;
 		ref << "            a_out = a_in3;" << endl;
+		ref << "        else" << endl;
+		ref << "            a_out = 32'h00000000;" << endl;
 		ref << endl;
 		ref << "    end" << endl;
 		ref << endl;

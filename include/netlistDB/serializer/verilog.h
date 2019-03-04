@@ -52,9 +52,7 @@ public:
 	using Serializer::serialize_value;
 
 	virtual bool serialize_type_usage(const hw_type::iHwType & t,
-			std::ostream & str) override {
-		return false;
-	}
+			std::ostream & str);
 	virtual void serialize_value(const typename hw_type::HwInt::value_type & val, std::ostream & str) override;
 	virtual void serialize_net_usage(const Net & n, std::ostream & str)
 			override;

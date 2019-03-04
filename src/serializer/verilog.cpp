@@ -19,7 +19,28 @@ Verilog2001::Verilog2001(
 	}
 }
 
-void Verilog2001::serialize_value(const typename hw_type::HwInt::value_type & val, std::ostream & str) {
+bool Verilog2001::serialize_type_usage(const hw_type::iHwType & t,
+		std::ostream & str) {
+	auto int_t = dynamic_cast<const HwInt*>(&t);
+	if (int_t) {
+		if (int_t->bit_length() == 1 and not int_t->has_to_be_vector) {
+			// only single bit, does not require any type specification
+			return false;
+		} else {
+			if (int_t->is_signed)
+				str << "signed ";
+			str << "[" << int_t->bit_length() << "-1:0]";
+			return true;
+		}
+	} else {
+		throw runtime_error(
+				string(__PRETTY_FUNCTION__) + " not implemented for this type");
+	}
+
+}
+
+void Verilog2001::serialize_value(
+		const typename hw_type::HwInt::value_type & val, std::ostream & str) {
 	auto & t = val.t;
 	str << t.bit_length();
 	str << "'";
