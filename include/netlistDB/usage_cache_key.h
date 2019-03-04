@@ -4,6 +4,12 @@
 
 namespace netlistDB {
 
+/*
+ * The key for the Net usage cache
+ * Container of the function and arguments
+ *
+ * [TODO] does not work correctly with const nets where value should be compared instead
+ **/
 template<typename FunctionDef, typename Signal>
 class _UsageCacheKey {
 	FunctionDef * fn;
