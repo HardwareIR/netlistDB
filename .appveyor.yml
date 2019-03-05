@@ -1,14 +1,12 @@
 image:
   - Visual Studio 2017
 
-
 environment:
 
   matrix:
     - arch: x64
       PYTHON: "C:\\Python37-x64"
       BOOST_ROOT: "C:\\Libraries\\boost_1_67_0"
-      # BOOST_LIBRARYDIR: "C:\\Libraries\\boost_1_67_0\\lib64-msvc-14.1"
 
 platform:
   - x64
@@ -37,6 +35,7 @@ before_build:
 build_script:
   - cmd: echo Building on %arch% with %compiler%
   - cmd: meson --backend=ninja build
+  - cmd: type build\meson-logs\meson-log.txt
   - cmd: ninja -C build
 
 test_script:
