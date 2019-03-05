@@ -65,7 +65,7 @@ protected:
 
 public:
 	ChaindedIter(std::vector<_Item> & vectors) :
-			vectors(vectors), actual(nullptr), actual_end(nullptr), actual_vec_i(0) {
+			vectors(vectors), actual_vec_i(0) {
 		if (vectors.size()) {
 			auto & first = vectors[0];
 			std::tie(actual, actual_end) = first.get_begin_end();
