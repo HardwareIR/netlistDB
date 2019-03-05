@@ -18,8 +18,8 @@ install:
   - cmd: echo Using Python at %PYTHON%
   - cmd: echo Using boost at %BOOST_ROOT%
   #- cmd: set BOOST_ROOT=C:\Libraries\boost_1_67_0
-  - cmd: set BOOST_ROOT=%BOOST_ROOT%
-   
+  # - cmd: set BOOST_ROOT=%BOOST_ROOT%
+  - cmd: dir %BOOST_ROOT%
   # Add neccessary paths to PATH variable
   - cmd: set PATH=%cd%;C:\ninja-build;%PYTHON%;%PYTHON%\Scripts;%PATH%
   # Install meson the build tood
@@ -35,10 +35,12 @@ before_build:
 build_script:
   - cmd: echo Building on %arch% with %compiler%
   - cmd: meson --backend=ninja build
-  - cmd: type build\meson-logs\meson-log.txt
+
   - cmd: ninja -C build
 
 test_script:
   - cmd: ninja -C build test
 
-
+on_failure:
+  - cmd: type C:\projects\netlistdb\build\meson-logs\meson-log.txt
+  
