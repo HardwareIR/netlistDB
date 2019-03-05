@@ -1,5 +1,5 @@
 
-test_boost_deps = dependency('boost', modules: ['unit_test_framework', 'system' ])
+test_boost_deps = dependency('boost', modules: ['unit_test_framework', 'thread', 'system' ])
 
 tests = [
 	  ['basic', 'test of the core'],
