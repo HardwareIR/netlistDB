@@ -14,8 +14,6 @@ platform:
 install:
   - cmd: mkdir C:\ninja-build
   - ps: (new-object net.webclient).DownloadFile('https://github.com/mesonbuild/cidata/raw/master/ninja.exe', 'C:\ninja-build\ninja.exe')
-  - set CMAKE_MAKE_PROGRAM=ninja.exe
-  - set CMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake
   # Print out dependency paths
   - cmd: echo Using Python at %PYTHON%
   # Add neccessary paths to PATH variable
@@ -28,7 +26,7 @@ install:
   #- cmmd: conan user # Create the conan data directory
   #- cmd: conan install TBB/2019_U3@conan/stable
 before_build:
-  - cd C:\projects\hardwareIr
+  - cd C:\projects\netlistDB
 
 build_script:
   - cmd: echo Building on %arch% with %compiler%
