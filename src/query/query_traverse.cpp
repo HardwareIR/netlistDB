@@ -16,7 +16,7 @@ iNode::iterator QueryTraverse::dummy_callback(iNode &n) {
 }
 
 void QueryTraverse::clean_visit_flags() {
-	auto g = thread_pool.task_group();
+	utils::TaskGroup g(thread_pool);
 	g.parallel_for(0, max_items, [&] (int index) {
 		visited[index] = false;
 	});
@@ -32,7 +32,7 @@ void QueryTraverse::traverse(std::vector<iNode*> starts, callback_t callback) {
 		clean_visit_flags();
 	}
 	visited_clean = false;
-	auto g = thread_pool.task_group();
+	utils::TaskGroup g(thread_pool);
 	g.parallel_for(0, starts.size(), [&] (int i) {
 		iNode * item = starts[i];
 		if (not is_visited(*item)) {
@@ -46,7 +46,7 @@ void QueryTraverse::traverse(iNode & n) {
 	stack.reserve(std::min(size_t(1024), load_balance_limit));
 	stack.push_back(&n);
 	size_t to_visit = 0;
-	auto g = thread_pool.task_group();
+	utils::TaskGroup g(thread_pool);
 	while (not stack.empty()) {
 		auto ch = stack.back();
 		stack.pop_back();

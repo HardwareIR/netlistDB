@@ -55,7 +55,7 @@ src = [
 ver_dir = 'serializer/verilog/'
 
 EXTRA_CXX_ARGS = [
-	'-std=c++17',
+	'-std=c++14',
 ]
 EXTRA_C_ARGS = []
 

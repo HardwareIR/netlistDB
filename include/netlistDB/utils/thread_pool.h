@@ -27,8 +27,6 @@ public:
 
 	size_t size();
 
-	TaskGroup task_group();
-
 	~ThreadPool();
 private:
 	void wrap_job(boost::function<void()> job);

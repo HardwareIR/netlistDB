@@ -136,7 +136,7 @@ bool TransformRemoveByMask::apply(Netlist & ctx) {
 
 	// resolve the boundaries between removed and kept part of the graph
 	//auto t = new Timer("collect_boundaries_between_deleted_and_keept");
-	auto g = thread_pool.task_group();
+	utils::TaskGroup g(thread_pool);
 	for (size_t thr_i = 0; thr_i < thread_cnt; thr_i++) {
 		g.run(
 				[node_to_keep_mask=node_to_keep_mask, &nodes, thr_i, thread_cnt, cnt,
@@ -156,7 +156,7 @@ bool TransformRemoveByMask::apply(Netlist & ctx) {
 
 		// disconnect the part which is being removed
 		// to_update_ep sets are separated by % op and each thread processing disjunct set of nets
-		auto g1 = thread_pool.task_group();
+		utils::TaskGroup g1(thread_pool);
 		//t = new Timer("disconnect_to_remove_connections");
 		for (size_t i = 0; i < thread_cnt; i++) {
 			g1.run(

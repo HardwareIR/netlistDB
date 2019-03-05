@@ -19,10 +19,6 @@ ThreadPool::ThreadPool(size_t pool_size) :
 	}
 }
 
-TaskGroup ThreadPool::task_group() {
-	return TaskGroup(*this);
-}
-
 ThreadPool::~ThreadPool() {
 	ios.stop();
 	try {

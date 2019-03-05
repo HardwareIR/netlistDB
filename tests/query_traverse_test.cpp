@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
 void tf_test(vector<iNode*> & outputs, QueryTraverse& q, size_t obj_cnt,
 		size_t thread_cnt) {
 
-	atomic<size_t> visited_cnt = 0;
+	atomic<size_t> visited_cnt(0);
 	auto callback = [&visited_cnt](iNode & n) {
 		//usleep(1);
 			visited_cnt++;

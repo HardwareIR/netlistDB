@@ -84,20 +84,23 @@ bool TransformIndexedAssignmentsToAssignmentOfConcat::apply(Netlist & ctx) {
 	// Assert all parts of the signals are driven
 
 	// Collect all the input signals for specified target signal
-	thread_pool.task_group().parallel_for(size_t(0), size_t(thread_cnt),
-			[&] (const size_t thread_i) {
-				size_t step = thread_cnt;
-				auto & to_upd = to_update[thread_i];
+	{
+		utils::TaskGroup g(thread_pool);
+		g.parallel_for(size_t(0), size_t(thread_cnt),
+				[&] (const size_t thread_i) {
+					size_t step = thread_cnt;
+					auto & to_upd = to_update[thread_i];
 
-				for(size_t i = thread_i; i < ctx.nets.size(); i+= step) {
-					Net * n = ctx.nets[i];
-					vector<Net*> inputs;
-					if (is_result_of_indexed_assignment(*n, inputs)) {
-						to_upd.push_back( {n, inputs});
+					for(size_t i = thread_i; i < ctx.nets.size(); i+= step) {
+						Net * n = ctx.nets[i];
+						vector<Net*> inputs;
+						if (is_result_of_indexed_assignment(*n, inputs)) {
+							to_upd.push_back( {n, inputs});
+						}
 					}
-				}
-
-			});
+				});
+		g.wait();
+	}
 
 	bool updated = false;
 	// sequentially replace the indexed assignments
