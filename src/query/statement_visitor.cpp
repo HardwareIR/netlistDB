@@ -40,7 +40,7 @@ void StatementVisitor::visit(const Statement & stm) {
 		return;
 	}
 	throw std::runtime_error(
-			std::string(__PRETTY_FUNCTION__) + " unknown statement type");
+			std::string(__FILE__) + ":" + std::to_string(__LINE__) + " unknown statement type");
 }
 void StatementVisitor::visit(const FunctionCall & c) {
 	for (auto n : c.args) {
@@ -62,7 +62,7 @@ void StatementVisitor::visit(const OperationNode & op) {
 	auto o = dynamic_cast<const FunctionCall*>(&op);
 	if (o == nullptr) {
 		throw std::runtime_error(
-				std::string(__PRETTY_FUNCTION__)
+				std::string(__FILE__) + ":" + std::to_string(__LINE__)
 						+ " expected only FunctionCall as this function should walk only items in expression");
 	}
 	visit(*o);

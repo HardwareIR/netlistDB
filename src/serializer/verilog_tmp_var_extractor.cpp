@@ -43,7 +43,7 @@ bool VerilogTmpVarExtractor::operand_is_another_operand(const Net & operand) {
 void VerilogTmpVarExtractor::extract_as_tmp_var(const Net & n,
 		const std::string & name_prefix) {
 	throw std::runtime_error(
-			std::string("Not implemented ") + __PRETTY_FUNCTION__);
+			std::string("Not implemented ") + std::string(__FILE__) + ":" + std::to_string(__LINE__));
 	assert(replacements.find(&n) == replacements.end());
 	Net & tmpVar = replacement_ctx.sig(name_prefix, n.t);
 	replacements[&n] = &tmpVar;

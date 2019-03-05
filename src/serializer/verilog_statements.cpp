@@ -127,7 +127,7 @@ void Verilog2001::serialize_tmp_vars(ostream & str) {
 		if (v.second == tmp_extractor.unused)
 			continue;
 		throw std::runtime_error(
-				string(__PRETTY_FUNCTION__) + ": Not implemented");
+				std::string(__FILE__) + ":" + std::to_string(__LINE__) + ": Not implemented");
 	}
 }
 

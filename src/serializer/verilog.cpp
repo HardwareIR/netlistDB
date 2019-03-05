@@ -48,7 +48,7 @@ bool Verilog2001::serialize_type_usage(const hw_type::iHwType & t,
 		}
 	} else {
 		throw runtime_error(
-				string(__PRETTY_FUNCTION__) + " not implemented for this type");
+				std::string(__FILE__) + ":" + std::to_string(__LINE__) + " not implemented for this type");
 	}
 
 }

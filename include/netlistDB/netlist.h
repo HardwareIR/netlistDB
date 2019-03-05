@@ -361,8 +361,7 @@ private:
 			return ctx.const_net(*int_t, val);
 		}
 		throw std::runtime_error(
-				std::string(__PRETTY_FUNCTION__)
-						+ "unknown type for automatic const instantiation");
+				std::string(__FILE__) + ":" + std::to_string(__LINE__) + "unknown type for automatic const instantiation");
 	}
 };
 

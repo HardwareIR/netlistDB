@@ -13,7 +13,7 @@ void Serializer::serialize_value(const iHwTypeValue & val, ostream & str) {
 		serialize_value(*int_v, str);
 		return;
 	}
-	throw runtime_error(string("not implemented") + __PRETTY_FUNCTION__);
+	throw runtime_error(string("not implemented") + std::string(__FILE__) + ":" + std::to_string(__LINE__));
 }
 
 void Serializer::serialize_stm(const Statement & stm, ostream & str) {
@@ -27,7 +27,7 @@ void Serializer::serialize_stm(const Statement & stm, ostream & str) {
 		serialize_stm(*i, str);
 		return;
 	}
-	throw runtime_error(string("Not implemented ") + __PRETTY_FUNCTION__);
+	throw runtime_error(string("Not implemented ") + std::string(__FILE__) + ":" + std::to_string(__LINE__));
 }
 
 void Serializer::serialize_operand(const Net & operand,
