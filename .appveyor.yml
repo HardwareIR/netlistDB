@@ -5,6 +5,7 @@ environment:
 
   matrix:
     - arch: x64
+      compiler: msvc2017
       PYTHON: "C:\\Python37-x64"
       BOOST_ROOT: "C:\\Libraries\\boost_1_67_0"
 
@@ -24,11 +25,10 @@ install:
   - cmd: set PATH=%cd%;C:\ninja-build;%PYTHON%;%PYTHON%\Scripts;%PATH%
   # Install meson the build tood
   - cmd: pip install meson
-  
-  # install conan the package manager
-  #- cmd: pip install conan
-  #- cmmd: conan user # Create the conan data directory
-  #- cmd: conan install TBB/2019_U3@conan/stable
+    # Set up the build environment
+  - cmd: if %compiler%==msvc2015 ( call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %arch% )
+  - cmd: if %compiler%==msvc2017 ( call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %arch% )
+
 before_build:
   - cd C:\projects\netlistDB
 
