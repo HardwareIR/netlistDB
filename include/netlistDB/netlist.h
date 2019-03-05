@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <vector>
 #include <unordered_map>
+#include <map>
 
 #include <netlistDB/inode.h>
 #include <netlistDB/utils/ordered_set.h>
