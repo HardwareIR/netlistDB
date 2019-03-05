@@ -54,9 +54,7 @@ src = [
 # pack all verilog template files in to single cpp with defined strings
 ver_dir = 'serializer/verilog/'
 
-EXTRA_CXX_ARGS = [
-	'-std=c++14',
-]
+EXTRA_CXX_ARGS = []
 EXTRA_C_ARGS = []
 
 thread_dep = dependency('threads')
