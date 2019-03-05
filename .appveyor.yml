@@ -8,7 +8,7 @@ environment:
     - arch: x64
       PYTHON: "C:\\Python37-x64"
       BOOST_ROOT: "C:\\Libraries\boost_1_67_0"
-      BOOST_LIBRARYDIR: "C:\\Libraries\\boost_1_67_0\\lib64-msvc-14.1"
+      # BOOST_LIBRARYDIR: "C:\\Libraries\\boost_1_67_0\\lib64-msvc-14.1"
 
 platform:
   - x64
@@ -18,6 +18,10 @@ install:
   - ps: (new-object net.webclient).DownloadFile('https://github.com/mesonbuild/cidata/raw/master/ninja.exe', 'C:\ninja-build\ninja.exe')
   # Print out dependency paths
   - cmd: echo Using Python at %PYTHON%
+  - cmd: echo Using boost at %BOOST_ROOT%
+  #- cmd: set BOOST_ROOT=C:\Libraries\boost_1_67_0
+  - cmd: set BOOST_ROOT=%BOOST_ROOT%
+   
   # Add neccessary paths to PATH variable
   - cmd: set PATH=%cd%;C:\ninja-build;%PYTHON%;%PYTHON%\Scripts;%PATH%
   # Install meson the build tood
