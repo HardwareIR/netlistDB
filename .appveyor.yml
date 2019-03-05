@@ -8,8 +8,8 @@ environment:
     - arch: x64
       PYTHON: "C:\\Python37-x64"
       environment:
-        - BOOST_ROOT: "C:\Libraries\boost_1_67_0"
-        #BOOST_LIBRARYDIR: C:\Libraries\boost_1_67_0\lib64-msvc-14.0
+         BOOST_ROOT: C:\Libraries\boost_1_67_0
+         BOOST_LIBRARYDIR: C:\Libraries\boost_1_67_0\lib64-msvc-14.1
 
 platform:
   - x64
