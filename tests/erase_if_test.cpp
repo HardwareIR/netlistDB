@@ -8,7 +8,7 @@
 #include <fstream>
 #include <random>
 
-#include <netlistDB/parallel_utils/erase_if.h>
+#include <netlistDB/utils/erase_if.h>
 #include "../src/debug_utils/timer.h"
 
 using namespace netlistDB;
@@ -34,44 +34,11 @@ struct indexed_int_index_selector {
 
 };
 
-//BOOST_AUTO_TEST_CASE(tbb_experiment) {
-//	size_t thread_cnt = 14;
-//	const int num = 10000000;
-//	size_t *input = new size_t[num];
-//	size_t *output = new size_t[num];
-//	size_t *tmp = new size_t[num];
-//
-//	for (unsigned i = 0; i < num; i++) {
-//		input[i] = i;
-//		output[i] = 0;
-//	}
-//	//tbb::task_scheduler_init init(thread_cnt);
-//	SumBody<size_t> body(output, input);
-//	auto t = new Timer("tbb");
-//	tbb::parallel_scan(tbb::blocked_range<int>(0, num), body,
-//			tbb::auto_partitioner());
-//	delete t;
-//	//init.terminate();
-//	//for (size_t i = 0; i < num; i++) {
-//	//	std::cout << output[i] << " ";
-//	//}
-//	//std::cout << std::endl;
-//
-//	//tf::Taskflow tf(thread_cnt);
-//	//t = new Timer("tf");
-//	//inclusive_scan<size_t>(input, output, tmp, num, tf, 16);
-//	//delete t;
-//	//for (size_t i = 0; i < num; i++) {
-//	//	std::cout << output[i] << " ";
-//	//}
-//	//std::cout << std::endl;
-//}
-
 BOOST_AUTO_TEST_CASE( simple ) {
 	size_t N = 1000;
 	std::uniform_int_distribution<> rand_bool(0, 1);
 	for (size_t thread_cnt = 1; thread_cnt <= 2; thread_cnt++) {
-		tbb::task_scheduler_init init(thread_cnt);
+		// [fixme] thread_cnt not not set properly
 		std::mt19937 rand(0);
 		std::vector<indexed_int> a(N), a_expected;
 		a_expected.reserve(N);

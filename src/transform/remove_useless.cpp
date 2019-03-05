@@ -1,5 +1,6 @@
-#include <netlistDB/parallel_utils/erase_if.h>
+
 #include <netlistDB/transform/remove_useless.h>
+#include <netlistDB/utils/erase_if.h>
 #include <netlistDB/transform/remove_by_mask.h>
 #include <netlistDB/query/query_traverse.h>
 #include <netlistDB/utils/chained_iterator.h>

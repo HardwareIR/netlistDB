@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <netlistDB/netlist.h>
+#include <netlistDB/utils/thread_pool.h>
 
 namespace netlistDB {
 namespace query {
@@ -25,6 +26,7 @@ public:
 	size_t load_balance_limit;
 	callback_t callback;
 	size_t max_items;
+	utils::ThreadPool thread_pool;
 
 	QueryTraverse(size_t max_items);
 

@@ -1,9 +1,9 @@
 #include <netlistDB/transform/remove_by_mask.h>
 
-#include <thread>
-#include <netlistDB/parallel_utils/erase_if.h>
+#include <netlistDB/utils/erase_if.h>
 
 using namespace netlistDB::parallel_utils;
+using namespace std;
 
 namespace netlistDB {
 namespace transform {
@@ -15,8 +15,8 @@ constexpr size_t to_update_ep_index(size_t thread_i, size_t thread_cnt,
 	return thread_i * thread_cnt + (node_i % thread_cnt);
 }
 
-bool check_if_any_removed(std::set<iNode*> * to_update_ep,
-		std::vector<iNode*> * to_delete, size_t thread_cnt) {
+bool check_if_any_removed(set<iNode*> * to_update_ep,
+		vector<iNode*> * to_delete, size_t thread_cnt) {
 	for (size_t i = 0; i < thread_cnt; i++) {
 		if (to_delete[i].size()) {
 			return true;
@@ -43,9 +43,9 @@ bool check_if_any_removed(std::set<iNode*> * to_update_ep,
  **/
 void collect_boundaries_between_deleted_and_keept(
 		typename query::QueryTraverse::flag_t * node_to_keep_mask,
-		std::vector<iNode*> nodes, size_t thread_i, size_t thread_cnt,
-		size_t size, std::set<iNode*> * to_update_ep,
-		std::vector<iNode*> & to_delete) {
+		vector<iNode*> nodes, size_t thread_i, size_t thread_cnt,
+		size_t size, set<iNode*> * to_update_ep,
+		vector<iNode*> & to_delete) {
 	for (size_t i = thread_i; i < size; i += thread_cnt) {
 		if (not node_to_keep_mask[i]) {
 			auto n = nodes[i];
@@ -71,9 +71,9 @@ void collect_boundaries_between_deleted_and_keept(
  **/
 void disconnect_to_remove_connections(
 		typename query::QueryTraverse::flag_t * node_to_keep_mask,
-		std::set<iNode*> * _to_update_ep, size_t thread_i, size_t thread_cnt) {
+		set<iNode*> * _to_update_ep, size_t thread_i, size_t thread_cnt) {
 	// collect to_update_ep sets to single vector
-	std::vector<std::set<iNode*> *> to_update_ep(thread_cnt);
+	vector<set<iNode*> *> to_update_ep(thread_cnt);
 	for (size_t i = 0; i < thread_cnt; i++) {
 		to_update_ep[i] = &_to_update_ep[to_update_ep_index(i, thread_cnt,
 				thread_i)];
@@ -127,16 +127,16 @@ bool TransformRemoveByMask::apply(Netlist & ctx) {
 	auto & nodes = ctx.nodes;
 	auto cnt = nodes.size();
 
-	size_t thread_cnt = std::thread::hardware_concurrency();
+	size_t thread_cnt = thread_pool.size();
 	bool any_removed = false;
 	// parallel version
-	auto to_update_ep = std::make_unique<std::set<iNode*>[]>(
+	auto to_update_ep = make_unique<set<iNode*>[]>(
 			thread_cnt * thread_cnt);
-	auto to_delete = std::make_unique<std::vector<iNode*>[]>(thread_cnt);
+	auto to_delete = make_unique<vector<iNode*>[]>(thread_cnt);
 
 	// resolve the boundaries between removed and kept part of the graph
 	//auto t = new Timer("collect_boundaries_between_deleted_and_keept");
-	tbb::task_group g;
+	auto g = thread_pool.task_group();
 	for (size_t thr_i = 0; thr_i < thread_cnt; thr_i++) {
 		g.run(
 				[node_to_keep_mask=node_to_keep_mask, &nodes, thr_i, thread_cnt, cnt,
@@ -156,7 +156,7 @@ bool TransformRemoveByMask::apply(Netlist & ctx) {
 
 		// disconnect the part which is being removed
 		// to_update_ep sets are separated by % op and each thread processing disjunct set of nets
-		tbb::task_group g1;
+		auto g1 = thread_pool.task_group();
 		//t = new Timer("disconnect_to_remove_connections");
 		for (size_t i = 0; i < thread_cnt; i++) {
 			g1.run(

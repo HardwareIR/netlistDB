@@ -22,17 +22,6 @@ install:
   - cmd: set PATH=%cd%;C:\ninja-build;%PYTHON%;%PYTHON%\Scripts;%PATH%
   # Install meson the build tood
   - cmd: pip install meson
-  # Install make because TBB uses it
-  - choco install make
-  
-  - cd c:\tools\vcpkg
-  # Update ports
-  - git pull
-  - # Update vcpkg
-  - .\bootstrap-vcpkg.bat
-  # Enable integration for Visual Studio/MSBuild
-  - vcpkg integrate install
-  - vcpkg install tbb
   
   # install conan the package manager
   #- cmd: pip install conan

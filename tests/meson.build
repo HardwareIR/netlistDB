@@ -1,11 +1,10 @@
 
-boost_deps = dependency('boost', modules: ['unit_test_framework', ])
+boost_deps = dependency('boost', modules: ['unit_test_framework', 'thread', 'system' ])
 
 tests = [
 	  ['basic', 'test of the core'],
 	  ['basic_query_match', 'basic test for query engine'],
 	  ['large_query_match', 'benchmarks for query engine'],
-	  ['transform_remove_useless', 'tests for TransformRemoveUseless'],
 	  ['chained_iter', 'tests for chained iterator'],
 	  ['ordered_set', 'tests for ordered set collection'],
 	  ['query_enclosure', 'test for the QueryEnclosure'],
@@ -19,6 +18,8 @@ tests = [
 	  ['statement_if', 'test for IfStatemet object'],
 	  ['expr_sensitivity_probe', 'test for the epxression sensitivity probe'],
 	  ['statement_to_hwprocess', 'test for TransformStatementToHwProcess'],
+      ['thread_pool', 'tests for the utils::ThreadPool'],
+	  ['transform_remove_useless', 'tests for TransformRemoveUseless'],
 	  ['unsigned_val', 'tests for unsigned arithmetic'],
 	  ['verilog_basic', 'basic tests for verilog serializer'],
 	  ['verilog_simple_modules', 'verilog serializer tests with simple modules'],
@@ -31,7 +32,7 @@ test_common_src = [
 foreach t : tests
 	test_exe = executable(t[0]  + '_test',
 		[t[0] + '_test.cpp'] + test_common_src,
-		dependencies: [boost_deps, thread_dep, tbb_dep],
+		dependencies: [boost_deps, thread_dep],
 		link_with: [netlistDB_lib, ],
 		cpp_args: EXTRA_CXX_ARGS,
         c_args: EXTRA_C_ARGS,

@@ -1,5 +1,5 @@
-#include <netlistDB/parallel_utils/erase_if.h>
 #include <netlistDB/netlist.h>
+#include <netlistDB/utils/erase_if.h>
 #include <netlistDB/operator_defs.h>
 #include <netlistDB/statement_assignment.h>
 

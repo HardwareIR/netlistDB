@@ -16,9 +16,11 @@ iNode::iterator QueryTraverse::dummy_callback(iNode &n) {
 }
 
 void QueryTraverse::clean_visit_flags() {
-	tbb::parallel_for(size_t(0), max_items, [&] (size_t index) {
+	auto g = thread_pool.task_group();
+	g.parallel_for(0, max_items, [&] (int index) {
 		visited[index] = false;
 	});
+	g.wait();
 	visited_clean = true;
 }
 
@@ -30,11 +32,13 @@ void QueryTraverse::traverse(std::vector<iNode*> starts, callback_t callback) {
 		clean_visit_flags();
 	}
 	visited_clean = false;
-
-	tbb::parallel_for_each(starts.begin(), starts.end(), [&] (iNode* item) {
+	auto g = thread_pool.task_group();
+	g.parallel_for(0, starts.size(), [&] (int i) {
+		iNode * item = starts[i];
 		if (not is_visited(*item)) {
 			traverse(*item);
 		}});
+	g.wait();
 }
 
 void QueryTraverse::traverse(iNode & n) {
@@ -42,7 +46,7 @@ void QueryTraverse::traverse(iNode & n) {
 	stack.reserve(std::min(size_t(1024), load_balance_limit));
 	stack.push_back(&n);
 	size_t to_visit = 0;
-	tbb::task_group g;
+	auto g = thread_pool.task_group();
 	while (not stack.empty()) {
 		auto ch = stack.back();
 		stack.pop_back();

@@ -34,20 +34,20 @@ std::vector<FunctionCall*> find_ops(Netlist & ctx, FunctionDef & op) {
 		}
 	}
 
-	tbb::concurrent_vector<FunctionCall*> ops;
-	auto cb = [&ops, &op] (iNode& n) {
+	boost::mutex mx;
+
+	std::vector<FunctionCall*> ops;
+	auto cb = [&ops, &op, &mx] (iNode& n) {
 		auto _n = dynamic_cast<FunctionCall*>(&n);
 		if (_n and &_n->fn == &op) {
+			boost::mutex::scoped_lock lock(mx);
 			ops.push_back(_n);
 		}
 		return QueryTraverse::dummy_callback(n);
 	};
 	q.traverse(inputs, cb);
 
-	std::vector<FunctionCall*> res;
-	res.reserve(ops.size());
-	res.assign(ops.begin(), ops.end());
-	return res;
+	return ops;
 }
 
 BOOST_AUTO_TEST_CASE( query_add ) {

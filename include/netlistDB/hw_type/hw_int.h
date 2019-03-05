@@ -10,6 +10,10 @@ namespace hw_type {
 
 class HwInt;
 
+
+/*
+ * [TODO] maybe hide cpp_int behind opaque pointer so we can hide  boost::multiprecision namespace which is slow to compile
+ * */
 /* Container of the value for hardware integer type
  **/
 class HwIntValue: public iHwTypeValue {

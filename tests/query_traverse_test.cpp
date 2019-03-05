@@ -17,34 +17,34 @@
 #include "../src/debug_utils/timer.h"
 #include "test_graphs.h"
 
-
+using namespace std;
 using namespace netlistDB;
 using namespace netlistDB::query;
 
-
 BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
 
-void tf_test(std::vector<iNode*> & outputs, QueryTraverse& q, size_t obj_cnt,
+// [fixme] thread_cnt not not set properly
+void tf_test(vector<iNode*> & outputs, QueryTraverse& q, size_t obj_cnt,
 		size_t thread_cnt) {
 
-	std::atomic<size_t> visited_cnt = 0;
+	atomic<size_t> visited_cnt = 0;
 	auto callback = [&visited_cnt](iNode & n) {
-			//usleep(1);
+		//usleep(1);
 			visited_cnt++;
 			return QueryTraverse::dummy_callback(n);
 		};
 	q.clean_visit_flags();
 	//q.load_balance_limit = 1;
-	auto t = new Timer(std::string("threads ") + std::to_string(thread_cnt));
+	auto t = new Timer(string("threads ") + to_string(thread_cnt));
 	q.traverse(outputs, callback);
 	delete t;
 	BOOST_CHECK_EQUAL(visited_cnt, obj_cnt);
 }
 
-Netlist* build_graph(std::vector<iNode*> & outputs, size_t N,
+Netlist* build_graph(vector<iNode*> & outputs, size_t N,
 		size_t expected_node_cnt) {
 	auto ctx = new Netlist("example_circuit");
-	std::mt19937 rand(0);
+	mt19937 rand(0);
 
 	auto t = new Timer("construction time");
 	build_random_circuit(*ctx, N, N, N, N, rand);
@@ -62,12 +62,12 @@ Netlist* build_graph(std::vector<iNode*> & outputs, size_t N,
 BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 	size_t N = 100;
 	size_t expected_node_cnt = 20090;
-	std::vector<iNode*> outputs;
+	vector<iNode*> outputs;
 	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
-	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
+	cout << "size " << N << " nodes:" << ctx->nodes.size() << endl;
 
 	QueryTraverse q(ctx->nodes.size());
-	//for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+	//for (size_t i = 1; i <= thread::hardware_concurrency(); i++) {
 	for (size_t i = 1; i <= 2; i++) {
 		tf_test(outputs, q, expected_node_cnt, i);
 	}
@@ -76,12 +76,12 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 //BOOST_AUTO_TEST_CASE( simple_traversal_500 ) {
 //	size_t N = 500;
 //	size_t expected_node_cnt = 496620;
-//	std::vector<iNode*> outputs;
+//	vector<iNode*> outputs;
 //	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
-//	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
+//	cout << "size " << N << " nodes:" << ctx->nodes.size() << endl;
 //
 //	QueryTraverse q(ctx->nodes.size());
-//	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+//	for (size_t i = 1; i <= thread::hardware_concurrency(); i++) {
 //		tf_test(outputs, q, expected_node_cnt, i);
 //	}
 //}
@@ -89,12 +89,12 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 //BOOST_AUTO_TEST_CASE( simple_traversal_750 ) {
 //	size_t N = 750;
 //	size_t expected_node_cnt = 1115936;
-//	std::vector<iNode*> outputs;
+//	vector<iNode*> outputs;
 //	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
-//	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
+//	cout << "size " << N << " nodes:" << ctx->nodes.size() << endl;
 //
 //	QueryTraverse q(ctx->nodes.size());
-//	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+//	for (size_t i = 1; i <= thread::hardware_concurrency(); i++) {
 //		tf_test(outputs, q, expected_node_cnt, i);
 //	}
 //}
@@ -102,12 +102,12 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 //BOOST_AUTO_TEST_CASE( simple_traversal_1000 ) {
 //	size_t N = 1000;
 //	size_t expected_node_cnt = 1983146;
-//	std::vector<iNode*> outputs;
+//	vector<iNode*> outputs;
 //	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
-//	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
+//	cout << "size " << N << " nodes:" << ctx->nodes.size() << endl;
 //
 //	QueryTraverse q(ctx->nodes.size());
-//	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+//	for (size_t i = 1; i <= thread::hardware_concurrency(); i++) {
 //		tf_test(outputs, q, expected_node_cnt, i);
 //	}
 //}
@@ -115,12 +115,12 @@ BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 //BOOST_AUTO_TEST_CASE( simple_traversal_2000 ) {
 //	size_t N = 2000;
 //	size_t expected_node_cnt = 7926124;
-//	std::vector<iNode*> outputs;
+//	vector<iNode*> outputs;
 //	Netlist * ctx = build_graph(outputs, N, expected_node_cnt);
-//	std::cout << "size " << N << " nodes:" << ctx->nodes.size() << std::endl;
+//	cout << "size " << N << " nodes:" << ctx->nodes.size() << endl;
 //
 //	QueryTraverse q(ctx->nodes.size());
-//	for (size_t i = 1; i <= std::thread::hardware_concurrency(); i++) {
+//	for (size_t i = 1; i <= thread::hardware_concurrency(); i++) {
 //		tf_test(outputs, q, expected_node_cnt, i);
 //	}
 //}

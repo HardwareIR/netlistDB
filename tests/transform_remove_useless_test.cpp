@@ -12,7 +12,6 @@
 #include <cstring>
 #include <atomic>
 #include <boost/range/join.hpp>
-#include <tbb/tbb.h>
 
 #include <netlistDB/transform/remove_useless.h>
 #include "test_graphs.h"
@@ -26,7 +25,7 @@ BOOST_AUTO_TEST_SUITE( TransformRemoveUseless_testsuite )
 BOOST_AUTO_TEST_CASE( simple_traversal_100 ) {
 	size_t N = 100;
 	for (size_t thread_cnt = 2; thread_cnt <= 14; thread_cnt+=12) {
-		tbb::task_scheduler_init init(thread_cnt);
+		// [fixme] thread_cnt not set properly
 		std::vector<iNode*> outputs;
 		Netlist ctx("example");
 		std::mt19937 rand(0);

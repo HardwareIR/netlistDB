@@ -5,7 +5,7 @@
 #include <netlistDB/query/query_sensitivity.h>
 #include <netlistDB/query/query_public_net.h>
 #include <netlistDB/query/query_structural_compatible.h>
-#include <netlistDB/parallel_utils/erase_if.h>
+#include <netlistDB/utils/erase_if.h>
 #include <netlistDB/utils/groupedby.h>
 
 using namespace std;

@@ -36,6 +36,8 @@ src = [
 	'transform/statement_to_hwprocess.cpp',
 	'transform/to_hdl_friendly.cpp',
 	
+	'utils/thread_pool.cpp',
+
 	'bit_utils.cpp',
 	'component_map.cpp',
 	'function_call.cpp',
@@ -58,13 +60,14 @@ EXTRA_CXX_ARGS = [
 EXTRA_C_ARGS = []
 
 thread_dep = dependency('threads')
-tbb_dep = dependency('tbb')
+boost_deps = dependency('boost', modules: ['system', 'thread'])
+
 netlistDB_incldir = include_directories('../include/')
 netlistDB_lib = shared_library(
 	'netlistDB',
     src,
     include_directories : [netlistDB_incldir, ],
-    dependencies : [thread_dep, tbb_dep],
+    dependencies : [thread_dep, boost_deps],
     install : true,
     cpp_args: EXTRA_CXX_ARGS,
     c_args: EXTRA_C_ARGS,
