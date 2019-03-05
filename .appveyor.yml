@@ -18,9 +18,6 @@ install:
   # Print out dependency paths
   - cmd: echo Using Python at %PYTHON%
   - cmd: echo Using boost at %BOOST_ROOT%
-  #- cmd: set BOOST_ROOT=C:\Libraries\boost_1_67_0
-  # - cmd: set BOOST_ROOT=%BOOST_ROOT%
-  - cmd: dir %BOOST_ROOT%
   # Add neccessary paths to PATH variable
   - cmd: set PATH=%cd%;C:\ninja-build;%PYTHON%;%PYTHON%\Scripts;%PATH%
   # Install meson the build tood
