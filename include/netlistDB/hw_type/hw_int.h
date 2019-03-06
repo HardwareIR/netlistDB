@@ -38,7 +38,7 @@ public:
 /*
  * Basic hardware integer type with specified size and sign
  * */
-class HwInt: public iHwType {
+class NETLISTDB_PUBLIC HwInt: public iHwType {
 	// size of value in bits
 	const size_t _M_bit_length;
 
