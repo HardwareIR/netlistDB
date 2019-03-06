@@ -57,8 +57,12 @@ ver_dir = 'serializer/verilog/'
 EXTRA_CXX_ARGS = []
 EXTRA_C_ARGS = []
 
-#thread_dep = dependency('threads')
 boost_deps = dependency('boost', modules: ['system', 'thread'])
+
+if meson.get_compiler('cpp').get_id() == 'msvc'
+	EXTRA_CXX_ARGS += ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK']
+	EXTRA_C_ARGS += ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK']
+endif
 
 netlistDB_incldir = include_directories('../include/')
 netlistDB_lib = shared_library(
