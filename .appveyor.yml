@@ -32,7 +32,6 @@ before_build:
 build_script:
   - cmd: echo Building on %arch% with %compiler%
   - cmd: meson --backend=ninja build
-
   - cmd: ninja -C build
 
 test_script:
@@ -40,4 +39,5 @@ test_script:
 
 on_failure:
   - cmd: type C:\projects\netlistdb\build\meson-logs\meson-log.txt
+  - cmd: dir C:\projects\netlistdb\build\meson-out\
   
