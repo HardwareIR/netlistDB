@@ -85,7 +85,7 @@ utils::ChainedSequence<Statement*> IfStatement::_iter_stms() {
 	return it;
 }
 
-IfStatement & If(Net & condition) {
+NETLISTDB_PUBLIC IfStatement & If(Net & condition) {
 	auto i = new IfStatement(condition);
 	condition.ctx.register_node(*i);
 	return *i;

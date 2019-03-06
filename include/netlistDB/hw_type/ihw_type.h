@@ -1,6 +1,8 @@
 #pragma once
+
 #include <stddef.h>
 #include <boost/multiprecision/cpp_int.hpp>
+#include <netlistDB/common.h>
 
 namespace netlistDB {
 namespace hw_type {
@@ -10,7 +12,7 @@ namespace hw_type {
  * The hardware type use used to store informations about type for nets and values
  * in generated circuit.
  **/
-class iHwType {
+class NETLISTDB_PUBLIC iHwType {
 public:
 	// @return number of bits required for representation of value for this type
 	virtual size_t bit_length() const = 0;

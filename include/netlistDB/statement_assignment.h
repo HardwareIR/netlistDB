@@ -3,7 +3,7 @@
 
 namespace netlistDB {
 
-class Assignment: public Statement {
+class NETLISTDB_PUBLIC Assignment: public Statement {
 public:
 	// the first index to apply is the last in this vector
 	std::vector<Net*> dst_index;

@@ -15,7 +15,7 @@ namespace query {
  * Discover for which signals the statement is not latch
  * The result is stored in sens property of the statement itself
  * */
-class QueryEnclosure {
+class NETLISTDB_PUBLIC QueryEnclosure {
 public:
 	// dispatch apply call for all statement types
 	static void apply(Statement & stm);

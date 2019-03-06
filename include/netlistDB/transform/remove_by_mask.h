@@ -7,7 +7,7 @@
 namespace netlistDB {
 namespace transform {
 
-class TransformRemoveByMask: iTransformation {
+class NETLISTDB_PUBLIC TransformRemoveByMask: iTransformation {
 	typename query::QueryTraverse::flag_t * node_to_keep_mask;
 	utils::ThreadPool thread_pool;
 public:

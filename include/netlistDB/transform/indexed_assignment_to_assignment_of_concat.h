@@ -8,7 +8,7 @@ namespace transform {
 /*
  * Transform a[0] = b; a[1] = c; to a = {b, c}
  **/
-class TransformIndexedAssignmentsToAssignmentOfConcat: iTransformation {
+class NETLISTDB_PUBLIC TransformIndexedAssignmentsToAssignmentOfConcat: iTransformation {
 protected:
 	utils::ThreadPool thread_pool;
 	// the range is closed <0, 9> is 10 bits

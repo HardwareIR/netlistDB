@@ -16,7 +16,7 @@ namespace query {
  *
  * @note the boundary nets has to have .id.hidden flag set to false
  * */
-class StatementVisitor {
+class NETLISTDB_PUBLIC StatementVisitor {
 public:
 	virtual void visit(const Assignment & a);
 	virtual void visit(const IfStatement & i);

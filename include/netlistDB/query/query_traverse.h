@@ -7,11 +7,10 @@
 namespace netlistDB {
 namespace query {
 
-
 /*
  * Traverse nodes in circuit
  **/
-class QueryTraverse {
+class NETLISTDB_PUBLIC QueryTraverse {
 public:
 	// align to cache line does not bring perf. improvement
 	// as there is large number of nodes and the access is more or less random.

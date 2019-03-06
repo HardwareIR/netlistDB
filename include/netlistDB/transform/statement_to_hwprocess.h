@@ -29,7 +29,7 @@ namespace transform {
  *
  * */
 
-class TransformStatementToHwProcess {
+class NETLISTDB_PUBLIC TransformStatementToHwProcess {
 public:
 
 	// Statements are not comparable due incompatible structure

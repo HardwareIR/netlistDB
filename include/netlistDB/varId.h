@@ -8,7 +8,7 @@ namespace netlistDB {
  * Container for the id of the variable
  *
  **/
-class VarId {
+class NETLISTDB_PUBLIC VarId {
 public:
 	std::string name;
 	bool hidden;

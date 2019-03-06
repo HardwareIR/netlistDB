@@ -33,9 +33,9 @@ foreach t : tests
 	test_exe = executable(t[0]  + '_test',
 		[t[0] + '_test.cpp'] + test_common_src,
 		dependencies: [netlistDB_dep, test_boost_deps],
-		cpp_args: EXTRA_CXX_ARGS,
-        c_args: EXTRA_C_ARGS,
-        include_directories: netlistDB_incldir)
+#		cpp_args: EXTRA_CXX_ARGS,
+#        c_args: EXTRA_C_ARGS
+	)
 	test(t[1], test_exe, workdir : meson.source_root())
 endforeach
 

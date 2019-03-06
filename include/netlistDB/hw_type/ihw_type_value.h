@@ -1,11 +1,12 @@
 #pragma once
+
 #include <stddef.h>
 #include <exception>
 
 namespace netlistDB {
 namespace hw_type {
 
-class iHwTypeValue {
+class NETLISTDB_PUBLIC iHwTypeValue {
 public:
 	virtual bool operator==(const iHwTypeValue & other) const {
 		throw std::runtime_error("undefined operator==");

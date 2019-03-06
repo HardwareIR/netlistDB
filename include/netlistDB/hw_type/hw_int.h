@@ -8,15 +8,14 @@
 namespace netlistDB {
 namespace hw_type {
 
-class HwInt;
-
+class NETLISTDB_PUBLIC HwInt;
 
 /*
  * [TODO] maybe hide cpp_int behind opaque pointer so we can hide  boost::multiprecision namespace which is slow to compile
  * */
 /* Container of the value for hardware integer type
  **/
-class HwIntValue: public iHwTypeValue {
+class NETLISTDB_PUBLIC HwIntValue: public iHwTypeValue {
 public:
 	using aint_t = boost::multiprecision::cpp_int;
 

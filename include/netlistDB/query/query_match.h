@@ -14,7 +14,7 @@ namespace query {
  *
  * @attention the query graph has to have single component
  **/
-class QueryMatch: public Netlist {
+class NETLISTDB_PUBLIC QueryMatch: public Netlist {
 public:
 	QueryMatch();
 

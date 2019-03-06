@@ -5,7 +5,11 @@
 
 namespace netlistDB {
 namespace query {
-class QueryPath {
+
+/*
+ * Find the path between two nodes
+ * */
+class NETLISTDB_PUBLIC QueryPath {
 public:
 	using path_t = std::vector<iNode*>;
 

@@ -6,34 +6,34 @@ namespace netlistDB {
 
 // bitwise
 //extern FunctionDef OpNot;
-extern FunctionDef OpNeg;
-extern FunctionDef OpAnd;
-extern FunctionDef OpOr;
-extern FunctionDef OpXor;
+NETLISTDB_PUBLIC extern FunctionDef OpNeg;
+NETLISTDB_PUBLIC extern FunctionDef OpAnd;
+NETLISTDB_PUBLIC extern FunctionDef OpOr;
+NETLISTDB_PUBLIC extern FunctionDef OpXor;
 // nand, reverse
 
 // cmp
-extern FunctionDef OpLE;
-extern FunctionDef OpGE;
-extern FunctionDef OpGt;
-extern FunctionDef OpLt;
-extern FunctionDef OpEq;
-extern FunctionDef OpNeq;
+NETLISTDB_PUBLIC extern FunctionDef OpLE;
+NETLISTDB_PUBLIC extern FunctionDef OpGE;
+NETLISTDB_PUBLIC extern FunctionDef OpGt;
+NETLISTDB_PUBLIC extern FunctionDef OpLt;
+NETLISTDB_PUBLIC extern FunctionDef OpEq;
+NETLISTDB_PUBLIC extern FunctionDef OpNeq;
 
 
 // arithmetic
-extern FunctionDef OpUnMinus;
-extern FunctionDef OpAdd;
-extern FunctionDef OpSub;
-extern FunctionDef OpDiv;
-extern FunctionDef OpMul;
+NETLISTDB_PUBLIC extern FunctionDef OpUnMinus;
+NETLISTDB_PUBLIC extern FunctionDef OpAdd;
+NETLISTDB_PUBLIC extern FunctionDef OpSub;
+NETLISTDB_PUBLIC extern FunctionDef OpDiv;
+NETLISTDB_PUBLIC extern FunctionDef OpMul;
 // modulo, rem?
 
-extern FunctionDef OpConcat;
-extern FunctionDef OpSlice; // index, ranged index
+NETLISTDB_PUBLIC extern FunctionDef OpConcat;
+NETLISTDB_PUBLIC extern FunctionDef OpSlice; // index, ranged index
 
-extern FunctionDef OpRising;
-extern FunctionDef OpFalling;
+NETLISTDB_PUBLIC extern FunctionDef OpRising;
+NETLISTDB_PUBLIC extern FunctionDef OpFalling;
 // [todo] rising and falling ?= event
 
 constexpr bool is_event_op(const FunctionDef & op) {

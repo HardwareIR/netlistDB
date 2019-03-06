@@ -5,7 +5,7 @@
 namespace netlistDB {
 namespace transform {
 
-class TransformNormalize: iTransformation {
+class NETLISTDB_PUBLIC TransformNormalize: iTransformation {
 public:
 	/*
 	 * Apply transformation to netlist

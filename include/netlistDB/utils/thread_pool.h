@@ -4,12 +4,13 @@
 #include <boost/asio.hpp>
 #include <iostream>
 #include <atomic>
+#include <netlistDB/common.h>
 
 namespace netlistDB {
 namespace utils {
 
-class TaskGroup;
-class ThreadPool {
+class NETLISTDB_PUBLIC TaskGroup;
+class NETLISTDB_PUBLIC ThreadPool {
 public:
 	boost::asio::io_service ios;
 protected:

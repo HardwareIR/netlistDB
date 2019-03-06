@@ -28,11 +28,11 @@
 
 namespace netlistDB {
 
-class Net;
-class Netlist;
-class Statement;
+class NETLISTDB_PUBLIC Net;
+class NETLISTDB_PUBLIC Netlist;
+class NETLISTDB_PUBLIC Statement;
 
-class OperationNode: public iNode {
+class NETLISTDB_PUBLIC OperationNode: public iNode {
 };
 
 /*
@@ -46,7 +46,7 @@ class OperationNode: public iNode {
  *     (for which there is not any unused branch = where is not latch)
  *
  * */
-class SensitivityInfo {
+class NETLISTDB_PUBLIC SensitivityInfo {
 public:
 	bool is_completly_event_dependent;
 	bool now_is_event_dependent;
@@ -67,7 +67,7 @@ public:
  *
  * @attention the sensitivity has to be discovered explicitly
  */
-class Statement: public OperationNode {
+class NETLISTDB_PUBLIC Statement: public OperationNode {
 public:
 	Statement * parent;
 
@@ -114,7 +114,7 @@ public:
 /**
  * Container of call of the function (operator is also function)
  */
-class FunctionCall: public OperationNode {
+class NETLISTDB_PUBLIC FunctionCall: public OperationNode {
 public:
 	// definition of the function
 	FunctionDef & fn;
@@ -131,7 +131,7 @@ public:
 /*
  * Code construct which connects the nets to the ports of the child component
  * */
-class ComponentMap: public iNode {
+class NETLISTDB_PUBLIC ComponentMap: public iNode {
 public:
 	// backward reference to the Netlist instance
 	// where this component is instantiated
@@ -162,7 +162,7 @@ public:
  * in FunctionCall does.
  *
  **/
-class Netlist {
+class NETLISTDB_PUBLIC Netlist {
 public:
 	// name for serialization and debugging
 	std::string name;
@@ -223,7 +223,7 @@ public:
  *
  *  @note The overloaded operators are building the expression in the netlist
  * */
-class Net: public iNode {
+class NETLISTDB_PUBLIC Net: public iNode {
 public:
 	// container of name and type
 	VarId id;

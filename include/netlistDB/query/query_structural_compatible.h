@@ -14,7 +14,7 @@ namespace query {
 /*
  * Structural deep compare the statements if they can be merged without colision of code granches
  **/
-class QueryStructuralComapatible {
+class NETLISTDB_PUBLIC QueryStructuralComapatible {
 public:
 
 	// dispatch is_mergable call for all types

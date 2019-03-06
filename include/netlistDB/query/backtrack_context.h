@@ -8,8 +8,8 @@ namespace query {
  * The context used for management of the matched object
  * during graph pattern-match
  **/
-class BackTrackingContext;
-class BackTrackingContext {
+class NETLISTDB_PUBLIC BackTrackingContext;
+class NETLISTDB_PUBLIC BackTrackingContext {
 public:
 	// query: graph
 	std::map<iNode*, iNode*> & match;

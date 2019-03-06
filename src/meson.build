@@ -56,7 +56,8 @@ boost_deps = dependency('boost', modules: ['system', 'thread'])
 EXTRA_CXX_ARGS = []
 EXTRA_C_ARGS = []
 if meson.get_compiler('cpp').get_id() == 'msvc'
-	EXTRA_CXX_ARGS += ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK']
+    EXTRA = ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK', ]
+	EXTRA_CXX_ARGS += ['/DNETLISTDB_EXPORTS']
 	EXTRA_C_ARGS += ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK']
 endif
 

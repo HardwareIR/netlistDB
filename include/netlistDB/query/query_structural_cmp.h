@@ -14,7 +14,7 @@ namespace query {
 /*
  * Structural deep compare the statements for equivalence
  **/
-class QueryStructuralCmp {
+class NETLISTDB_PUBLIC QueryStructuralCmp {
 public:
 	// @return true if all statements are same (not necessary the same object) in this order
 	static bool statements_are_same(Statement & reference,

@@ -1,9 +1,11 @@
 #pragma once
+
 #include <string>
+#include <netlistDB/common.h>
 
 namespace netlistDB {
 // definition of function (operator is also function)
-class FunctionDef {
+class NETLISTDB_PUBLIC FunctionDef {
 public:
 	std::string name;
 	size_t arg_cnt;

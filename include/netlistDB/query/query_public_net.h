@@ -12,8 +12,7 @@ namespace query {
  * This nets represents nets which are connected between hdl process
  * instances and IO.
  **/
-
-class QueryPublicNet {
+class NETLISTDB_PUBLIC QueryPublicNet {
 public:
 
 	static void walk(Net & n, std::set<Net*> seen,

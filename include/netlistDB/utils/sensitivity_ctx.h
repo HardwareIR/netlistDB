@@ -1,3 +1,5 @@
+#pragma once
+
 #include <netlistDB/inode.h>
 #include <netlistDB/utils/ordered_set.h>
 
@@ -9,7 +11,7 @@ namespace netlistDB {
  *    sensitivity
  */
 
-class SensitivityCtx: public utils::OrderedSet<iNode*> {
+class NETLISTDB_PUBLIC SensitivityCtx: public utils::OrderedSet<iNode*> {
 public:
 	bool contains_event_dep;
 	SensitivityCtx() :

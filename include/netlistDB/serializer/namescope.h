@@ -1,13 +1,16 @@
 #pragma once
+
 #include <exception>
 #include <string>
 #include <vector>
 #include <map>
 
+#include <netlistDB/common.h>
+
 namespace netlistDB {
 namespace serializer {
 
-class NameOccupiedErr: public std::runtime_error {
+class NETLISTDB_PUBLIC NameOccupiedErr: public std::runtime_error {
 public:
 	const void * usedOn;
 	NameOccupiedErr(const void *usedOn) :
@@ -16,15 +19,15 @@ public:
 };
 
 // dummy object to reserver name for keyword
-class KeyWord {
+class NETLISTDB_PUBLIC KeyWord {
 };
 
-class NameScope;
+class NETLISTDB_PUBLIC NameScope;
 /*
  * If name is discovered in scope it is converted to name_id
  * where id is sequential number for prefix name\_
  */
-class NameScopeItem: public std::map<const std::string, const void*> {
+class NETLISTDB_PUBLIC NameScopeItem: public std::map<const std::string, const void*> {
 	size_t myLvl;
 
 	/* some names are specified just as prefix and serializer
@@ -54,7 +57,7 @@ public:
 };
 
 // Scope of used names in HDL to prevent name collision
-class NameScope: public std::vector<NameScopeItem*> {
+class NETLISTDB_PUBLIC NameScope: public std::vector<NameScopeItem*> {
 	std::map<const void*, std::string> _all_names;
 public:
 	bool ignorecase;

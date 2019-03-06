@@ -7,7 +7,7 @@ namespace transform {
 
 
 
-class TransformMarkInterProcessNets: public iTransformation {
+class NETLISTDB_PUBLIC TransformMarkInterProcessNets: public iTransformation {
 public:
 	/*
 	 * Walk all IO and outputs of the statements and set id.hidden flag to false

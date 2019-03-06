@@ -12,7 +12,7 @@ namespace transform {
  * 2. update id.hidden flags
  * 3. wrap statements to HwProcess instances
  **/
-class TransformToHdlFriendly: public iTransformation {
+class NETLISTDB_PUBLIC TransformToHdlFriendly: public iTransformation {
 public:
 	virtual bool apply(Netlist & ctx) override;
 };

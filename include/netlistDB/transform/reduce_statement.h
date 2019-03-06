@@ -8,7 +8,7 @@ namespace netlistDB {
 namespace transform {
 
 // simplify the statement
-class TransformReduceStatement {
+class NETLISTDB_PUBLIC TransformReduceStatement {
 public:
 
 	/*

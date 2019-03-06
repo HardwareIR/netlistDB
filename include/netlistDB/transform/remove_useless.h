@@ -5,7 +5,7 @@
 namespace netlistDB {
 namespace transform {
 
-class TransformRemoveUseless: iTransformation {
+class NETLISTDB_PUBLIC TransformRemoveUseless: iTransformation {
 public:
 	/*
 	 * Walk from the outputs of the netlit to all drivers of the outputs recursively

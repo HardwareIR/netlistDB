@@ -4,7 +4,7 @@
 
 namespace netlistDB {
 
-class _IfSttementSensExtra {
+class NETLISTDB_PUBLIC _IfSttementSensExtra {
 public:
 	std::set<Net*> ifTrue_enclosed_for;
 	std::vector<std::set<Net*>> elseIf_enclosed_for;
@@ -16,7 +16,7 @@ public:
  *
  * The if statement can represent multiple hardware components like multiplexer or latch
  * */
-class IfStatement: public Statement {
+class NETLISTDB_PUBLIC IfStatement: public Statement {
 public:
 	Net * condition;
 
@@ -54,6 +54,6 @@ public:
 };
 
 // the helper method for IfStatement construction
-IfStatement & If(Net & condition);
+NETLISTDB_PUBLIC IfStatement & If(Net & condition);
 
 }

@@ -7,7 +7,7 @@
 namespace netlistDB {
 namespace query {
 
-class QuerySensitivity {
+class NETLISTDB_PUBLIC QuerySensitivity {
 public:
 	/*
 	 * Discover the sensitivity of all statements
