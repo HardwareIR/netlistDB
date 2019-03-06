@@ -32,8 +32,7 @@ test_common_src = [
 foreach t : tests
 	test_exe = executable(t[0]  + '_test',
 		[t[0] + '_test.cpp'] + test_common_src,
-		dependencies: [test_boost_deps],
-		link_with: [netlistDB_lib, ],
+		dependencies: [netlistDB_dep, test_boost_deps],
 		cpp_args: EXTRA_CXX_ARGS,
         c_args: EXTRA_C_ARGS,
         include_directories: netlistDB_incldir)

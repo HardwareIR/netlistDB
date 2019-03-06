@@ -51,21 +51,17 @@ src = [
 	'statement_if.cpp',
 ]
 
-# pack all verilog template files in to single cpp with defined strings
-ver_dir = 'serializer/verilog/'
+boost_deps = dependency('boost', modules: ['system', 'thread'])
 
 EXTRA_CXX_ARGS = []
 EXTRA_C_ARGS = []
-
-boost_deps = dependency('boost', modules: ['system', 'thread'])
-
 if meson.get_compiler('cpp').get_id() == 'msvc'
 	EXTRA_CXX_ARGS += ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK']
 	EXTRA_C_ARGS += ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK']
 endif
 
 netlistDB_incldir = include_directories('../include/')
-netlistDB_lib = shared_library(
+netlistDB_lib = library(
 	'netlistDB',
     src,
     include_directories : [netlistDB_incldir, ],
@@ -76,3 +72,7 @@ netlistDB_lib = shared_library(
     #link_args: EXTRA_LINK_ARGS
 )
 install_subdir('../include/netlistDB', install_dir : 'include')
+netlistDB_dep = declare_dependency(link_with : netlistDB_lib,
+  include_directories : include_directories('../include')
+)
+
