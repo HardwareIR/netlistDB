@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <assert.h>
+#include <netlistDB/common.h>
 
 namespace netlistDB {
 namespace utils {
@@ -9,7 +10,7 @@ namespace utils {
 /* Iterator of chained vectors
  **/
 template<class T>
-class ChaindedIter: public std::iterator<std::forward_iterator_tag, T> {
+class NETLISTDB_PUBLIC ChaindedIter: public std::iterator<std::forward_iterator_tag, T> {
 public:
 	using it_t = typename std::vector<T>::iterator;
 
@@ -111,7 +112,7 @@ private:
 };
 
 template<class T>
-class ChainedSequence {
+class NETLISTDB_PUBLIC ChainedSequence {
 	using _Item = typename ChaindedIter<T>::_Item;
 	std::vector<_Item> vectors;
 
