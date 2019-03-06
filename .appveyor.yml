@@ -31,7 +31,7 @@ before_build:
 
 build_script:
   - cmd: echo Building on %arch% with %compiler%
-  - cmd: meson --backend=ninja build
+  - cmd: meson --backend=ninja build --default-library=static --layout=flat
   - cmd: ninja -C build
 
 test_script:
