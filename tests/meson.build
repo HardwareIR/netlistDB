@@ -43,8 +43,7 @@ endforeach
 #igraph_benchmark_exe = executable('igraph_benchmark',
 #		['igraph_benchmark.cpp', 'netlist_to_igraph.cpp',
 #		 'netlist_to_igraph.h'] + test_common_src,
-#		dependencies: [boost_deps, thread_dep, igraph_dep],
-#		link_with: [netlistDB_lib, ],
+#		dependencies: [netlistDB_dep, test_boost_deps, igraph_dep],
 #		cpp_args: EXTRA_CXX_ARGS,
-#        c_args: EXTRA_C_ARGS)
+#       c_args: EXTRA_C_ARGS)
 
