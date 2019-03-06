@@ -1,6 +1,6 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MAIN
-#define BOOST_TEST_MODULE netlistDB_test
+#define BOOST_TEST_MODULE netlistDB_unsigned_val_test
 
 #include <boost/test/unit_test.hpp>
 #include <functional>
@@ -15,16 +15,18 @@
 using namespace netlistDB;
 using namespace netlistDB::hw_type;
 
-BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
+BOOST_AUTO_TEST_SUITE( netlistDB_unsigned_val_testsuite )
 
-BOOST_AUTO_TEST_CASE( simple_adder ) {
+BOOST_AUTO_TEST_CASE( simple_unsigned_val_test ) {
 	Netlist ctx("test");
 
-	Net & c = ctx.const_net(hw_int64, (typename HwIntValue::aint_t) 1);
+	using aint_t = typename HwIntValue::aint_t;
+	Net & c = ctx.const_net(hw_int64, aint_t(1));
 	BOOST_CHECK_NE(c.val, nullptr);
 	auto v = dynamic_cast<HwIntValue*>(c.val);
-	BOOST_CHECK_EQUAL(v->value, 1);
-	BOOST_CHECK_EQUAL(v->mask, size_t(-1));
+
+	BOOST_CHECK_EQUAL(v->value, aint_t(1));
+	BOOST_CHECK_EQUAL(v->mask, aint_t(size_t(-1)));
 	BOOST_CHECK_EQUAL(v->mask, hw_int64.all_mask);
 }
 
