@@ -54,9 +54,10 @@ src = [
 EXTRA_CXX_ARGS = []
 EXTRA_C_ARGS = []
 if meson.get_compiler('cpp').get_id() == 'msvc'
-    EXTRA = ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK', '/wd4251']
-	EXTRA_CXX_ARGS += ['/DNETLISTDB_EXPORTS']
-	EXTRA_C_ARGS += ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK']
+    EXTRA = ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK', '/wd4251',
+             '/DNETLISTDB_EXPORTS', '/DNETLISTDB_DLL']
+	EXTRA_CXX_ARGS += EXTRA
+	EXTRA_C_ARGS += EXTRA
 endif
 
 _boost_dep = dependency('boost', modules: ['system', 'thread',])
