@@ -55,7 +55,9 @@ EXTRA_CXX_ARGS = []
 EXTRA_C_ARGS = []
 if meson.get_compiler('cpp').get_id() == 'msvc'
     EXTRA = ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK', '/wd4251',
-             '/DNETLISTDB_EXPORTS', '/DNETLISTDB_DLL']
+             '/DNETLISTDB_EXPORTS', '/DNETLISTDB_DLL',
+             '/D_WIN32_WINNT=0x0501' # windows XP+
+             ]
 	EXTRA_CXX_ARGS += EXTRA
 	EXTRA_C_ARGS += EXTRA
 endif
