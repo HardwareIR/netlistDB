@@ -1,5 +1,5 @@
 
-test_boost_deps = dependency('boost', modules: ['unit_test_framework', 'thread', 'system' ])
+test_boost_deps = dependency('boost', modules: ['unit_test_framework' ])
 
 tests = [
 	  ['basic', 'test of the core'],
@@ -32,7 +32,7 @@ test_common_src = [
 foreach t : tests
 	test_exe = executable(t[0]  + '_test',
 		[t[0] + '_test.cpp'] + test_common_src,
-		dependencies: [netlistDB_dep, test_boost_deps],
+		dependencies: [test_boost_deps, netlistDB_dep],
 #		cpp_args: EXTRA_CXX_ARGS,
 #        c_args: EXTRA_C_ARGS
 	)

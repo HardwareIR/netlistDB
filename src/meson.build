@@ -51,8 +51,6 @@ src = [
 	'statement_if.cpp',
 ]
 
-boost_deps = dependency('boost', modules: ['system', 'thread',])
-
 EXTRA_CXX_ARGS = []
 EXTRA_C_ARGS = []
 if meson.get_compiler('cpp').get_id() == 'msvc'
@@ -61,19 +59,22 @@ if meson.get_compiler('cpp').get_id() == 'msvc'
 	EXTRA_C_ARGS += ['/DBOOST_ALL_NO_LIB', '/DBOOST_ALL_DYN_LINK']
 endif
 
-netlistDB_incldir = include_directories('../include/')
-netlistDB_lib = library(
+_boost_dep = dependency('boost', modules: ['system', 'thread',])
+_netlistDB_inc = include_directories('../include/')
+_netlistDB_lib = library(
 	'netlistDB',
     src,
-    include_directories : [netlistDB_incldir, ],
-    dependencies : [boost_deps],
+    include_directories : [_netlistDB_inc, ],
+    dependencies : [_boost_dep],
     install : true,
     cpp_args: EXTRA_CXX_ARGS,
     c_args: EXTRA_C_ARGS,
     #link_args: EXTRA_LINK_ARGS
 )
 install_subdir('../include/netlistDB', install_dir : 'include')
-netlistDB_dep = declare_dependency(link_with : netlistDB_lib,
-  include_directories : include_directories('../include')
+netlistDB_dep = declare_dependency(
+  dependencies: [_boost_dep],
+  link_with : _netlistDB_lib,
+  include_directories : _netlistDB_inc
 )
 
