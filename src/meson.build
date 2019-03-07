@@ -53,10 +53,15 @@ src = [
 
 EXTRA_CXX_ARGS = []
 EXTRA_C_ARGS = []
+
 if meson.get_compiler('cpp').get_id() == 'msvc'
-    EXTRA = ['/DBOOST_ALL_NO_LIB',
-             '/DBOOST_ALL_DYN_LINK',
-             #'/wd4251', # "needs to have dll-interface to be used by clients of class"
+	if get_option('default_library') == 'static'
+		EXTRA = ['/DBOOST_ALL_NO_LIB',
+        	     '/DBOOST_ALL_DYN_LINK',]
+	else
+		EXTRA = []
+	endif
+    EXTRA += [#'/wd4251', # "needs to have dll-interface to be used by clients of class"
              #'/DNETLISTDB_EXPORTS', '/DNETLISTDB_DLL',
              '/D_WIN32_WINNT=0x0501' # windows XP+
              ]
