@@ -10,7 +10,8 @@ namespace utils {
 /* Iterator of chained vectors
  **/
 template<class T>
-class NETLISTDB_PUBLIC ChaindedIter: public std::iterator<std::forward_iterator_tag, T> {
+class NETLISTDB_PUBLIC ChaindedIter: public std::iterator<
+		std::forward_iterator_tag, T> {
 public:
 	using it_t = typename std::vector<T>::iterator;
 
@@ -74,8 +75,10 @@ public:
 		}
 	}
 
-	ChaindedIter(std::vector<_Item> & vectors, it_t actual_pos, it_t actual_end, size_t actual_vec_i) :
-			vectors(vectors), actual(actual_pos), actual_end(actual_end), actual_vec_i(actual_vec_i) {
+	ChaindedIter(std::vector<_Item> & vectors, it_t actual_pos, it_t actual_end,
+			size_t actual_vec_i) :
+			vectors(vectors), actual(actual_pos), actual_end(actual_end), actual_vec_i(
+					actual_vec_i) {
 	}
 
 	T& operator*() {
@@ -94,11 +97,13 @@ public:
 	}
 
 	friend bool operator==(ChaindedIter a, ChaindedIter b) {
-		return a.actual == b.actual and a.actual_vec_i == b.actual_vec_i;
+		return a.vectors.size() == 0
+				or (a.actual == b.actual and a.actual_vec_i == b.actual_vec_i);
 	}
 
 	friend bool operator!=(ChaindedIter a, ChaindedIter b) {
-		return a.actual != b.actual or a.actual_vec_i != b.actual_vec_i;
+		return a.vectors.size() != 0
+				and (a.actual != b.actual or a.actual_vec_i != b.actual_vec_i);
 	}
 
 private:
