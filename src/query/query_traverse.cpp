@@ -77,5 +77,9 @@ void QueryTraverse::traverse(iNode & n) {
 	g.wait();
 }
 
+QueryTraverse::~QueryTraverse() {
+	delete [] visited;
+}
+
 }
 }

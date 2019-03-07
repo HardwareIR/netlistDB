@@ -48,6 +48,7 @@ public:
 	 * */
 	void traverse(std::vector<iNode*> starts, const callback_t & callback);
 
+	~QueryTraverse();
 protected:
 	/*
 	 * Traverse using limited DFS, if limit is exceeded the rest children are processed
