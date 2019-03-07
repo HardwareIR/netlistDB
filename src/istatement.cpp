@@ -9,8 +9,14 @@ Netlist & Statement::_get_context() {
 	for (auto inp : backward)
 		return dynamic_cast<Net*>(inp)->ctx;
 
-	for (auto s : _iter_stms())
-		return s->_get_context();
+	Netlist * _ctx = nullptr;
+	visit_child_stm([&_ctx](Statement & stm) {
+		_ctx = &stm._get_context();
+		return _ctx != nullptr;
+	});
+
+	if (_ctx)
+		return *_ctx;
 
 	throw std::runtime_error(
 			"the statement is entirely disconnected, the context is lost");
@@ -19,9 +25,10 @@ Netlist & Statement::_get_context() {
 void Statement::_on_parent_event_dependent() {
 	if (not sens.is_completly_event_dependent) {
 		sens.is_completly_event_dependent = true;
-		for (auto stm : _iter_stms()) {
-			stm->_on_parent_event_dependent();
-		}
+		visit_child_stm([](Statement & stm) {
+			stm._on_parent_event_dependent();
+			return false;
+		});
 	}
 }
 void Statement::_set_parent_stm(Statement * stm) {

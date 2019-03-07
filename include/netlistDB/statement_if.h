@@ -49,7 +49,7 @@ public:
 	IfStatement & Else(std::initializer_list<Statement*> statements);
 	IfStatement & Else(const std::vector<Statement*> & statements);
 
-	virtual utils::ChainedSequence<Statement*> _iter_stms() override;
+	virtual void visit_child_stm(const std::function<bool(Statement &)> & fn) override;
 	virtual ~IfStatement();
 };
 

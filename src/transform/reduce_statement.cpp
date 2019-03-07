@@ -217,10 +217,11 @@ void TransformReduceStatement::collect_io(Statement & self) {
 	auto & i = self._inputs;
 	auto & o = self._outputs;
 
-	for (auto stm : self._iter_stms()) {
-		i.extend(stm->_inputs);
-		o.extend(stm->_outputs);
-	}
+	self.visit_child_stm([&](Statement & stm) {
+		i.extend(stm._inputs);
+		o.extend(stm._outputs);
+		return false;
+	});
 }
 
 void TransformReduceStatement::on_reduce(Statement & stm, bool self_reduced,

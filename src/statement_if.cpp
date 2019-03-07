@@ -71,23 +71,32 @@ IfStatement & IfStatement::Else(const std::vector<Statement*> & statements) {
 	return *this;
 }
 
-utils::ChainedSequence<Statement*> IfStatement::_iter_stms() {
-	utils::ChainedSequence<Statement*> it;
-	it.push_back(&ifTrue);
-	for (auto & eif : elseIf) {
-		it.push_back(&eif.second);
-	}
-	if (ifFalse_specified) {
-		it.push_back(&ifFalse);
+void IfStatement::visit_child_stm(const std::function<bool(Statement &)> & fn) {
+	for (auto stm : ifTrue) {
+		if (fn(*stm))
+			return;
 	}
 
-	return it;
+	for (auto & eif : elseIf) {
+		for (auto stm : eif.second) {
+			if (fn(*stm))
+				return;
+		}
+	}
+
+	if (ifFalse_specified) {
+		for (auto stm : ifFalse) {
+			if (fn(*stm))
+				return;
+		}
+	}
 }
 
 IfStatement::~IfStatement() {
-	for (auto stm : _iter_stms()) {
-		delete stm;
-	}
+	visit_child_stm([](Statement & stm){
+		delete &stm;
+		return false;
+	});
 }
 
 NETLISTDB_PUBLIC IfStatement & If(Net & condition) {

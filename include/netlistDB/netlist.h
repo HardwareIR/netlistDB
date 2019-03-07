@@ -94,9 +94,12 @@ public:
 	void _on_parent_event_dependent();
 
 	/*
-	 * @return iterator over all (direct) children statements
+	 * walk all direct child statements with specified function fn
+	 *
+	 * @param fn callback which is called on each node, if the function returns true the iteration is stoped
+	 * 		and the visit_child_stm returns
 	 * */
-	virtual utils::ChainedSequence<Statement*> _iter_stms() = 0;
+	virtual void visit_child_stm(const std::function<bool(Statement &)> & fn) = 0;
 
 	/*
 	 * @return the Netlist where signals for connected to this statement are created

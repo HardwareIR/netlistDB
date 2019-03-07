@@ -40,8 +40,7 @@ Net & Assignment::extract_dst_index_cascade(Net & dst) {
 	return dst;
 }
 
-utils::ChainedSequence<Statement*> Assignment::_iter_stms() {
-	return {};
+void Assignment::visit_child_stm(const std::function<bool(Statement &)> & fn) {
 }
 
 }

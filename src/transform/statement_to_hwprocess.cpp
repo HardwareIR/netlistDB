@@ -99,13 +99,15 @@ Statement * TransformStatementToHwProcess::cut_off_drivers_of(
 		self._inputs.push_back(cond_sig);
 		self._outputs.clear();
 
-		for (auto stm : self._iter_stms()) {
-			for (auto inp : stm->_inputs)
+		self.visit_child_stm([&](Statement & stm) {
+			for (auto inp : stm._inputs)
 				inputs.push_back(inp);
 
-			for (auto outp : stm->_outputs)
+			for (auto outp : stm._outputs)
 				self._outputs.push_back(outp);
-		}
+
+			return false;
+		});
 		if (self.sens.sensitivity.size() or self.sens.enclosed_for.size()) {
 			throw runtime_error(
 					"Sensitivity and enclosure has to be cleaned first");
@@ -216,8 +218,10 @@ void TransformStatementToHwProcess::clean_signal_meta(Statement & self) {
 
 	self.sens.enclosed_for.clear();
 	self.sens.sensitivity.clear();
-	for (auto stm : self._iter_stms())
-		clean_signal_meta(*stm);
+	self.visit_child_stm([](Statement & stm) {
+		clean_signal_meta(stm);
+		return false;
+	});
 }
 
 bool TransformStatementToHwProcess::cut_off_drivers_of(Net * dstSignal,
@@ -321,8 +325,10 @@ size_t TransformStatementToHwProcess::max_stm_id(Statement & stm) {
 	if (a)
 		return a->index;
 
-	for (auto _stm : stm._iter_stms())
-		maxId = std::max(maxId, max_stm_id(*_stm));
+	stm.visit_child_stm([&maxId](Statement & _stm) {
+		maxId = std::max(maxId, max_stm_id(_stm));
+		return false;
+	});
 	return maxId;
 }
 

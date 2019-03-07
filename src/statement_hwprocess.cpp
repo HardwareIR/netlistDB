@@ -13,16 +13,18 @@ HwProcess::HwProcess(const std::string & name,
 		rank += s->rank;
 }
 
-utils::ChainedSequence<Statement*> HwProcess::_iter_stms() {
-	utils::ChainedSequence<Statement*> it;
-	it.push_back(&statements);
-	return it;
+void HwProcess::visit_child_stm(const std::function<bool(Statement &)> & fn) {
+	for (auto stm: statements) {
+		if (fn(*stm))
+			return;
+	}
 }
 
 HwProcess::~HwProcess() {
-	for (auto stm : _iter_stms()) {
-		delete stm;
-	}
+	visit_child_stm([](Statement & stm){
+		delete &stm;
+		return false;
+	});
 }
 
 }

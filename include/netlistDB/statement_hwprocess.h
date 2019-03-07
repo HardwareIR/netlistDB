@@ -35,7 +35,7 @@ public:
 			utils::OrderedSet<iNode*> sensitivityList,
 			utils::OrderedSet<Net*> inputs, utils::OrderedSet<Net*> outputs);
 
-	virtual utils::ChainedSequence<Statement*> _iter_stms() override;
+	virtual void visit_child_stm(const std::function<bool(Statement &)> & fn) override;
 	// automatically delete child statements
 	virtual ~HwProcess();
 };
