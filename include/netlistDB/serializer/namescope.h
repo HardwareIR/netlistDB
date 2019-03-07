@@ -75,6 +75,8 @@ public:
 
 	std::string checkedName(const std::string & actualName,
 			const void * actualObj, bool isGlobal = false);
+
+	~NameScope();
 };
 
 }

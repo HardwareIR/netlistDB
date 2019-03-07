@@ -140,13 +140,20 @@ string NameScope::checkedName(const string & actualName, const void * actualObj,
 
 	NameScopeItem * ch;
 	if (isGlobal) {
-		ch = this->front();
+		ch = front();
 	} else {
-		ch = this->back();
+		ch = back();
 	}
 	auto n = ch->get_usable_name(actualName, actualObj, *this);
 	all_names[actualObj] = n;
 	return n;
+}
+
+NameScope::~NameScope() {
+	while(this->size()) {
+		delete back();
+		pop_back();
+	}
 }
 
 }
