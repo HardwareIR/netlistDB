@@ -93,7 +93,7 @@ void IfStatement::visit_child_stm(const std::function<bool(Statement &)> & fn) {
 }
 
 IfStatement::~IfStatement() {
-	visit_child_stm([](Statement & stm){
+	visit_child_stm([](Statement & stm) {
 		delete &stm;
 		return false;
 	});

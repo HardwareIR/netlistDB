@@ -3,7 +3,6 @@
 #include <netlistDB/utils/erase_if.h>
 #include <netlistDB/transform/remove_by_mask.h>
 #include <netlistDB/query/query_traverse.h>
-#include <netlistDB/utils/chained_iterator.h>
 
 //#include "../debug_utils/timer.h"
 
@@ -30,8 +29,11 @@ bool TransformRemoveUseless::apply(Netlist & ctx) {
 	//auto t = new Timer("traversing");
 	// discover what was used
 	QueryTraverse q(ctx.nodes.size());
-	auto walk_all_drivers = [](iNode &n) {
-		return n.backward;
+	auto walk_all_drivers = [](iNode &n, const std::function<void(iNode &)> & select) {
+		n.backward([&select] (iNode & node) {
+			select(node);
+			return false;
+		});
 	};
 	q.traverse(outputs, walk_all_drivers);
 	//delete t;

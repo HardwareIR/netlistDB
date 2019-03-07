@@ -38,8 +38,6 @@ Net::Net(Netlist & ctx, hw_type::iHwType & t, const std::string & name,
 		id(name), ctx(ctx), net_index(0), t(t), val(nullptr), nop_val(nullptr), def_val(
 				nullptr), direction(direction) {
 	ctx.register_node(*this);
-	forward.push_back(reinterpret_cast<std::vector<iNode*>*>(&endpoints));
-	backward.push_back(reinterpret_cast<std::vector<iNode*>*>(&drivers));
 }
 
 bool Net::is_const() {
@@ -115,7 +113,21 @@ Statement & Net::operator()(Net & other) {
 	return *(new Assignment(*this, other));
 }
 
-void Net::forward_disconnect(iNode::predicate_t pred) {
+void Net::forward(const predicate_t & fn) {
+	for (auto e: endpoints) {
+		if (fn(*e))
+			return;
+	}
+}
+
+void Net::backward(const predicate_t & fn) {
+	for (auto d: drivers) {
+		if (fn(*d))
+			return;
+	}
+}
+
+void Net::forward_disconnect(std::function<bool(iNode*)> pred) {
 	parallel_utils::erase_if_seq<OperationNode*>(endpoints, pred);
 }
 

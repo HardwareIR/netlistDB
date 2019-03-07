@@ -3,18 +3,24 @@
 namespace netlistDB {
 
 Netlist & Statement::_get_context() {
-	for (auto outp : forward)
-		return dynamic_cast<Net*>(outp)->ctx;
-
-	for (auto inp : backward)
-		return dynamic_cast<Net*>(inp)->ctx;
-
 	Netlist * _ctx = nullptr;
+	auto search_ctx = [&_ctx](iNode & outp) {
+		_ctx = &dynamic_cast<Net*>(&outp)->ctx;
+		return true;
+	};
+
+	forward(search_ctx);
+	if (_ctx)
+		return *_ctx;
+
+	backward(search_ctx);
+	if (_ctx)
+		return *_ctx;
+
 	visit_child_stm([&_ctx](Statement & stm) {
 		_ctx = &stm._get_context();
 		return _ctx != nullptr;
 	});
-
 	if (_ctx)
 		return *_ctx;
 
@@ -71,6 +77,20 @@ void Statement::_register_stements(const std::vector<Statement*> & statements,
 		assert(stm->parent == nullptr);
 		stm->_set_parent_stm(this);
 		target.push_back(stm);
+	}
+}
+
+void Statement::forward(const predicate_t & fn) {
+	for (auto o : _outputs) {
+		if (fn(*o))
+			return;
+	}
+}
+
+void Statement::backward(const predicate_t & fn) {
+	for (auto i : _inputs) {
+		if (fn(*i))
+			return;
 	}
 }
 

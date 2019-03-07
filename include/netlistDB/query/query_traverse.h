@@ -18,12 +18,12 @@ public:
 	using flag_t = bool;
 	using atomic_flag_t = std::atomic<flag_t>;
 
-	// return the next nodes which should be probed
-	using callback_t = std::function<iNode::iterator(iNode&)>;
+	// the function which calls the argument function on children of the i node
+	using callback_t = std::function<void(iNode&, const std::function<void(iNode &)> &)>;
 	atomic_flag_t * visited;
 	bool visited_clean;
 	size_t load_balance_limit;
-	callback_t callback;
+	const callback_t * callback;
 	size_t max_items;
 	utils::ThreadPool thread_pool;
 
@@ -34,7 +34,7 @@ public:
 		return visited[n.index].exchange(true);
 	}
 
-	static iNode::iterator dummy_callback(iNode &n);
+	static void dummy_callback(iNode &n, const std::function<void(iNode &)> & select);
 public:
 	/*
 	 * Reset visit flags used in traversal
@@ -44,9 +44,9 @@ public:
 	/*
 	 * Traverse graph from starts and call callback on each node exactly once
 	 * @param starts the nodes where the search should start
-	 * @param callback the callback function called on each vistited node (exactly once)
+	 * @param callback the callback function called on each visited node (exactly once)
 	 * */
-	void traverse(std::vector<iNode*> starts, callback_t callback);
+	void traverse(std::vector<iNode*> starts, const callback_t & callback);
 
 protected:
 	/*

@@ -2,7 +2,6 @@
 
 #include <functional>
 
-#include <netlistDB/utils/chained_iterator.h>
 #include <netlistDB/common.h>
 
 namespace netlistDB {
@@ -17,13 +16,12 @@ public:
 	// and as a index in main list of iNode instances in Netlist.nodes
 	size_t index;
 
-	using iterator = utils::ChainedSequence<iNode*>;
-	using predicate_t = std::function<bool(iNode*)>;
+	using predicate_t = std::function<bool(iNode&)>;
 
 	// iterator of endpoints for Net or outputs for statement or result for expression
-	iterator forward;
+	virtual void forward(const predicate_t & fn) = 0;
 	// iterator of drivers for net or inputs for statement or args for expression
-	iterator backward;
+	virtual void backward(const predicate_t & fn) = 0;
 
 	virtual ~iNode() {
 	}

@@ -5,7 +5,6 @@ tests = [
 	  ['basic', 'test of the core'],
 	  ['basic_query_match', 'basic test for query engine'],
 	  ['large_query_match', 'benchmarks for query engine'],
-	  ['chained_iter', 'tests for chained iterator'],
 	  ['ordered_set', 'tests for ordered set collection'],
 	  ['query_enclosure', 'test for the QueryEnclosure'],
 	  ['query_flooding', 'tests for flooding query engine'],

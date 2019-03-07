@@ -16,15 +16,18 @@ bool QueryPath::find_path(iNode & a, iNode & b, path_t & path) {
 	if (&a == &b)
 		return true;
 
-	for (auto node : a.forward) {
-		bool not_in_path = std::find(path.begin(), path.end(), node)
+	bool found = false;
+	a.forward([&](iNode & node) {
+		bool not_in_path = std::find(path.begin(), path.end(), &node)
 				== path.end();
 		if (not_in_path) {
-			auto found = find_path(*node, b, path);
-			if (found)
-				return true;
+			found = find_path(node, b, path);
+
 		}
-	}
+		return found;
+	});
+	if (found)
+		return true;
 	path.pop_back();
 	return false;
 }

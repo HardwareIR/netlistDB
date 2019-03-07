@@ -16,4 +16,23 @@ void ComponentMap::add(Net * parent_net, Net * component_port) {
 	child_to_parent[component_port] = parent_net;
 }
 
+void ComponentMap::forward(const predicate_t & fn) {
+	for (auto p : child_to_parent) {
+		auto d = p.first->direction;
+		if (d == Direction::DIR_OUT or d == Direction::DIR_INOUT)
+			if (fn(*p.first))
+				return;
+	}
+}
+
+void ComponentMap::backward(const predicate_t & fn) {
+	for (auto p : child_to_parent) {
+		auto d = p.first->direction;
+		if (d == Direction::DIR_IN or d == Direction::DIR_INOUT)
+			if (fn(*p.first))
+				return;
+	}
+
+}
+
 }

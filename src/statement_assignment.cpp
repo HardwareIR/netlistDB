@@ -16,10 +16,6 @@ Assignment::Assignment(Net & _dst, Net & _src) :
 	}
 	_inputs.push_back(&src);
 	_outputs.push_back(&dst);
-
-	forward.push_back(reinterpret_cast<vector<iNode*>*>(&_outputs));
-	backward.push_back(reinterpret_cast<iNode*>(&src));
-	backward.push_back(reinterpret_cast<vector<iNode*>*>(&dst_index));
 }
 
 Net & Assignment::extract_dst_index_cascade(Net & dst) {

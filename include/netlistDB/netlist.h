@@ -111,6 +111,9 @@ public:
 	 * */
 	void _register_stements(const std::vector<Statement*> & statements,
 			std::vector<Statement*> & target);
+
+	virtual void forward(const predicate_t & fn) override;
+	virtual void backward(const predicate_t & fn) override;
 };
 
 /**
@@ -128,6 +131,9 @@ public:
 	FunctionCall(const FunctionCall& other) = delete;
 	FunctionCall(FunctionDef & fn, Net & op0, Net & res);
 	FunctionCall(FunctionDef & fn, Net & op0, Net & op1, Net & res);
+
+	virtual void forward(const predicate_t & fn) override;
+	virtual void backward(const predicate_t & fn) override;
 };
 
 /*
@@ -141,12 +147,16 @@ public:
 	// ptr on Netlist which is instantiated
 	// @note you can create shared_ptr from local variable using null_deleter
 	const std::shared_ptr<Netlist> component;
+	// the direction of the connection is resolved by direction of the net (port) in child component
 	std::map<Net*, Net*> parent_to_child;
 	std::map<Net*, Net*> child_to_parent;
 
 	ComponentMap(Netlist & parent, std::shared_ptr<Netlist> component);
 
 	void add(Net * parent_net, Net * component_port);
+
+	virtual void forward(const predicate_t & fn) override;
+	virtual void backward(const predicate_t & fn) override;
 };
 
 /**
@@ -351,8 +361,10 @@ public:
 		return (*this)(wrap_val_to_const_net(val));
 	}
 
+	virtual void forward(const predicate_t & fn) override;
+	virtual void backward(const predicate_t & fn) override;
 	// disconnect the selected endpoints
-	void forward_disconnect(iNode::predicate_t pred);
+	void forward_disconnect(std::function<bool(iNode*)> pred);
 private:
 	/*
 	 * Wrap c-constant to constant net in parent netlist

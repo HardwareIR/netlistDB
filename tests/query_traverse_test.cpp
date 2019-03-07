@@ -28,11 +28,11 @@ void tf_test(vector<iNode*> & outputs, QueryTraverse& q, size_t obj_cnt,
 		size_t thread_cnt) {
 
 	atomic<size_t> visited_cnt(0);
-	auto callback = [&visited_cnt](iNode & n) {
+	auto callback = [&visited_cnt](iNode& n, const std::function<void(iNode &)> & select) {
 		//usleep(1);
-			visited_cnt++;
-			return QueryTraverse::dummy_callback(n);
-		};
+		visited_cnt++;
+		QueryTraverse::dummy_callback(n, select);
+	};
 	q.clean_visit_flags();
 	//q.load_balance_limit = 1;
 	auto t = new Timer(string("threads ") + to_string(thread_cnt));

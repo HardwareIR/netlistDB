@@ -52,12 +52,14 @@ void Netlist::integrty_assert() {
 	size_t i = 0;
 	for (auto n : nodes) {
 		assert(i == n->index);
-		for (auto f : n->forward) {
-			assert(nodes[f->index] == f);
-		}
-		for (auto b : n->forward) {
-			assert(nodes[b->index] == b);
-		}
+		n->forward([&](iNode & f){
+			assert(nodes[f.index] == &f);
+			return true;
+		});
+		n->forward([&](iNode & b){
+			assert(nodes[b.index] == &b);
+			return false;
+		});
 		i++;
 	}
 	i = 0;

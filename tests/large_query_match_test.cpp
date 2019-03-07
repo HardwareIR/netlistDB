@@ -37,13 +37,14 @@ std::vector<FunctionCall*> find_ops(Netlist & ctx, FunctionDef & op) {
 	boost::mutex mx;
 
 	std::vector<FunctionCall*> ops;
-	auto cb = [&ops, &op, &mx] (iNode& n) {
+	auto cb = [&ops, &op, &mx] (iNode& n,
+			const std::function<void(iNode &)> & select) {
 		auto _n = dynamic_cast<FunctionCall*>(&n);
 		if (_n and &_n->fn == &op) {
 			boost::mutex::scoped_lock lock(mx);
 			ops.push_back(_n);
 		}
-		return QueryTraverse::dummy_callback(n);
+		QueryTraverse::dummy_callback(n, select);
 	};
 	q.traverse(inputs, cb);
 

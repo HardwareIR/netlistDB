@@ -11,8 +11,16 @@ QueryTraverse::QueryTraverse(size_t max_items) :
 	callback = nullptr;
 }
 
-iNode::iterator QueryTraverse::dummy_callback(iNode &n) {
-	return n.backward.joined(n.forward);
+void QueryTraverse::dummy_callback(iNode &n,
+		const std::function<void(iNode &)> & select) {
+	n.backward([&select](iNode& n) {
+		select(n);
+		return false;
+	});
+	n.forward([&select](iNode& n) {
+		select(n);
+		return false;
+	});
 }
 
 void QueryTraverse::clean_visit_flags() {
@@ -24,10 +32,11 @@ void QueryTraverse::clean_visit_flags() {
 	visited_clean = true;
 }
 
-void QueryTraverse::traverse(std::vector<iNode*> starts, callback_t callback) {
+void QueryTraverse::traverse(std::vector<iNode*> starts,
+		const callback_t & callback) {
 	if (starts.size() == 0)
 		return;
-	this->callback = callback;
+	this->callback = &callback;
 	if (not visited_clean) {
 		clean_visit_flags();
 	}
@@ -50,19 +59,20 @@ void QueryTraverse::traverse(iNode & n) {
 	while (not stack.empty()) {
 		auto ch = stack.back();
 		stack.pop_back();
-		auto next_items = callback(*ch);
 
-		for (auto item : next_items)
-			if (not is_visited(*item)) {
+		auto process_item = [&](iNode& item) {
+			if (not is_visited(item)) {
 				to_visit++;
 				if (to_visit < load_balance_limit) {
-					stack.push_back(item); // process next node on this thread
-				} else {
-					g.run([this, item]() {  // process next node in child task
-								traverse(*item);
-							});
-				}
+					stack.push_back(&item); // process next node on this thread
+			} else {
+				g.run([this, &item]() {  // process next node in child task
+							traverse(item);
+						});
 			}
+		}
+	}	;
+		(*callback)(*ch, process_item);
 	}
 	g.wait();
 }
