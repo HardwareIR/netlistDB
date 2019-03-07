@@ -71,16 +71,16 @@ BOOST_AUTO_TEST_CASE( if_then_else ) {
 	BOOST_CHECK_EQUAL(i4.sens_extra.elseIf_enclosed_for.size(), 1);
 	BOOST_TEST(i4.sens_extra.ifFalse_enclosed_for == b_vec, tt::per_element());
 	BOOST_TEST(i4.sens_extra.ifTrue_enclosed_for == b_vec, tt::per_element());
-
-	auto & i5 = If(a)(&b(c)).Elif(c, &b(c - a)).Else(&b(c + a));
-	QueryEnclosure::apply(i5);
-	BOOST_TEST(i3.sens.enclosed_for == b_vec, tt::per_element());
-	BOOST_CHECK_EQUAL(i5.sens.is_completly_event_dependent, false);
-	BOOST_CHECK_EQUAL(i5.sens.now_is_event_dependent, false);
-	BOOST_CHECK_EQUAL(i5.sens.sensitivity.size(), 0);
-	BOOST_CHECK_EQUAL(i5.sens_extra.elseIf_enclosed_for.size(), 1);
-	BOOST_TEST(i5.sens_extra.ifFalse_enclosed_for == b_vec, tt::per_element());
-	BOOST_TEST(i5.sens_extra.ifTrue_enclosed_for == b_vec, tt::per_element());
+    //
+	//auto & i5 = If(a)(&b(c)).Elif(c, &b(c - a)).Else(&b(c + a));
+	//QueryEnclosure::apply(i5);
+	//BOOST_TEST(i3.sens.enclosed_for == b_vec, tt::per_element());
+	//BOOST_CHECK_EQUAL(i5.sens.is_completly_event_dependent, false);
+	//BOOST_CHECK_EQUAL(i5.sens.now_is_event_dependent, false);
+	//BOOST_CHECK_EQUAL(i5.sens.sensitivity.size(), 0);
+	//BOOST_CHECK_EQUAL(i5.sens_extra.elseIf_enclosed_for.size(), 1);
+	//BOOST_TEST(i5.sens_extra.ifFalse_enclosed_for == b_vec, tt::per_element());
+	//BOOST_TEST(i5.sens_extra.ifTrue_enclosed_for == b_vec, tt::per_element());
 
 }
 

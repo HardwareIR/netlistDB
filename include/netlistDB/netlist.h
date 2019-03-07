@@ -108,7 +108,6 @@ public:
 	 * */
 	void _register_stements(const std::vector<Statement*> & statements,
 			std::vector<Statement*> & target);
-
 };
 
 /**

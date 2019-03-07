@@ -33,6 +33,7 @@ Statement * TransformStatementToHwProcess::cut_off_drivers_of(Statement & self,
 
 	throw runtime_error("not implement for statement of this type");
 }
+
 Statement * TransformStatementToHwProcess::cut_off_drivers_of(
 		IfStatement & self, Net* sig) {
 	if (self._outputs.size() == 1 and self._outputs[0] == sig) {
@@ -363,14 +364,12 @@ void TransformStatementToHwProcess::reduce(std::vector<HwProcess*> & processes) 
 				auto pB = procs[iB];
 				if (pB == nullptr)
 					continue;
-
 				try {
 					pA = tryToMerge(*pA, *pB);
+					procs[iB] = nullptr;
 				} catch (const IncompatibleStructure & e) {
 					continue;
 				}
-
-				procs[iB] = nullptr;
 			}
 		}
 		for (auto p : procs) {
@@ -403,12 +402,13 @@ HwProcess * TransformStatementToHwProcess::tryToMerge(HwProcess & procA,
 		throw IncompatibleStructure();
 	}
 
-	TransformReduceStatement::merge_statements_vector(procA.statements,
-			procB.statements);
-
 	procA.outputs.extend(procB.outputs);
 	procA.inputs.extend(procB.inputs);
 	procA.sensitivityList.extend(procB.sensitivityList);
+
+	TransformReduceStatement::merge_statements_vector(procA.statements,
+			procB.statements);
+
 
 	return &procA;
 }

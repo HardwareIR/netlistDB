@@ -4,7 +4,6 @@ namespace netlistDB {
 
 IfStatement::IfStatement(Net & condition) :
 		condition(&condition), ifTrue_specified(false), ifFalse_specified(false) {
-
 	_inputs.push_back(&condition);
 	condition.endpoints.push_back(this);
 	rank = 0;
@@ -75,7 +74,7 @@ IfStatement & IfStatement::Else(const std::vector<Statement*> & statements) {
 utils::ChainedSequence<Statement*> IfStatement::_iter_stms() {
 	utils::ChainedSequence<Statement*> it;
 	it.push_back(&ifTrue);
-	for (auto eif : elseIf) {
+	for (auto & eif : elseIf) {
 		it.push_back(&eif.second);
 	}
 	if (ifFalse_specified) {
@@ -83,6 +82,12 @@ utils::ChainedSequence<Statement*> IfStatement::_iter_stms() {
 	}
 
 	return it;
+}
+
+IfStatement::~IfStatement() {
+	for (auto stm : _iter_stms()) {
+		delete stm;
+	}
 }
 
 NETLISTDB_PUBLIC IfStatement & If(Net & condition) {

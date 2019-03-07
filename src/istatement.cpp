@@ -9,7 +9,7 @@ Netlist & Statement::_get_context() {
 	for (auto inp : backward)
 		return dynamic_cast<Net*>(inp)->ctx;
 
-	for (auto s: _iter_stms())
+	for (auto s : _iter_stms())
 		return s->_get_context();
 
 	throw std::runtime_error(

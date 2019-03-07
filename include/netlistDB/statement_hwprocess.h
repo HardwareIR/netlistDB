@@ -36,7 +36,8 @@ public:
 			utils::OrderedSet<Net*> inputs, utils::OrderedSet<Net*> outputs);
 
 	virtual utils::ChainedSequence<Statement*> _iter_stms() override;
-
+	// automatically delete child statements
+	virtual ~HwProcess();
 };
 
 }

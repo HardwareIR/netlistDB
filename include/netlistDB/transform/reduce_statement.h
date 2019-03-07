@@ -30,6 +30,7 @@ public:
 	/*
 	 * Merge two vector of statements into one
 	 *
+	 * @note stmsB will be cleared
 	 * :return: vector of merged statements
 	 * */
 	static std::vector<Statement*> merge_statements_vector(
@@ -77,6 +78,7 @@ public:
 	 * After merging statements update IO, sensitivity and context
 	 *
 	 * @attention rank is not updated
+	 * @note other will be deleted
 	 * @param self the statement which was merged to
 	 * @param other the statement which was merged in to "self"
 	 */

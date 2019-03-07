@@ -127,6 +127,8 @@ vector<Statement*> TransformReduceStatement::merge_statements_vector(
 			b = nullptr;
 		}
 	}
+
+	stmsB.clear();
 	return tmp;
 }
 
@@ -339,6 +341,7 @@ void TransformReduceStatement::on_merge(Statement & self, Statement & other) {
 			s->drivers.push_back(&self);
 		}
 	}
+	delete &other;
 }
 
 }

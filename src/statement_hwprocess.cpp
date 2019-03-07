@@ -19,4 +19,10 @@ utils::ChainedSequence<Statement*> HwProcess::_iter_stms() {
 	return it;
 }
 
+HwProcess::~HwProcess() {
+	for (auto stm : _iter_stms()) {
+		delete stm;
+	}
+}
+
 }

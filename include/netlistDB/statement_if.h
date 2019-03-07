@@ -50,7 +50,7 @@ public:
 	IfStatement & Else(const std::vector<Statement*> & statements);
 
 	virtual utils::ChainedSequence<Statement*> _iter_stms() override;
-
+	virtual ~IfStatement();
 };
 
 // the helper method for IfStatement construction
