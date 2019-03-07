@@ -2,6 +2,7 @@
 #include <netlistDB/utils/erase_if.h>
 #include <netlistDB/operator_defs.h>
 #include <netlistDB/statement_assignment.h>
+#include <netlistDB/hw_type/hw_int.h>
 
 namespace netlistDB {
 
@@ -32,6 +33,32 @@ Net & apply_call(FunctionDef & fn, Net & a) {
 	a.usage_cache[k] = &res;
 	return res;
 }
+
+
+template<typename T>
+Net & _wrap_val_to_const_net(Net &n, T val) {
+	auto int_t = dynamic_cast<typename hw_type::HwInt*>(&n.t);
+	if (int_t) {
+		return (*int_t)(n.ctx, val);
+	}
+	throw std::runtime_error(
+			std::string(__FILE__) + ":" + std::to_string(__LINE__) + "unknown type for automatic const instantiation");
+}
+
+Net & Net::wrap_val_to_const_net(uint64_t val) {
+	return _wrap_val_to_const_net(*this, val);
+}
+Net & Net::wrap_val_to_const_net(int64_t val) {
+	return _wrap_val_to_const_net(*this, val);
+}
+Net & Net::wrap_val_to_const_net(int val) {
+	return _wrap_val_to_const_net(*this, val);
+}
+Net & Net::wrap_val_to_const_net(unsigned val) {
+	return _wrap_val_to_const_net(*this, val);
+}
+
+
 
 Net::Net(Netlist & ctx, hw_type::iHwType & t, const std::string & name,
 		Direction direction) :

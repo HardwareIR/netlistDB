@@ -22,9 +22,8 @@
 #include <netlistDB/function_def.h>
 #include <netlistDB/hw_type/ihw_type.h>
 #include <netlistDB/hw_type/ihw_type_value.h>
-#include <netlistDB/hw_type/hw_int.h>
 #include <netlistDB/utils/sensitivity_ctx.h>
-#include "usage_cache_key.h"
+#include <netlistDB/usage_cache_key.h>
 
 namespace netlistDB {
 
@@ -191,19 +190,6 @@ public:
 	// create output signal
 	Net & sig_out(const std::string & name, hw_type::iHwType & t);
 
-	/* create constant net in this Netlist
-	 * @param v value of the constant net
-	 */
-	template<typename hw_type_t>
-	Net & const_net(hw_type_t & t, typename hw_type_t::value_type::aint_t v);
-
-	/* create constant net in this Netlist
-	 * @param v value of the constant net
-	 * @param mask mask for the value
-	 */
-	template<typename hw_type_t>
-	Net & const_net(hw_type_t & t, typename hw_type_t::value_type::aint_t v,
-			typename hw_type_t::value_type::aint_t mask);
 	// create internal signals without specified name
 	Net & sig(hw_type::iHwType & t);
 	// create internal signal with name specified
@@ -371,33 +357,15 @@ private:
 	/*
 	 * Wrap c-constant to constant net in parent netlist
 	 * */
-	template<typename T>
-	Net & wrap_val_to_const_net(T val) {
-		auto int_t = dynamic_cast<typename hw_type::HwInt*>(&t);
-		if (int_t) {
-			return ctx.const_net(*int_t, val);
-		}
-		throw std::runtime_error(
-				std::string(__FILE__) + ":" + std::to_string(__LINE__) + "unknown type for automatic const instantiation");
-	}
+	Net & wrap_val_to_const_net(uint64_t val);
+	Net & wrap_val_to_const_net(int64_t val);
+	Net & wrap_val_to_const_net(int val);
+	Net & wrap_val_to_const_net(unsigned val);
 };
 
-template<typename hw_type_t>
-Net & Netlist::const_net(hw_type_t & t,
-		typename hw_type_t::value_type::aint_t v) {
-	Net & n = sig("const_", t);
-	n.val = new typename hw_type_t::value_type(t, v, t.all_mask);
-	return n;
-}
 
-template<typename hw_type_t>
-Net & Netlist::const_net(hw_type_t & t,
-		typename hw_type_t::value_type::aint_t v,
-		typename hw_type_t::value_type::aint_t mask) {
-	Net & n = sig("const_", t);
-	n.val = new typename hw_type_t::value_type(t, v, mask);
-	return n;
-}
+
+
 
 }
 

@@ -1,19 +1,18 @@
 #pragma once
 
-#include <boost/multiprecision/cpp_int.hpp>
 #include <netlistDB/common.h>
+#include <netlistDB/hw_type/hw_int.h>
 
 namespace netlistDB {
 namespace bit_utils {
 
-boost::multiprecision::cpp_int mask(std::size_t len);
+hw_type::aint_t mask(std::size_t len);
 
-boost::multiprecision::cpp_int select_bits(boost::multiprecision::cpp_int val,
-		std::size_t bitsStart, std::size_t bitsLen);
+hw_type::aint_t select_bits(const hw_type::aint_t & val, std::size_t bitsStart,
+		std::size_t bitsLen);
 
-boost::multiprecision::cpp_int set_bits(boost::multiprecision::cpp_int val,
-		std::size_t bitStart, std::size_t bitsLen,
-		boost::multiprecision::cpp_int newBits);
+hw_type::aint_t set_bits(const hw_type::aint_t & val, std::size_t bitStart,
+		std::size_t bitsLen, const hw_type::aint_t & newBits);
 
 }
 }

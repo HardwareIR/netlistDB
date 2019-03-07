@@ -26,17 +26,17 @@ BOOST_AUTO_TEST_CASE( hwint_values ) {
 	HwInt hw_uint128(128);
 
 	vector<pair<Net*, string>> expected = {
-			{&ctx.const_net(hw_bit, 1), "1'b1"},
-			{&ctx.const_net(hw_bit, 0), "1'b0"},
-			{&ctx.const_net(hw_bit, 0, 0), "1'bX"},
-			{&ctx.const_net(hw_bit, 0, 1), "1'b0"},
-			{&ctx.const_net(hw_uint128,
-			 (HwInt::value_type::aint_t(1) << 128) -1),
+			{&hw_bit(ctx, 1), "1'b1"},
+			{&hw_bit(ctx, 0), "1'b0"},
+			{&hw_bit(ctx, 0, 0), "1'bX"},
+			{&hw_bit(ctx, 0, 1), "1'b0"},
+			{&hw_uint128(ctx,
+			 (aint_t(1) << 128ul) -1),
 			 "128'hffffffffffffffffffffffffffffffff"},
-			{&ctx.const_net(hw_uint128,
-			 (HwInt::value_type::aint_t(1) << 128) -1, 0),
+			{&hw_uint128(ctx,
+			 (aint_t(1) << 128ul) -1, aint_t(0)),
 			 "128'hXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"},
-			{&ctx.const_net(hw_uint32, 0x0123DEAD), "32'h0123dead"}
+			{&hw_uint32(ctx, 0x0123DEAD), "32'h0123dead"}
 	};
 
 	Verilog2001 ser;

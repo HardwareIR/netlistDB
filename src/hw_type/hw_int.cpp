@@ -20,9 +20,22 @@ bool HwInt::operator==(const iHwType & _other) const {
 
 HwInt::HwInt(size_t bit_length, bool is_signed, bool has_to_be_vector) :
 		_M_bit_length(bit_length), all_mask(
-				(boost::multiprecision::cpp_int(1) << bit_length) - 1), is_signed(
+				(aint_t(1) << bit_length) - 1), is_signed(
 				is_signed), has_to_be_vector(has_to_be_vector) {
 }
+
+Net & HwInt::operator()(Netlist & ctx, const aint_t & val) {
+	Net & n = ctx.sig("const_", *this);
+	n.val = new value_type(*this, val, all_mask);
+	return n;
+}
+
+Net & HwInt::operator()(Netlist & ctx, const aint_t & val, const aint_t & mask) {
+	Net & n = ctx.sig("const_", *this);
+	n.val = new value_type(*this, val, mask);
+	return n;
+}
+
 
 HwInt::~HwInt() {
 }

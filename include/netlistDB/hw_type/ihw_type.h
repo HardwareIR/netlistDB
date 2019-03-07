@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stddef.h>
-#include <boost/multiprecision/cpp_int.hpp>
 #include <netlistDB/common.h>
 
 namespace netlistDB {

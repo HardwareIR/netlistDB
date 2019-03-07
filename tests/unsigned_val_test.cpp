@@ -20,8 +20,7 @@ BOOST_AUTO_TEST_SUITE( netlistDB_unsigned_val_testsuite )
 BOOST_AUTO_TEST_CASE( simple_unsigned_val_test ) {
 	Netlist ctx("test");
 
-	using aint_t = typename HwIntValue::aint_t;
-	Net & c = ctx.const_net(hw_int64, aint_t(1));
+	Net & c = hw_int64(ctx, aint_t(1));
 	BOOST_CHECK_NE(c.val, nullptr);
 	auto v = dynamic_cast<HwIntValue*>(c.val);
 

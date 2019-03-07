@@ -1,10 +1,11 @@
 #pragma once
 
 #include <stddef.h>
-#include <exception>
+#include <stdexcept>
 
 namespace netlistDB {
 namespace hw_type {
+
 
 class NETLISTDB_PUBLIC iHwTypeValue {
 public:

@@ -1,23 +1,23 @@
 #pragma once
 
+#include <netlistDB/netlist.h>
 #include <netlistDB/hw_type/ihw_type.h>
-#include <boost/multiprecision/cpp_int.hpp>
-//#include <boost/multiprecision/gmp.hpp>
 #include <netlistDB/hw_type/ihw_type_value.h>
+#include <netlistDB/hw_type/aint.h>
+
 
 namespace netlistDB {
 namespace hw_type {
 
+
 class NETLISTDB_PUBLIC HwInt;
 
 /*
- * [TODO] maybe hide cpp_int behind opaque pointer so we can hide  boost::multiprecision namespace which is slow to compile
  * */
 /* Container of the value for hardware integer type
  **/
 class NETLISTDB_PUBLIC HwIntValue: public iHwTypeValue {
 public:
-	using aint_t = boost::multiprecision::cpp_int;
 
 	// backward reference to type
 	// (to keep track of the sign and size, ...)
@@ -30,9 +30,17 @@ public:
 	// is undefined
 	aint_t mask;
 
+	HwIntValue(const HwInt & t, const aint_t & value);
 	HwIntValue(const HwInt & t, uint64_t val);
-	HwIntValue(const HwInt & t, uint64_t val, uint64_t mask);
+	HwIntValue(const HwInt & t, int64_t val);
+	HwIntValue(const HwInt & t, unsigned val);
+	HwIntValue(const HwInt & t, int val);
+
 	HwIntValue(const HwInt & t, const aint_t & value, const aint_t & mask);
+	HwIntValue(const HwInt & t, uint64_t val, uint64_t mask);
+	HwIntValue(const HwInt & t, int64_t val, int64_t mask);
+	HwIntValue(const HwInt & t, unsigned val, unsigned mask);
+	HwIntValue(const HwInt & t, int val, int mask);
 };
 
 /*
@@ -47,7 +55,7 @@ public:
 	using value_type = HwIntValue;
 
 	// the mask value for the type of this size
-	const boost::multiprecision::cpp_int all_mask;
+	const aint_t all_mask;
 
 	// true if the value is signed integer
 	const size_t is_signed;
@@ -60,6 +68,21 @@ public:
 	virtual size_t bit_length() const override;
 	virtual bool operator==(const iHwType & other) const override;
 
+	// create constant net of this type in specified netlist
+	Net & operator()(Netlist & ctx, const aint_t & val);
+	Net & operator()(Netlist & ctx, const aint_t & val, const aint_t & mask);
+	template<typename T>
+	Net & operator()(Netlist & ctx, T val) {
+		Net & n = ctx.sig("const_", *this);
+		n.val = new value_type(*this, val, T(all_mask));
+		return n;
+	}
+	template<typename T>
+	Net & operator()(Netlist & ctx, T val, T mask) {
+		Net & n = ctx.sig("const_", *this);
+		n.val = new value_type(*this, val, mask);
+		return n;
+	}
 	~HwInt();
 };
 
