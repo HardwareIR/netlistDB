@@ -57,7 +57,8 @@ EXTRA_C_ARGS = []
 if meson.get_compiler('cpp').get_id() == 'msvc'
 	if get_option('default_library') == 'static'
 		EXTRA = ['/DBOOST_ALL_NO_LIB',
-        	     '/DBOOST_ALL_DYN_LINK',]
+        	     #'/DBOOST_ALL_DYN_LINK',
+        	     ]
 	else
 		EXTRA = []
 	endif
