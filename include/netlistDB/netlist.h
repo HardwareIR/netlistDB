@@ -365,6 +365,8 @@ public:
 	virtual void backward(const predicate_t & fn) override;
 	// disconnect the selected endpoints
 	void forward_disconnect(std::function<bool(iNode*)> pred);
+
+	virtual ~Net() override;
 private:
 	/*
 	 * Wrap c-constant to constant net in parent netlist

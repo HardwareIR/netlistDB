@@ -131,4 +131,8 @@ void Net::forward_disconnect(std::function<bool(iNode*)> pred) {
 	parallel_utils::erase_if_seq<OperationNode*>(endpoints, pred);
 }
 
+Net::~Net() {
+	delete val;
+}
+
 }
