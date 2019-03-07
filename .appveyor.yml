@@ -8,6 +8,7 @@ environment:
       compiler: msvc2017
       PYTHON: "C:\\Python37-x64"
       BOOST_ROOT: "C:\\Libraries\\boost_1_69_0"
+      BOOST_LIBRARYDIR: "C:\\Libraries\\boost_1_69_0\\lib64-msvc-14.0"
 
 platform:
   - x64
@@ -19,7 +20,7 @@ install:
   - cmd: echo Using Python at %PYTHON%
   - cmd: echo Using boost at %BOOST_ROOT%
   # Add neccessary paths to PATH variable
-  - cmd: set PATH=%cd%;C:\ninja-build;%PYTHON%;%PYTHON%\Scripts;%PATH%
+  - cmd: set PATH=%cd%;C:\ninja-build;%PYTHON%;%PYTHON%\Scripts;%BOOST_LIBRARYDIR%;%PATH%
   # Install meson the build tood
   - cmd: pip install meson
     # Set up the build environment
