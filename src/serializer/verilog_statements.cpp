@@ -18,7 +18,7 @@ void Verilog2001::serialize_stm(const Assignment & a, ostream & str) {
 	serialize_net_usage(a.dst, str);
 	for (size_t i = a.dst_index.size(); i > 0; i--) {
 		str << "[";
-		serialize_net_usage(*a.dst_index[i], str);
+		serialize_net_usage(*a.dst_index[i - 1], str);
 		str << "]";
 	}
 
