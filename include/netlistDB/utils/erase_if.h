@@ -4,7 +4,7 @@
 #include <algorithm>
 
 namespace netlistDB {
-namespace parallel_utils {
+namespace utils {
 
 ///*
 // * The body of inclusive scan operation for tbb
@@ -144,6 +144,5 @@ void erase_if(std::vector<T> & vec, std::function<bool(T)> pred) {
 //
 //	vec = new_vec;
 //}
-
 }
 }

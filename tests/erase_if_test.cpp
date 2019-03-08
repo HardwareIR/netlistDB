@@ -9,10 +9,11 @@
 #include <random>
 
 #include <netlistDB/utils/erase_if.h>
-#include "../src/debug_utils/timer.h"
+#include <netlistDB/utils/timer.h>
 
 using namespace netlistDB;
-using namespace netlistDB::parallel_utils;
+using namespace netlistDB::utils;
+
 
 BOOST_AUTO_TEST_SUITE( netlistDB_erase_if_testsuite )
 

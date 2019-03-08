@@ -155,7 +155,7 @@ void Net::backward(const predicate_t & fn) {
 }
 
 void Net::forward_disconnect(std::function<bool(iNode*)> pred) {
-	parallel_utils::erase_if_seq<OperationNode*>(endpoints, pred);
+	utils::erase_if_seq<OperationNode*>(endpoints, pred);
 }
 
 Net::~Net() {

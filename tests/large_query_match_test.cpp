@@ -15,12 +15,14 @@
 #include <netlistDB/query/query_match.h>
 #include <netlistDB/operator_defs.h>
 #include <netlistDB/query/query_traverse.h>
-#include "../src/debug_utils/timer.h"
+#include <netlistDB/utils/timer.h>
+
 #include "test_graphs.h"
 
 using namespace netlistDB;
 using namespace netlistDB::query;
 using namespace netlistDB::hw_type;
+using namespace netlistDB::utils;
 
 BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
 auto & t = hw_int32;

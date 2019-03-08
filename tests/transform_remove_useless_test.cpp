@@ -14,11 +14,12 @@
 #include <boost/range/join.hpp>
 
 #include <netlistDB/transform/remove_useless.h>
+#include <netlistDB/utils/timer.h>
 #include "test_graphs.h"
-#include "../src/debug_utils/timer.h"
 
 using namespace netlistDB;
 using namespace netlistDB::transform;
+using namespace netlistDB::utils;
 
 BOOST_AUTO_TEST_SUITE( TransformRemoveUseless_testsuite )
 

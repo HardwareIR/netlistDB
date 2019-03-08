@@ -11,7 +11,7 @@
 using namespace std;
 using namespace netlistDB::utils;
 using namespace netlistDB::query;
-using namespace netlistDB::parallel_utils;
+using namespace netlistDB::utils;
 
 namespace netlistDB {
 namespace transform {

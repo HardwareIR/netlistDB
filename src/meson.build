@@ -1,5 +1,4 @@
 src = [
-    'debug_utils/timer.cpp',
 
 	'hw_type/aint.cpp',
 	'hw_type/common.cpp',
@@ -38,6 +37,7 @@ src = [
 	'transform/to_hdl_friendly.cpp',
 	
 	'utils/thread_pool.cpp',
+    'utils/timer.cpp',
 
 	'bit_utils.cpp',
 	'component_map.cpp',
