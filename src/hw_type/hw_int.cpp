@@ -9,6 +9,9 @@ size_t HwInt::bit_length() const {
 }
 
 bool HwInt::operator==(const iHwType & _other) const {
+	if (this == &_other)
+		return true;
+
 	auto other = dynamic_cast<const HwInt*>(&_other);
 	if (other == nullptr)
 		return false;
