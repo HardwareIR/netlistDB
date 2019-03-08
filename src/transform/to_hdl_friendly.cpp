@@ -29,7 +29,7 @@ bool TransformToHdlFriendly::apply(Netlist & ctx) {
 		TransformStatementToHwProcess::apply( { stm }, res, true);
 
 	TransformStatementToHwProcess::reduce(res);
-	for (auto p: res)
+	for (auto p : res)
 		ctx.register_node(*p);
 
 	return modified;
