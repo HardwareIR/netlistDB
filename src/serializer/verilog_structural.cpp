@@ -38,10 +38,14 @@ void Verilog2001::serialize_io(const Net & io_net, std::ostream & str) {
 		str << " reg";
 	}
 	str << " ";
-	if (serialize_type_usage(io_net.t, str)) {
+	// extract the non array type from type
+
+	if (serialize_type_usage(get_non_array_t(io_net.t), str)) {
 		str << " ";
 	}
 	str << name_scope.checkedName(io_net.id.name, &io_net);
+	// add array sizes if required
+	print_array_indexes(&io_net.t, true, str);
 }
 
 void Verilog2001::serialize_module_head(const Netlist & netlist,

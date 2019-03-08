@@ -23,7 +23,7 @@ public:
 
 };
 
-class NETLISTDB_PUBLIC iHwType_array: iHwType {
+class NETLISTDB_PUBLIC iHwType_array: public iHwType {
 public:
 	const iHwType & elm_t;
 	const size_t size;

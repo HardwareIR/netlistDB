@@ -19,6 +19,33 @@ Verilog2001::Verilog2001(
 	}
 }
 
+void Verilog2001::print_array_indexes(const hw_type::iHwType * t, bool first,
+		std::ostream & str) {
+	auto at = dynamic_cast<const hw_type::iHwType_array*>(t);
+	if (at) {
+		if (first) {
+			str << " ";
+		}
+
+		print_array_indexes(&at->elm_t, false, str);
+		str << "[0:" << (at->size - 1) << "]";
+	}
+}
+
+const hw_type::iHwType & Verilog2001::get_non_array_t(
+		const hw_type::iHwType & _t) {
+	const hw_type::iHwType * t = &_t;
+	while (true) {
+		auto at = dynamic_cast<const hw_type::iHwType_array*>(t);
+		if (at) {
+			t = &at->elm_t;
+		} else {
+			return *t;
+		}
+	}
+	return *t;
+}
+
 void Verilog2001::serialize_net_def(const Net & n, std::ostream & str) {
 	indent(str);
 	auto v_t = verilogTypeOfSig(n);
@@ -27,10 +54,12 @@ void Verilog2001::serialize_net_def(const Net & n, std::ostream & str) {
 	} else {
 		str << "wire ";
 	}
-	if (serialize_type_usage(n.t, str))
+	if (serialize_type_usage(get_non_array_t(n.t), str))
 		str << " ";
 
-	str << name_scope.checkedName(n.id.name, &n) << ";";
+	str << name_scope.checkedName(n.id.name, &n);
+	print_array_indexes(&n.t, true, str);
+	str << ";";
 }
 
 bool Verilog2001::serialize_type_usage(const hw_type::iHwType & t,
