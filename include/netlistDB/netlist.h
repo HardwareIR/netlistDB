@@ -50,7 +50,7 @@ public:
 	bool is_completly_event_dependent;
 	bool now_is_event_dependent;
 	utils::OrderedSet<Net*> enclosed_for;
-	SensitivityCtx sensitivity;
+	utils::SensitivityCtx sensitivity;
 	SensitivityInfo() :
 			is_completly_event_dependent(false), now_is_event_dependent(false) {
 	}

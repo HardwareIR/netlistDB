@@ -15,12 +15,12 @@ class NETLISTDB_PUBLIC ExprSensitivityProbe {
 public:
 	static void apply(FunctionCall & fn_call,
 			std::set<Net*> & casual_sensitivity, std::set<iNode*> & seen,
-			SensitivityCtx & ctx);
+			utils::SensitivityCtx & ctx);
 
 	static void apply(Net & net, std::set<Net*> & casual_sensitivity,
-			std::set<iNode*> & seen, SensitivityCtx & ctx);
+			std::set<iNode*> & seen, utils::SensitivityCtx & ctx);
 
-	static void apply(Net & net, std::set<iNode*> & seen, SensitivityCtx & ctx);
+	static void apply(Net & net, std::set<iNode*> & seen, utils::SensitivityCtx & ctx);
 };
 
 }

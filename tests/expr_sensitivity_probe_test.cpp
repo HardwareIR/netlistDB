@@ -16,6 +16,8 @@
 using namespace netlistDB;
 using namespace netlistDB::hw_type;
 using namespace netlistDB::query;
+using namespace netlistDB::utils;
+
 using namespace std;
 namespace tt = boost::test_tools;
 
