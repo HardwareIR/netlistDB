@@ -37,10 +37,10 @@ public:
 	HwIntValue(const HwInt & t, int val);
 
 	HwIntValue(const HwInt & t, const aint_t & value, const aint_t & mask);
-	HwIntValue(const HwInt & t, uint64_t val, uint64_t mask);
-	HwIntValue(const HwInt & t, int64_t val, int64_t mask);
-	HwIntValue(const HwInt & t, unsigned val, unsigned mask);
-	HwIntValue(const HwInt & t, int val, int mask);
+	HwIntValue(const HwInt & t, uint64_t val, aint_t mask);
+	HwIntValue(const HwInt & t, int64_t val, aint_t mask);
+	HwIntValue(const HwInt & t, unsigned val, aint_t mask);
+	HwIntValue(const HwInt & t, int val, aint_t mask);
 };
 
 /*
@@ -74,11 +74,11 @@ public:
 	template<typename T>
 	Net & operator()(Netlist & ctx, T val) {
 		Net & n = ctx.sig("const_", *this);
-		n.val = new value_type(*this, val, T(all_mask));
+		n.val = new value_type(*this, val, all_mask);
 		return n;
 	}
 	template<typename T>
-	Net & operator()(Netlist & ctx, T val, T mask) {
+	Net & operator()(Netlist & ctx, T val, aint_t mask) {
 		Net & n = ctx.sig("const_", *this);
 		n.val = new value_type(*this, val, mask);
 		return n;

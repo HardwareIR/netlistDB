@@ -9,19 +9,14 @@ hw_type::aint_t mask(std::size_t len) {
 
 hw_type::aint_t select_bits(const hw_type::aint_t & val, std::size_t bitsStart,
 		std::size_t bitsLen) {
-	val >>= bitsStart;
-	return val & mask(bitsLen);
+	return (val >> bitsStart) & mask(bitsLen);
 }
 
 hw_type::aint_t set_bits(const hw_type::aint_t & val, std::size_t bitStart,
 		std::size_t bitsLen, const hw_type::aint_t & newBits) {
-	hw_type::aint_t _mask = mask(bitsLen);
-	newBits &= _mask;
-
-	_mask <<= bitStart;
-	newBits <<= bitStart;
-
-	return (val & ~_mask) | newBits;
+	auto _mask = mask(bitsLen) << bitStart;
+	auto _new_bits = ((newBits & _mask) << bitStart);
+	return (val & ~_mask) | _new_bits;
 }
 
 }

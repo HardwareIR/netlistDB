@@ -13,11 +13,13 @@
 #include <netlistDB/statement_if.h>
 #include <netlistDB/hw_type/common.h>
 #include <netlistDB/serializer/verilog.h>
+#include <netlistDB/bit_utils.h>
 
 using namespace std;
 using namespace netlistDB;
 using namespace netlistDB::hw_type;
 using namespace netlistDB::serializer;
+using namespace netlistDB::bit_utils;
 
 BOOST_AUTO_TEST_SUITE( netlistDB_verilog_basic_testsuite )
 
@@ -30,11 +32,9 @@ BOOST_AUTO_TEST_CASE( hwint_values ) {
 			{&hw_bit(ctx, 0), "1'b0"},
 			{&hw_bit(ctx, 0, 0), "1'bX"},
 			{&hw_bit(ctx, 0, 1), "1'b0"},
-			{&hw_uint128(ctx,
-			 (aint_t(1) << 128ul) -1),
+			{&hw_uint128(ctx, mask(128)),
 			 "128'hffffffffffffffffffffffffffffffff"},
-			{&hw_uint128(ctx,
-			 (aint_t(1) << 128ul) -1, aint_t(0)),
+			{&hw_uint128(ctx, mask(128), aint_t(0)),
 			 "128'hXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"},
 			{&hw_uint32(ctx, 0x0123DEAD), "32'h0123dead"}
 	};

@@ -1,9 +1,9 @@
 #pragma once
 #include <stdint.h>
+#include <ostream>
 
 namespace netlistDB {
 namespace hw_type {
-
 
 // wrapper for boost::multiprecision::cpp_int arbitrary integer
 // cpp_int is hidden behind opaque pointer so we can hide boost::multiprecision namespace which is slow to compile
@@ -119,7 +119,6 @@ public:
 	bool operator!=(int other) const;
 	bool operator!=(unsigned other) const;
 
-
 	bool operator&&(const aint_t & other) const;
 	bool operator&&(uint64_t other) const;
 	bool operator&&(int64_t other) const;
@@ -132,70 +131,81 @@ public:
 	bool operator||(int other) const;
 	bool operator||(unsigned other) const;
 
+	void operator+=(const aint_t & other);
+	void operator+=(uint64_t other);
+	void operator+=(int64_t other);
+	void operator+=(int other);
+	void operator+=(unsigned other);
 
-	void operator+=(const aint_t & other) const;
-	void operator+=(uint64_t other) const;
-	void operator+=(int64_t other) const;
-	void operator+=(int other) const;
-	void operator+=(unsigned other) const;
+	void operator-=(const aint_t & other);
+	void operator-=(uint64_t other);
+	void operator-=(int64_t other);
+	void operator-=(int other);
+	void operator-=(unsigned other);
 
-	void operator-=(const aint_t & other) const;
-	void operator-=(uint64_t other) const;
-	void operator-=(int64_t other) const;
-	void operator-=(int other) const;
-	void operator-=(unsigned other) const;
+	void operator/=(const aint_t & other);
+	void operator/=(uint64_t other);
+	void operator/=(int64_t other);
+	void operator/=(int other);
+	void operator/=(unsigned other);
 
-	void operator/=(const aint_t & other) const;
-	void operator/=(uint64_t other) const;
-	void operator/=(int64_t other) const;
-	void operator/=(int other) const;
-	void operator/=(unsigned other) const;
+	void operator%=(const aint_t & other);
+	void operator%=(uint64_t other);
+	void operator%=(int64_t other);
+	void operator%=(int other);
+	void operator%=(unsigned other);
 
-	void operator%=(const aint_t & other) const;
-	void operator%=(uint64_t other) const;
-	void operator%=(int64_t other) const;
-	void operator%=(int other) const;
-	void operator%=(unsigned other) const;
+	void operator^=(const aint_t & other);
+	void operator^=(uint64_t other);
+	void operator^=(int64_t other);
+	void operator^=(int other);
+	void operator^=(unsigned other);
 
-	void operator^=(const aint_t & other) const;
-	void operator^=(uint64_t other) const;
-	void operator^=(int64_t other) const;
-	void operator^=(int other) const;
-	void operator^=(unsigned other) const;
+	void operator&=(const aint_t & other);
+	void operator&=(uint64_t other);
+	void operator&=(int64_t other);
+	void operator&=(int other);
+	void operator&=(unsigned other);
 
-	void operator&=(const aint_t & other) const;
-	void operator&=(uint64_t other) const;
-	void operator&=(int64_t other) const;
-	void operator&=(int other) const;
-	void operator&=(unsigned other) const;
+	void operator|=(const aint_t & other);
+	void operator|=(uint64_t other);
+	void operator|=(int64_t other);
+	void operator|=(int other);
+	void operator|=(unsigned other);
 
-	void operator|=(const aint_t & other) const;
-	void operator|=(uint64_t other) const;
-	void operator|=(int64_t other) const;
-	void operator|=(int other) const;
-	void operator|=(unsigned other) const;
+	void operator*=(const aint_t & other);
+	void operator*=(uint64_t other);
+	void operator*=(int64_t other);
+	void operator*=(int other);
+	void operator*=(unsigned other);
 
-	void operator*=(const aint_t & other) const;
-	void operator*=(uint64_t other) const;
-	void operator*=(int64_t other) const;
-	void operator*=(int other) const;
-	void operator*=(unsigned other) const;
+	//void operator<<=(const aint_t & other);
+	void operator<<=(uint64_t other);
+	//void operator<<=(int64_t other);
+	//void operator<<=(int other);
+	//void operator<<=(unsigned other);
 
-	//void operator<<=(const aint_t & other) const;
-	void operator<<=(uint64_t other) const;
-	//void operator<<=(int64_t other) const;
-	//void operator<<=(int other) const;
-	//void operator<<=(unsigned other) const;
+	//void operator>>=(const aint_t & other);
+	void operator>>=(uint64_t other);
+	//void operator>>=(int64_t other);
+	//void operator>>=(int other);
+	//void operator>>=(unsigned other);
 
-	//void operator>>=(const aint_t & other) const;
-	void operator>>=(uint64_t other) const;
-	//void operator>>=(int64_t other) const;
-	//void operator>>=(int other) const;
-	//void operator>>=(unsigned other) const;
+	aint_t operator~();
+	aint_t operator-();
+	aint_t operator!();
+	aint_t operator++();
+	aint_t operator--();
 
+	operator int64_t() const;
+	operator uint64_t() const;
+	operator unsigned() const;
+	operator int() const;
 	operator bool() const;
 
 	~aint_t();
+
+	friend std::ostream & operator<<(std::ostream & str, const aint_t & t);
 };
 
 }

@@ -1,7 +1,8 @@
 #pragma once
 
 #include <netlistDB/common.h>
-#include <netlistDB/hw_type/hw_int.h>
+#include <netlistDB/hw_type/aint.h>
+#include <cstddef>
 
 namespace netlistDB {
 namespace bit_utils {
