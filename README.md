@@ -3,6 +3,7 @@
 [![Windows build](https://ci.appveyor.com/api/projects/status/9a9ckao995bcetbk/branch/master?svg=true)](https://ci.appveyor.com/project/Nic3084362/netlistdb/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/HardwareIR/hardwareIr/badge.svg?branch=master)](https://coveralls.io/github/HardwareIR/hardwareIr?branch=master)
 [![Gitter Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/netlistDB/community)
+[![Doc](https://readthedocs.org/projects/netlistdb/badge/?version=latest)](http://netlistdb.readthedocs.io/en/latest/?badge=latest) 
 [ROADMAP](https://drive.google.com/file/d/1zyegLIf7VaBRyb-ED5vgOMmHzW4SRZLp/view?usp=sharing)
 
 (State: pre alfa)
