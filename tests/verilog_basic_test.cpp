@@ -171,7 +171,36 @@ BOOST_AUTO_TEST_CASE( simple_if ) {
 	}
 }
 
+BOOST_AUTO_TEST_CASE( simple_precedence_driven_bracing ) {
+	Netlist ctx("test");
+	auto &a = ctx.sig_in("a", hw_uint8);
+	auto &b = ctx.sig_in("b", hw_uint8);
+	auto &c = ctx.sig_in("c", hw_uint8);
+	auto &d = ctx.sig_in("d", hw_uint8);
 
+	Verilog2001 ser;
+	auto test = [&](Net & n, string ref) {
+		stringstream str;
+		ser.serialize_net_usage(n, str);
+		BOOST_CHECK_EQUAL(str.str(), ref);
+	};
+
+	test((a + b) + c, "a + b + c");
+	test(a + b + c, "a + b + c");
+	test(a + (b + c), "a + (b + c)");
+	test((a + b) * c, "(a + b) * c");
+	test(a + (b * c), "a + b * c");
+	test(a + b * c, "a + b * c");
+	test(a[b + c], "a[b + c]");
+	test(a + b + c + d, "a + b + c + d");
+	test((a + b) + c + d, "a + b + c + d");
+	test(((a + b) + c) + d, "a + b + c + d");
+	test(a + b + (c + d), "(a + b) + (c + d)");
+	test(a + (b + (c + d)), "a + (b + (c + d))");
+	test((a + b) + (c + d), "(a + b) + (c + d)");
+	test((a + b) * (c + d), "(a + b) * (c + d)");
+	test((a * b) + (c * d), "a * b + c * d");
+}
 
 
 //____________________________________________________________________________//

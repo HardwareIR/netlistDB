@@ -93,12 +93,14 @@ public:
 	 * Serialize the operand, optionally wrap in to braces
 	 *
 	 * @param expr_requires_braces if true and the operand is any form of expression
-	 * 			the braces will be added
+	 * 			the braces will be always added
+	 * 		 (if false the braces will be added only if required)
+	 * @param cancel_brances if true the braces are never added
 	 * */
 	virtual void serialize_operand(const Net & operand,
-			const FunctionCall & oper, bool expr_requires_braces,
+			const FunctionCall & oper, bool expr_requires_braces, bool cancel_brances,
 			std::ostream & str);
-
+	int precedence_of_expr(const Net & n);
 	virtual const std::map<const FunctionDef*, int> & get_operator_precedence() = 0;
 
 	virtual ~Serializer() {

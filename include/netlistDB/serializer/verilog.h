@@ -53,7 +53,9 @@ public:
 
 	virtual bool serialize_type_usage(const hw_type::iHwType & t,
 			std::ostream & str);
-	virtual void serialize_value(const typename hw_type::HwInt::value_type & val, std::ostream & str) override;
+	virtual void serialize_value(
+			const typename hw_type::HwInt::value_type & val, std::ostream & str)
+					override;
 	virtual void serialize_net_usage(const Net & n, std::ostream & str)
 			override;
 	virtual void serialize_net_def(const Net & n, std::ostream & str) override;
@@ -64,10 +66,12 @@ public:
 	virtual void serialize_block(const std::vector<Statement*> & stms,
 			std::ostream & str);
 
-	virtual void serialize_stm(const Assignment & stm, std::ostream & str) override;
+	virtual void serialize_stm(const Assignment & stm, std::ostream & str)
+			override;
 	virtual void serialize_stm(const IfStatement & stm, std::ostream & str)
 			override;
-	virtual void serialize_stm(const HwProcess & stm, std::ostream & str) override;
+	virtual void serialize_stm(const HwProcess & stm, std::ostream & str)
+			override;
 
 	virtual void serialize_module_head(const Netlist & netlist,
 			std::ostream & str) override;
@@ -88,7 +92,7 @@ public:
 
 	virtual void serialize_operand(const Net & _operand,
 			const FunctionCall & oper, bool expr_requires_braces,
-			std::ostream & str) override;
+			bool cancel_brances, std::ostream & str) override;
 
 	std::ostream & indent(std::ostream & str);
 	enum VERILOG_NET_TYPE verilogTypeOfSig(const Net & n) const;
