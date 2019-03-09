@@ -50,15 +50,15 @@ int Serializer::precedence_of_expr(const Net & n) {
 }
 
 void Serializer::serialize_operand(const Net & operand,
-		const FunctionCall & oper, bool expr_requires_braces, bool cancel_brances, ostream & str) {
+		const FunctionCall & oper, bool expr_requires_brackets, bool cancel_brackets, ostream & str) {
 
-	bool use_braces = false;
-	if (not cancel_brances) {
-		// resolve if the braces are required
+	bool use_brackets = false;
+	if (not cancel_brackets) {
+		// resolve if the brackets are required
 		auto precedence_my = precedence_of_expr(operand);
 		if (precedence_my >= 0) { // if this is expression
-			if (expr_requires_braces) {
-				use_braces = true;
+			if (expr_requires_brackets) {
+				use_brackets = true;
 			} else {
 				auto prec = get_operator_precedence();
 				auto p = prec.find(&oper.fn);
@@ -83,40 +83,40 @@ void Serializer::serialize_operand(const Net & operand,
 									+ std::to_string(__LINE__));
 				}
 				if (left) { // "operand" is right
-					// same precedence -> braces on right if it is expression
+					// same precedence -> brackets on right if it is expression
 					// a + (b + c)
 					// a + b + c = (a + b) + c
-					// right with lower precedence -> braces for right not required
+					// right with lower precedence -> brackets for right not required
 					// a + b * c = a + (b * c)
-					// right with higher precedence -> braces for right
+					// right with higher precedence -> brackets for right
 					// a * (b + c)
 					if (precedence_my >= precedence_parent) {
-						use_braces = true;
+						use_brackets = true;
 					}
 				} else {
 					// "operand" is left
 					if (precedence_my == precedence_parent) {
 						if (precedence_of_expr(*right) == precedence_my) {
-							// right and left with same precedence -> braces on both sides
+							// right and left with same precedence -> brackets on both sides
 							// (a + b) + (c + d)
-							use_braces = true;
+							use_brackets = true;
 						}
 					} else if (precedence_my > precedence_parent) {
-						// left with higher precedence -> braces for left
+						// left with higher precedence -> brackets for left
 						// (a + b) * c
 						// a + b + c + d = (a + b) + c + d = ((a + b) + c) + d
-						use_braces = true;
+						use_brackets = true;
 					}
 				}
 			}
 		}
 	}
-	if (use_braces)
+	if (use_brackets)
 		str << "(";
 
 	serialize_net_usage(operand, str);
 
-	if (use_braces)
+	if (use_brackets)
 		str << ")";
 }
 

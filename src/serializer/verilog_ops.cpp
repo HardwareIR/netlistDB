@@ -40,9 +40,9 @@ void Verilog2001::serialize_sensitivity_list_item(const iNode & item,
 }
 
 void Verilog2001::serialize_operand(const Net & _operand, const FunctionCall & oper,
-		bool expr_requires_braces, bool cancel_brances, std::ostream & str) {
+		bool expr_requires_brackets, bool cancel_brackets, std::ostream & str) {
 	auto & operand = tmp_extractor.checked(_operand);
-	Serializer::serialize_operand(operand, oper, expr_requires_braces, cancel_brances, str);
+	Serializer::serialize_operand(operand, oper, expr_requires_brackets, cancel_brackets, str);
 }
 
 void Verilog2001::serialize_generic_binOp(const std::string & op_str,

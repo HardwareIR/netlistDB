@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE( simple_if ) {
 	}
 }
 
-BOOST_AUTO_TEST_CASE( simple_precedence_driven_bracing ) {
+BOOST_AUTO_TEST_CASE( simple_precedence_driven_brackets ) {
 	Netlist ctx("test");
 	auto &a = ctx.sig_in("a", hw_uint8);
 	auto &b = ctx.sig_in("b", hw_uint8);

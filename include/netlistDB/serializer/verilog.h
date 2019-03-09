@@ -91,7 +91,7 @@ public:
 			const FunctionCall & o, std::ostream & str);
 
 	virtual void serialize_operand(const Net & _operand,
-			const FunctionCall & oper, bool expr_requires_braces,
+			const FunctionCall & oper, bool expr_requires_brackets,
 			bool cancel_brances, std::ostream & str) override;
 
 	std::ostream & indent(std::ostream & str);
