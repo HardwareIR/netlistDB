@@ -40,13 +40,15 @@ This library is a backend and intermediate format for representation of digital 
 
 Install dependencies
 ```
-sudo apt-get install build-essentials meson cmake git libtbb-dev libboost-all-dev
+sudo apt-get install build-essentials meson cmake libboost-all-dev git
 # [NOTE] if you are using old system like like ubuntu 14 on travis-ci install fresh meson by
 #        pip3 install meson instead to avoid complications with libboost discovery
 ```
 
 build this library
 ```
+git clone https://github.com/HardwareIR/netlistDB
+cd netlistDB
 meson build # meson is tool similar to cmake or autotools
 cd build
 ninja # ninja is tool similar to make
@@ -54,7 +56,6 @@ ninja # ninja is tool similar to make
 
 run tests
 ```
-cd build
 ninja test
 ```
 
