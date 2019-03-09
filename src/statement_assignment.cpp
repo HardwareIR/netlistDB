@@ -6,7 +6,8 @@ using namespace std;
 namespace netlistDB {
 
 Assignment::Assignment(Net & _dst, Net & _src) :
-		Statement(), dst(extract_dst_index_cascade(_dst)), src(_src) {
+		Statement(), dst_index(), dst(extract_dst_index_cascade(_dst)), src(
+				_src) {
 	dst.ctx.register_node(*this);
 	dst.drivers.push_back(this);
 	src.endpoints.push_back(this);
@@ -29,8 +30,10 @@ Net & Assignment::extract_dst_index_cascade(Net & dst) {
 
 	if (op != nullptr and &op->fn == &OpSlice) {
 		// get signal on which is index applied
+		assert(op->args.size() == 2);
 		Net * indexed_on = op->args[0];
-		dst_index.push_back(op->args[1]);
+		Net * index = op->args[1];
+		dst_index.push_back(index);
 		return extract_dst_index_cascade(*indexed_on);
 	}
 	return dst;

@@ -3,6 +3,7 @@
 [![Windows build](https://ci.appveyor.com/api/projects/status/9a9ckao995bcetbk/branch/master?svg=true)](https://ci.appveyor.com/project/Nic3084362/netlistdb/branch/master)
 [![Coverage Status](https://coveralls.io/repos/github/HardwareIR/hardwareIr/badge.svg?branch=master)](https://coveralls.io/github/HardwareIR/hardwareIr?branch=master)
 [![Gitter Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/netlistDB/community)
+[![Doc](https://readthedocs.org/projects/netlistdb/badge/?version=latest)](http://netlistdb.readthedocs.io/en/latest/?badge=latest) 
 [ROADMAP](https://drive.google.com/file/d/1zyegLIf7VaBRyb-ED5vgOMmHzW4SRZLp/view?usp=sharing)
 
 (State: pre alfa)
@@ -39,13 +40,15 @@ This library is a backend and intermediate format for representation of digital 
 
 Install dependencies
 ```
-sudo apt-get install build-essentials meson cmake git libtbb-dev libboost-all-dev
+sudo apt-get install build-essentials meson cmake libboost-all-dev git
 # [NOTE] if you are using old system like like ubuntu 14 on travis-ci install fresh meson by
 #        pip3 install meson instead to avoid complications with libboost discovery
 ```
 
 build this library
 ```
+git clone https://github.com/HardwareIR/netlistDB
+cd netlistDB
 meson build # meson is tool similar to cmake or autotools
 cd build
 ninja # ninja is tool similar to make
@@ -53,7 +56,6 @@ ninja # ninja is tool similar to make
 
 run tests
 ```
-cd build
 ninja test
 ```
 
@@ -76,6 +78,12 @@ Net &b = ctx.sig_in("b", hw_int32);
 Net &res_tmp = a + b;
 Net &res = ctx.sig_out("out", hw_int32);
 res(res_tmp); // equivalent of res <= res_tmp in verilog/vhdl
+
+// convert the ctx to verilog string
+TransformToHdlFriendly t;
+t.apply(ctx);
+Verilog2001 ser;
+ser.serialize(ctx, std::cout);
 ```
 
 To perform analysis of the Netlist there is netlistDB::query namespace.

@@ -103,6 +103,9 @@ public:
 	void serialize_sensitivity_list_item(const iNode & item,
 			bool anyIsEventDependent, const HwProcess & proc,
 			std::ostream & str);
+
+	const hw_type::iHwType & get_non_array_t(const hw_type::iHwType & _t);
+	void print_array_indexes(const hw_type::iHwType * t, bool first, std::ostream & str);
 	virtual ~Verilog2001();
 };
 

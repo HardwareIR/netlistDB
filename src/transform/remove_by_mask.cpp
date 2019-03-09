@@ -2,7 +2,7 @@
 
 #include <netlistDB/utils/erase_if.h>
 
-using namespace netlistDB::parallel_utils;
+using namespace netlistDB::utils;
 using namespace std;
 
 namespace netlistDB {

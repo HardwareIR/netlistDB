@@ -4,6 +4,8 @@
 #include <netlistDB/utils/ordered_set.h>
 
 namespace netlistDB {
+namespace utils {
+
 /*
  * Sensitivity list used for resolution of sensitivity for hw statement instances
  *
@@ -39,4 +41,5 @@ private:
 
 };
 
+}
 }

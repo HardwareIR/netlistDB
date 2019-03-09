@@ -177,6 +177,56 @@ BOOST_AUTO_TEST_CASE( mux_module ) {
 }
 
 
+BOOST_AUTO_TEST_CASE( simple_bram_sp_module ) {
+	Netlist ctx("simple_bram_sp_module");
+
+	HwInt hw_int4(4);
+	auto hw_int32x16 = hw_int32[16];
+	auto &clk = ctx.sig_in("clk", hw_bit);
+	auto &addr = ctx.sig_in("addr", hw_int4);
+	auto &en = ctx.sig_in("en", hw_bit);
+	auto &d_in = ctx.sig_in("d_in", hw_int32);
+	auto &d_out = ctx.sig_out("d_out", hw_int32);
+	auto &mem = ctx.sig("mem", hw_int32x16);
+
+	If(clk.rising())({
+		&d_out(mem[addr]),
+		&If(en) ({
+			&mem[addr](d_in),
+		})
+	});
+
+	TransformToHdlFriendly t;
+	t.apply(ctx);
+
+	Verilog2001 ser;
+	{
+		stringstream str;
+		stringstream ref;
+		ref << "module simple_bram_sp_module(" << endl;
+		ref << "    input [4-1:0] addr," << endl;
+		ref << "    input clk," << endl;
+		ref << "    input signed [32-1:0] d_in," << endl;
+		ref << "    output reg signed [32-1:0] d_out," << endl;
+		ref << "    input en);" << endl;
+        ref << endl;
+		ref << "    reg signed [32-1:0] mem [0:15];"<< endl;
+        ref << endl;
+		ref << "    always @(posedge clk) begin: diver_of_d_out" << endl;
+		ref << "        d_out <= mem[addr];" << endl;
+		ref << "        if (en)" << endl;
+		ref << "            mem[addr] <= d_in;" << endl;
+        ref << endl;
+		ref << "    end" << endl;
+        ref << endl;
+		ref << "endmodule";
+
+		ser.serialize(ctx, str);
+		//cerr << str.str() << endl;
+		BOOST_CHECK_EQUAL(str.str(), ref.str());
+	}
+}
+
 //____________________________________________________________________________//
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -7,7 +7,7 @@ namespace query {
 
 void ExprSensitivityProbe::apply(FunctionCall & fn_call,
 		set<Net*> & casual_sensitivity, set<iNode*> & seen,
-		SensitivityCtx & ctx) {
+		utils::SensitivityCtx & ctx) {
 	seen.insert(&fn_call);
 
 	if (is_event_op(fn_call.fn)) {
@@ -25,7 +25,7 @@ void ExprSensitivityProbe::apply(FunctionCall & fn_call,
 }
 
 void ExprSensitivityProbe::apply(Net & net, set<Net*> & casual_sensitivity,
-		set<iNode*> & seen, SensitivityCtx & ctx) {
+		set<iNode*> & seen, utils::SensitivityCtx & ctx) {
 	seen.insert(&net);
 
 	if (net.is_const())
@@ -44,7 +44,7 @@ void ExprSensitivityProbe::apply(Net & net, set<Net*> & casual_sensitivity,
 }
 
 void ExprSensitivityProbe::apply(Net & net, std::set<iNode*> & seen,
-		SensitivityCtx & ctx) {
+		utils::SensitivityCtx & ctx) {
 	set<Net*> casualSensitivity;
 	apply(net, casualSensitivity, seen, ctx);
 	if (not ctx.contains_event_dep) {

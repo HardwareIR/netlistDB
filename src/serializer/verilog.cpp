@@ -19,6 +19,33 @@ Verilog2001::Verilog2001(
 	}
 }
 
+void Verilog2001::print_array_indexes(const hw_type::iHwType * t, bool first,
+		std::ostream & str) {
+	auto at = dynamic_cast<const hw_type::iHwType_array*>(t);
+	if (at) {
+		if (first) {
+			str << " ";
+		}
+
+		print_array_indexes(&at->elm_t, false, str);
+		str << "[0:" << (at->size - 1) << "]";
+	}
+}
+
+const hw_type::iHwType & Verilog2001::get_non_array_t(
+		const hw_type::iHwType & _t) {
+	const hw_type::iHwType * t = &_t;
+	while (true) {
+		auto at = dynamic_cast<const hw_type::iHwType_array*>(t);
+		if (at) {
+			t = &at->elm_t;
+		} else {
+			return *t;
+		}
+	}
+	return *t;
+}
+
 void Verilog2001::serialize_net_def(const Net & n, std::ostream & str) {
 	indent(str);
 	auto v_t = verilogTypeOfSig(n);
@@ -27,10 +54,12 @@ void Verilog2001::serialize_net_def(const Net & n, std::ostream & str) {
 	} else {
 		str << "wire ";
 	}
-	if (serialize_type_usage(n.t, str))
+	if (serialize_type_usage(get_non_array_t(n.t), str))
 		str << " ";
 
-	str << name_scope.checkedName(n.id.name, &n) << ";";
+	str << name_scope.checkedName(n.id.name, &n);
+	print_array_indexes(&n.t, true, str);
+	str << ";";
 }
 
 bool Verilog2001::serialize_type_usage(const hw_type::iHwType & t,
@@ -48,7 +77,8 @@ bool Verilog2001::serialize_type_usage(const hw_type::iHwType & t,
 		}
 	} else {
 		throw runtime_error(
-				std::string(__FILE__) + ":" + std::to_string(__LINE__) + " not implemented for this type");
+				std::string(__FILE__) + ":" + std::to_string(__LINE__)
+						+ " not implemented for this type");
 	}
 
 }
@@ -59,10 +89,45 @@ void Verilog2001::serialize_value(
 	str << t.bit_length();
 	str << "'";
 
+	constexpr size_t bits_per_nible = 4;
+	size_t rounded_size = t.bit_length() / bits_per_nible;
+	if (rounded_size * bits_per_nible < t.bit_length()) {
+		rounded_size++;
+	}
 	auto str_flags = str.flags();
+	size_t base = 2;
 
 	if ((val.mask != 0 and val.mask != t.all_mask) or t.bit_length() == 1) {
-		// base = 2
+		base = 2;
+		if (t.bit_length() > 1) {
+			// if all chars are full defined or full undefined
+			bool first = true;
+			bool can_be_in_hex = true;
+			for (int B = rounded_size - 1; B >= 0; B--) {
+				auto m = select_bits(val.mask, B * bits_per_nible,
+						bits_per_nible);
+				if (m != 0xf and m != 0x0) {
+					if (first) {
+						auto expected_m = select_bits(t.all_mask,
+								B * bits_per_nible, bits_per_nible);
+						if (m != expected_m) {
+							can_be_in_hex = false;
+							break;
+						}
+					} else {
+						can_be_in_hex = false;
+						break;
+					}
+				}
+				first = false;
+			}
+			if (can_be_in_hex)
+				base = 16;
+		}
+	} else {
+		base = 16;
+	}
+	if (base == 2) {
 		str << "b";
 		for (int b = int(t.bit_length()) - 1; b >= 0; b--) {
 			auto m = select_bits(val.mask, b, 1);
@@ -77,23 +142,21 @@ void Verilog2001::serialize_value(
 				str << "X";
 			}
 		}
-	} else {
+	} else if (base == 16) {
 		// base = 16
 		str << "h";
-		constexpr size_t bits_per_char = 4;
-		size_t rounded_size = t.bit_length() / bits_per_char;
-		if (rounded_size * bits_per_char < t.bit_length()) {
-			rounded_size++;
-		}
+
 		for (int B = rounded_size - 1; B >= 0; B--) {
-			auto m = select_bits(val.mask, B * bits_per_char, bits_per_char);
-			auto v = select_bits(val.value, B * bits_per_char, bits_per_char);
+			auto m = select_bits(val.mask, B * bits_per_nible, bits_per_nible);
+			auto v = select_bits(val.value, B * bits_per_nible, bits_per_nible);
 			if (m) {
 				str << hex << int(v);
 			} else {
 				str << "X";
 			}
 		}
+	} else {
+		throw std::runtime_error("not supported base for the number");
 	}
 
 	str.flags(str_flags);

@@ -26,16 +26,22 @@ BOOST_AUTO_TEST_SUITE( netlistDB_verilog_basic_testsuite )
 BOOST_AUTO_TEST_CASE( hwint_values ) {
 	Netlist ctx("test");
 	HwInt hw_uint128(128);
+	HwInt hw_uint4(4);
 
 	vector<pair<Net*, string>> expected = {
 			{&hw_bit(ctx, 1), "1'b1"},
 			{&hw_bit(ctx, 0), "1'b0"},
 			{&hw_bit(ctx, 0, 0), "1'bX"},
 			{&hw_bit(ctx, 0, 1), "1'b0"},
+			{&hw_uint4(ctx, 0, 1), "4'bXXX0"},
 			{&hw_uint128(ctx, mask(128)),
 			 "128'hffffffffffffffffffffffffffffffff"},
 			{&hw_uint128(ctx, mask(128), aint_t(0)),
 			 "128'hXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"},
+			{&hw_uint128(ctx, mask(64)),
+			 "128'h0000000000000000ffffffffffffffff"},
+			{&hw_uint128(ctx, mask(64), mask(64)),
+			 "128'hXXXXXXXXXXXXXXXXffffffffffffffff"},
 			{&hw_uint32(ctx, 0x0123DEAD), "32'h0123dead"}
 	};
 

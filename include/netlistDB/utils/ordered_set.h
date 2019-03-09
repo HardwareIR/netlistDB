@@ -61,7 +61,7 @@ public:
 				_set.erase(i);
 			}
 		}
-		parallel_utils::erase_if_seq<T>(*this, [item](T i) {
+		utils::erase_if_seq<T>(*this, [item](T i) {
 			return i == item;
 		});
 		bool was_erased = prev_size != vec_t::size();

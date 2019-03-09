@@ -14,11 +14,13 @@
 #include <boost/range/join.hpp>
 
 #include <netlistDB/query/query_traverse.h>
-#include "../src/debug_utils/timer.h"
+#include <netlistDB/utils/timer.h>
+
 #include "test_graphs.h"
 
 using namespace std;
 using namespace netlistDB;
+using namespace netlistDB::utils;
 using namespace netlistDB::query;
 
 BOOST_AUTO_TEST_SUITE( netlistDB_testsuite )
