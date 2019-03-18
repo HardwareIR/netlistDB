@@ -23,6 +23,7 @@ NETLISTDB_PUBLIC FunctionDef OpMul("*", 2);
 
 NETLISTDB_PUBLIC FunctionDef OpConcat("concat", 2);
 NETLISTDB_PUBLIC FunctionDef OpSlice("slice", 2);
+NETLISTDB_PUBLIC FunctionDef OpDownto("downto", 2);
 
 NETLISTDB_PUBLIC FunctionDef OpRising("rising", 1);
 NETLISTDB_PUBLIC FunctionDef OpFalling("falling", 1);

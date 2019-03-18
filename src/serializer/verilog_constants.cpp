@@ -39,15 +39,15 @@ const map<const FunctionDef*, int> Verilog2001::opPrecedence = {
     {&OpAnd, 11},         //
     {&OpXor, 12},         //
     {&OpOr, 13},          //
-    //{OpDownto, 2},      //
+    {&OpDownto, 2},        //
     {&OpGt, 9},           //
     {&OpLt, 9},           //
     {&OpGE, 9},           //
     {&OpLE, 9},           //
     {&OpConcat, 5},       //
     {&OpSlice, 1},        //
-    //{OpTERNARY, 16},    //
-    //{OpCALL, 2},        //
+    //{&OpTERNARY, 16},    //
+    //{&OpCALL, 2},        //
 };
 
 const map<const FunctionDef*, const string> Verilog2001::_unaryOps = {
@@ -62,7 +62,7 @@ const map<const FunctionDef*, const std::string> Verilog2001::_binOps = {
     {&OpOr, "|"},
     {&OpXor, "^"},
     {&OpDiv, "/"},
-    //{&OpDownto, ':'},
+    {&OpDownto, ":"},
     //{&OpTo, ':'},
     {&OpEq, "=="},
     {&OpGt, ">"},
@@ -73,7 +73,6 @@ const map<const FunctionDef*, const std::string> Verilog2001::_binOps = {
     {&OpMul, "*"},
     {&OpNeq, "!="},
     {&OpAdd, "+"},
-
     //{&OpPow, '%s ** %s'},
 };
 

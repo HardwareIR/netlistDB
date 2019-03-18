@@ -70,6 +70,7 @@ BOOST_AUTO_TEST_CASE( simple_bin_ops ) {
 	auto & c_and   = ctx.sig_out("c_and", hw_int32);
 	auto & c_conc  = ctx.sig_out("c_conc", hw_int64);
 	auto & c_index = ctx.sig_out("c_index", hw_bit);
+	auto & c_slice4b = ctx.sig_out("c_slice4b", int4_t);
 
 	auto & a_p =     c_p(a + b);
 	auto & a_m =     c_m(a - b);
@@ -80,6 +81,7 @@ BOOST_AUTO_TEST_CASE( simple_bin_ops ) {
 	auto & a_and =   c_and(a & b);
 	auto & a_conc =  c_conc(a.concat(b));
 	auto & a_index = c_index(a[a1]);
+	auto & a_slice4b = c_slice4b(a[(a1 + 4).downto(a1)]);
 
 	Verilog2001 ser;
 	vector<pair<Statement*, string>> expected = {
@@ -92,6 +94,7 @@ BOOST_AUTO_TEST_CASE( simple_bin_ops ) {
 	    {&a_and, "assign c_and = a & b;"},
 	    {&a_conc, "assign c_conc = {a, b};"},
 	    {&a_index, "assign c_index = a[a1];"},
+	    {&a_slice4b, "assign c_slice4b = a[(a1 + 4'h4) : a1];"},
 	};
 
 	for (auto & t: expected) {

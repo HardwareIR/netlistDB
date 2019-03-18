@@ -128,6 +128,10 @@ Net & Net::operator[](Net & index) {
 	return apply_call(OpSlice, *this, index);
 }
 
+Net & Net::downto(Net & lower) {
+	return apply_call(OpDownto, *this, lower);
+}
+
 Net & Net::rising() {
 	return apply_call(OpRising, *this);
 }

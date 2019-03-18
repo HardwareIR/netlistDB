@@ -341,6 +341,12 @@ public:
 		return (*this)[wrap_val_to_const_net(val)];
 	}
 
+	Net & downto(Net & lower);
+	template<typename T>
+	Net & downto(T val) {
+		return (*this).downto(wrap_val_to_const_net(val));
+	}
+
 	Net & concat(Net & other);
 	Net & rising();
 	Net & falling();

@@ -31,6 +31,7 @@ NETLISTDB_PUBLIC extern FunctionDef OpMul;
 
 NETLISTDB_PUBLIC extern FunctionDef OpConcat;
 NETLISTDB_PUBLIC extern FunctionDef OpSlice; // index, ranged index
+NETLISTDB_PUBLIC extern FunctionDef OpDownto;
 
 NETLISTDB_PUBLIC extern FunctionDef OpRising;
 NETLISTDB_PUBLIC extern FunctionDef OpFalling;
