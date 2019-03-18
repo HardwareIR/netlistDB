@@ -21,6 +21,7 @@ tests = [
 	  ['transform_remove_useless', 'tests for TransformRemoveUseless'],
 	  ['unsigned_val', 'tests for unsigned arithmetic'],
 	  ['verilog_basic', 'basic tests for verilog serializer'],
+	  ['verilog_hierarchy', 'verilog serializer tests with hierarchical modules'],
 	  ['verilog_simple_modules', 'verilog serializer tests with simple modules'],
 ]
 

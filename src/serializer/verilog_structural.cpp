@@ -96,7 +96,7 @@ void Verilog2001::serialize_module_body(const Netlist & netlist,
 	//{% endfor %}{{indent}}endmodule
 	indent_cnt++;
 	bool any_net_def = false;
-	for (auto n: netlist.nets) {
+	for (auto n : netlist.nets) {
 		if (not n->id.hidden and n->direction == Direction::DIR_UNKNOWN) {
 			serialize_net_def(*n, str);
 			str << endl;
@@ -106,25 +106,35 @@ void Verilog2001::serialize_module_body(const Netlist & netlist,
 	if (any_net_def)
 		str << endl;
 
-	vector<HwProcess*> processes;
-	for (auto n: netlist.nodes) {
+	vector<const HwProcess*> processes;
+	vector<const ComponentMap*> components;
+	for (auto n : netlist.nodes) {
 		auto stm = dynamic_cast<Statement*>(n);
 		if (stm) {
 			auto p = dynamic_cast<HwProcess*>(stm);
 			if (p) {
 				processes.push_back(p);
 			} else {
-				throw runtime_error("All statements in netlist should be already wrapped in HwProcess");
+				throw runtime_error(
+						"All statements in netlist should be already wrapped in HwProcess");
 			}
+			continue;
 		}
+		auto c = dynamic_cast<ComponentMap*>(n);
+		if (c)
+			components.push_back(c);
 	}
+	serialize_component_instances(components, str);
+	if (components.size())
+		str << endl << endl;
+
 	sort(processes.begin(), processes.end(),
 			[this](const HwProcess * a, const HwProcess * b) {
 				// [TODO] proper name allocation for the processes with same name
 				return name_scope.checkedName(a->name, a) < name_scope.checkedName(b->name, b);
 			});
 
-	for (auto p: processes) {
+	for (auto p : processes) {
 		serialize_stm(*p, str);
 		str << endl;
 	}
@@ -140,10 +150,28 @@ void Verilog2001::serialize(const Netlist & netlist, ostream & str) {
 	serialize_module_body(netlist, str);
 }
 
+void Verilog2001::serialize_component_instances(
+		std::vector<const ComponentMap*> comps, std::ostream & str) {
+	sort(comps.begin(), comps.end(),
+			[this](const ComponentMap * a, const ComponentMap * b) {
+				// [TODO] proper name allocation for the components with same name
+				return name_scope.checkedName(a->component->name, a) < name_scope.checkedName(b->component->name, b);
+			});
+
+	for (auto c : comps) {
+		auto c_name = name_scope.checkedName(c->component->name, &c->component,
+				true);
+		auto inst_name = name_scope.checkedName(c->component->name, c);
+		std::map<Net*, Net*> param_map;
+		serialize_component_instance(c_name, inst_name, param_map,
+				c->child_to_parent, str);
+	}
+}
+
 void Verilog2001::serialize_component_instance(const std::string & module_name,
-		const std::string & instance_name, std::vector<Net*> & params,
-		std::map<Net*, Net*> param_map, std::vector<Net*> & io,
-		std::map<Net*, Net*> io_map, std::ostream & str) {
+		const std::string & instance_name,
+		const std::map<Net*, Net*> & param_map,
+		const std::map<Net*, Net*> & io_map, std::ostream & str) {
 	/*
 	 *{{indent}}{{ module_name }} {%
 	 *	if paramsMap|length >0 %}#({{
@@ -156,27 +184,33 @@ void Verilog2001::serialize_component_instance(const std::string & module_name,
 	 *{% endif %}
 	 */
 	indent(str) << module_name << " ";
-	if (params.size()) {
+	if (param_map.size()) {
 		str << "#(";
 		indent_cnt++;
-		for (auto p : params) {
+		for (auto p : param_map) {
 			// auto src = param_map[p];
 			throw std::runtime_error(
-					"not implemented Verilog2001::tmpl_component_instance param");
+					"not implemented Verilog2001::serialize_component_instance param");
 		}
 		str << std::endl;
 		indent_cnt--;
 		indent(str);
 		str << ") ";
 	}
-	if (io.size()) {
-		str << " (" << std::endl;
+	if (io_map.size()) {
+		str << "(" << std::endl;
 
 		indent_cnt++;
-		for (auto p : io) {
-			// auto src = io_map[p];
-			throw std::runtime_error(
-					"not implemented Verilog2001::tmpl_component_instance IO");
+		for (auto iter = io_map.begin(); iter != io_map.end(); ) {
+			auto port = iter->first;
+			auto par_sig = iter->second;
+		  indent(str) << "." << name_scope.checkedName(port->id.name, port);
+		  str << "(";
+		  serialize_net_usage(*par_sig, str);
+		  str << ")";
+
+		  if (++iter != io_map.end())
+		      str << "," << endl;
 		}
 		str << std::endl;
 		indent_cnt--;

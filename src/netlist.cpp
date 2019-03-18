@@ -27,6 +27,19 @@ void Netlist::unregister_node(Net & n) {
 	unregister_node(static_cast<iNode&>(n));
 }
 
+
+ComponentMap & Netlist::add_component(std::shared_ptr<Netlist> component) {
+	auto c = new ComponentMap(*this, component);
+	register_node(*c);
+	return *c;
+}
+
+ComponentMap & Netlist::add_component(Netlist & component) {
+	return add_component(
+			std::shared_ptr < Netlist > (&component, [](Netlist*) {}));
+
+}
+
 Net & Netlist::sig_in(const std::string & name, hw_type::iHwType & t) {
 	auto s = new Net(*this, t, name, DIR_IN);
 	s->id.hidden = false;
@@ -52,11 +65,11 @@ void Netlist::integrty_assert() {
 	size_t i = 0;
 	for (auto n : nodes) {
 		assert(i == n->index);
-		n->forward([&](iNode & f){
+		n->forward([&](iNode & f) {
 			assert(nodes[f.index] == &f);
 			return true;
 		});
-		n->forward([&](iNode & b){
+		n->forward([&](iNode & b) {
 			assert(nodes[b.index] == &b);
 			return false;
 		});
@@ -69,7 +82,6 @@ void Netlist::integrty_assert() {
 		i++;
 	}
 }
-
 
 Netlist::~Netlist() {
 	for (auto o : nodes) {

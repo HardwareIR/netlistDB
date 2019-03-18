@@ -138,21 +138,22 @@ public:
 /*
  * Code construct which connects the nets to the ports of the child component
  * */
-class NETLISTDB_PUBLIC ComponentMap: public iNode {
+class NETLISTDB_PUBLIC ComponentMap: public OperationNode {
 public:
 	// backward reference to the Netlist instance
 	// where this component is instantiated
 	Netlist & parent;
 	// ptr on Netlist which is instantiated
-	// @note you can create shared_ptr from local variable using null_deleter
 	const std::shared_ptr<Netlist> component;
 	// the direction of the connection is resolved by direction of the net (port) in child component
 	std::map<Net*, Net*> parent_to_child;
 	std::map<Net*, Net*> child_to_parent;
 
+	// @note you can create shared_ptr from local variable using null_deleter
+	//        std::shared_ptr<Netlist>(&m, [](Netlist*){})
 	ComponentMap(Netlist & parent, std::shared_ptr<Netlist> component);
 
-	void add(Net * parent_net, Net * component_port);
+	void connect(Net & parent_net, Net & component_port);
 
 	virtual void forward(const predicate_t & fn) override;
 	virtual void backward(const predicate_t & fn) override;
@@ -194,6 +195,10 @@ public:
 	Net & sig(hw_type::iHwType & t);
 	// create internal signal with name specified
 	Net & sig(const std::string & name, hw_type::iHwType & t);
+
+	// add sub component
+	ComponentMap & add_component(std::shared_ptr<Netlist> component);
+	ComponentMap & add_component(Netlist & component);
 
 	/*
 	 * Add node in to nodes on place specified by index and

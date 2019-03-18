@@ -85,9 +85,9 @@ public:
 	 * Template for component instance
 	 * */
 	virtual void serialize_component_instance(const std::string & module_name,
-			const std::string & instance_name, std::vector<Net*> & params,
-			std::map<Net*, Net*> param_map, std::vector<Net*> & io,
-			std::map<Net*, Net*> io_map, std::ostream & str) = 0;
+			const std::string & instance_name,
+			const std::map<Net*, Net*> & param_map,
+			const std::map<Net*, Net*> & io_map, std::ostream & str) = 0;
 
 	/*
 	 * Serialize the operand, optionally wrap in to brackets
