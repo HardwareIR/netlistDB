@@ -45,10 +45,10 @@ BOOST_AUTO_TEST_CASE( hwint_values ) {
 			{&hw_uint32(ctx, 0x0123DEAD), "32'h0123dead"}
 	};
 
-	Verilog2001 ser;
 	for (auto & t: expected) {
 		stringstream str;
-		ser.serialize_net_usage(*t.first, str);
+		Verilog2001 ser(str);
+		ser.serialize_net_usage(*t.first);
 		BOOST_CHECK_EQUAL(str.str(), t.second);
 	}
 
@@ -83,7 +83,6 @@ BOOST_AUTO_TEST_CASE( simple_bin_ops ) {
 	auto & a_index = c_index(a[a1]);
 	auto & a_slice4b = c_slice4b(a[(a1 + 4).downto(a1)]);
 
-	Verilog2001 ser;
 	vector<pair<Statement*, string>> expected = {
 	    {&a_p,   "assign c_p = a + b;"},
 	    {&a_m,   "assign c_m = a - b;"},
@@ -99,7 +98,8 @@ BOOST_AUTO_TEST_CASE( simple_bin_ops ) {
 
 	for (auto & t: expected) {
 		stringstream str;
-		ser.serialize_stm(*t.first, str);
+		Verilog2001 ser(str);
+		ser.serialize_stm(*t.first);
 		BOOST_CHECK_EQUAL(str.str(), t.second);
 	}
 }
@@ -115,16 +115,17 @@ BOOST_AUTO_TEST_CASE( simple_un_ops ) {
 	auto & a_r = c0(a.rising());
 	auto & a_f = c1(a.falling());
 
-	Verilog2001 ser;
 	{
 		stringstream str;
-		ser.serialize_stm(a_n, str);
+		Verilog2001 ser(str);
+		ser.serialize_stm(a_n);
 		BOOST_CHECK_EQUAL(str.str(), "assign c = ~a;");
 	}
 	{
 		stringstream str;
-		BOOST_CHECK_THROW(ser.serialize_stm(a_r, str), std::runtime_error);
-		BOOST_CHECK_THROW(ser.serialize_stm(a_f, str), std::runtime_error);
+		Verilog2001 ser(str);
+		BOOST_CHECK_THROW(ser.serialize_stm(a_r), std::runtime_error);
+		BOOST_CHECK_THROW(ser.serialize_stm(a_f), std::runtime_error);
 	}
 }
 
@@ -152,20 +153,21 @@ BOOST_AUTO_TEST_CASE( simple_if ) {
 
 	auto ind = Verilog2001::INDENT;
 
-	Verilog2001 ser;
 	{
 		stringstream str;
+		Verilog2001 ser(str);
 		stringstream ref;
 		ref << "if (a0)" << endl;
 		ref << ind << "c0 = b;" << std::endl;
 		ref << "else" << std::endl;
 		ref << ind << "c0 = ~b;" << std::endl;
 
-		ser.serialize_stm(if0, str);
+		ser.serialize_stm(if0);
 		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}
 	{
 		stringstream str;
+		Verilog2001 ser(str);
 		stringstream ref;
 		ref << "if (a1) begin" << endl;
 		ref << ind << "c1 = b;" << std::endl;
@@ -175,7 +177,7 @@ BOOST_AUTO_TEST_CASE( simple_if ) {
 		ref << ind << "d1 = ~b;" << std::endl;
 		ref << "end";
 
-		ser.serialize_stm(if1, str);
+		ser.serialize_stm(if1);
 		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}
 }
@@ -187,10 +189,10 @@ BOOST_AUTO_TEST_CASE( simple_precedence_driven_brackets ) {
 	auto &c = ctx.sig_in("c", hw_uint8);
 	auto &d = ctx.sig_in("d", hw_uint8);
 
-	Verilog2001 ser;
 	auto test = [&](Net & n, string ref) {
 		stringstream str;
-		ser.serialize_net_usage(n, str);
+		Verilog2001 ser(str);
+		ser.serialize_net_usage(n);
 		BOOST_CHECK_EQUAL(str.str(), ref);
 	};
 

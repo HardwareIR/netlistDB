@@ -5,20 +5,21 @@ using namespace std;
 namespace netlistDB {
 namespace serializer {
 
-void Verilog2001::serialize_stm(const Assignment & a, ostream & str) {
+void Verilog2001::serialize_stm(const Assignment & a) {
 	assert(a.dst.val == nullptr);
+	auto & str = io.str();
 
-	indent(str);
+	indent();
 	// resolve if should use procedural assignment
 	auto ver_sig_t = verilogTypeOfSig(a.dst);
 	if (ver_sig_t == VERILOG_NET_TYPE::VERILOG_WIRE and a.parent == nullptr)
 		str << "assign ";
 
 	// resolve the destination
-	serialize_net_usage(a.dst, str);
+	serialize_net_usage(a.dst);
 	for (size_t i = a.dst_index.size(); i > 0; i--) {
 		str << "[";
-		serialize_net_usage(*a.dst_index[i - 1], str);
+		serialize_net_usage(*a.dst_index[i - 1]);
 		str << "]";
 	}
 
@@ -44,11 +45,11 @@ void Verilog2001::serialize_stm(const Assignment & a, ostream & str) {
 	} else {
 		throw runtime_error("can not determine type of the Verilog signal");
 	}
-	serialize_net_usage(a.src, str);
+	serialize_net_usage(a.src);
 	str << ";";
 }
 
-void Verilog2001::serialize_stm(const IfStatement & stm, ostream & str) {
+void Verilog2001::serialize_stm(const IfStatement & stm) {
 	/* {{indent}}if({{ cond }}){%
 	 * if ifTrue|length >0 %} begin
 	 * {%    for s in ifTrue %}{{s}}
@@ -68,13 +69,14 @@ void Verilog2001::serialize_stm(const IfStatement & stm, ostream & str) {
 	 * %}{{indent}}end{%
 	 * endif %}
 	 */
+	auto & str = io.str();
 	if (tmp_extractor.is_unused(*stm.condition)) {
 		assert(stm.elseIf.size() == 0);
 		assert(stm.ifFalse.size() == 0);
 		assert(stm.ifFalse_specified == false);
 		auto last = stm.ifTrue.back();
 		for (auto s : stm.ifTrue) {
-			serialize_stm(*s, str);
+			serialize_stm(*s);
 			if (s != last) {
 				str << endl;
 			}
@@ -82,11 +84,11 @@ void Verilog2001::serialize_stm(const IfStatement & stm, ostream & str) {
 		return;
 	}
 
-	indent(str) << "if (";
-	serialize_net_usage(*stm.condition, str);
+	indent() << "if (";
+	serialize_net_usage(*stm.condition);
 	str << ")";
 	if (stm.ifTrue.size() > 0) {
-		serialize_block(stm.ifTrue, str);
+		serialize_block(stm.ifTrue);
 	}
 	bool last_is_begin_end_block = stm.ifTrue.size() != 1;
 	if (stm.elseIf.size() > 0) {
@@ -94,20 +96,20 @@ void Verilog2001::serialize_stm(const IfStatement & stm, ostream & str) {
 			if (last_is_begin_end_block)
 				str << " ";
 			else
-				indent(str);
+				indent();
 
 			str << "else";
 			if (tmp_extractor.is_unused(*elif.first)) {
 				assert(&stm.elseIf.back() == &elif);
 				assert(stm.ifFalse.size() == 0);
 				assert(stm.ifFalse_specified == false);
-				serialize_block(elif.second, str);
+				serialize_block(elif.second);
 				return;
 			}
 			str << " if (";
-			serialize_net_usage(*elif.first, str);
+			serialize_net_usage(*elif.first);
 			str << ")";
-			serialize_block(elif.second, str);
+			serialize_block(elif.second);
 
 			last_is_begin_end_block = elif.second.size() != 1;
 		}
@@ -117,12 +119,12 @@ void Verilog2001::serialize_stm(const IfStatement & stm, ostream & str) {
 		if (last_is_begin_end_block)
 			str << " ";
 		else
-			indent(str);
+			indent();
 		str << "else";
-		serialize_block(stm.ifFalse, str);
+		serialize_block(stm.ifFalse);
 	}
 }
-void Verilog2001::serialize_tmp_vars(ostream & str) {
+void Verilog2001::serialize_tmp_vars() {
 	for (auto & v : tmp_extractor.replacements) {
 		if (v.second == tmp_extractor.unused)
 			continue;
@@ -131,7 +133,7 @@ void Verilog2001::serialize_tmp_vars(ostream & str) {
 	}
 }
 
-void Verilog2001::serialize_stm(const HwProcess & proc, ostream & str) {
+void Verilog2001::serialize_stm(const HwProcess & proc) {
 	// {% if hasToBeProcess
 	//    %}{{indent}}{%
 	//     if sensitivityList|length>0
@@ -174,13 +176,14 @@ void Verilog2001::serialize_stm(const HwProcess & proc, ostream & str) {
 				break;
 			}
 	}
+	auto & str = io.str();
 	if (hasToBeProcess) {
-		indent(str);
+		indent();
 		if (proc.sensitivityList.size()) {
 			str << "always @(";
 			const iNode* last = proc.sensitivityList.back();
 			for (const iNode* si : proc.sensitivityList) {
-				serialize_sensitivity_list_item(*si, anyIsEventDependnt, proc, str);
+				serialize_sensitivity_list_item(*si, anyIsEventDependnt, proc);
 				if (si != last) {
 					str << " or ";
 				}
@@ -191,17 +194,17 @@ void Verilog2001::serialize_stm(const HwProcess & proc, ostream & str) {
 		}
 		str << " begin: " << name_scope.checkedName(proc.name, &proc) << endl;
 		indent_cnt++;
-		serialize_tmp_vars(str);
+		serialize_tmp_vars();
 		for (auto s : proc.statements) {
-			serialize_stm(*s, str);
+			serialize_stm(*s);
 			str << endl;
 		}
 		indent_cnt--;
-		indent(str) << "end";
+		indent() << "end";
 	} else {
 		auto last = proc.statements.back();
 		for (auto stm: proc.statements) {
-			serialize_stm(*stm, str);
+			serialize_stm(*stm);
 			if (stm != last)
 				str << endl;
 		}

@@ -76,18 +76,20 @@ const map<const FunctionDef*, const std::string> Verilog2001::_binOps = {
     //{&OpPow, '%s ** %s'},
 };
 
-const map<const FunctionDef*, function<void(Verilog2001&, const FunctionCall &, ostream & str)>> Verilog2001::_specialOp = {
-	{&OpConcat, [](Verilog2001 & s, const FunctionCall & o, ostream & str) {
+const map<const FunctionDef*, function<void(Verilog2001&, const FunctionCall &)>> Verilog2001::_specialOp = {
+	{&OpConcat, [](Verilog2001 & s, const FunctionCall & o) {
+		auto & str = s.io.str();
 		str << "{";
-		s.serialize_operand(*o.args[0], o, false, false, str);
+		s.serialize_operand(*o.args[0], o, false, false);
 		str << ", ";
-		s.serialize_operand(*o.args[1], o, false, false, str);
+		s.serialize_operand(*o.args[1], o, false, false);
 		str << "}";
 	}},
-	{&OpSlice, [](Verilog2001 & s, const FunctionCall & o, ostream & str) {
-		s.serialize_operand(*o.args[0], o, true, false, str);
+	{&OpSlice, [](Verilog2001 & s, const FunctionCall & o) {
+		auto & str = s.io.str();
+		s.serialize_operand(*o.args[0], o, true, false);
 		str << "[" ;
-		s.serialize_operand(*o.args[1], o, false, true, str);
+		s.serialize_operand(*o.args[1], o, false, true);
 		str << "]";
 	}},
 };

@@ -9,25 +9,37 @@ using namespace netlistDB::bit_utils;
 namespace netlistDB {
 namespace serializer {
 
-Verilog2001::Verilog2001(
-		std::map<const std::string, const void*> reserved_names) :
-		name_scope(true), indent_cnt(0) {
+Verilog2001::Verilog2001(iSerializationIO & io,
+		std::map<const std::string, const void*> reserved_names,
+		bool delete_io_after):
+		Serializer(io, delete_io_after), name_scope(true), indent_cnt(0) {
 	name_scope.set_level(1);
 	auto & scope = *name_scope[0];
 	for (auto & kw : keywords) {
 		scope[kw] = new KeyWord;
 	}
+	io.file_extension(DEFAULT_FILE_EXT);
 }
 
-void Verilog2001::print_array_indexes(const hw_type::iHwType * t, bool first,
-		std::ostream & str) {
+Verilog2001::Verilog2001(std::ostream & str,
+		std::map<const std::string, const void*> reserved_names) :
+		Verilog2001(*new SerializeToStream(str), reserved_names, true) {
+}
+
+Verilog2001::Verilog2001(const std::string & root_dir,
+		std::map<const std::string, const void*> reserved_names) :
+		Verilog2001(*new SerializeToFiles(root_dir), reserved_names, true) {
+}
+
+void Verilog2001::print_array_indexes(const hw_type::iHwType * t, bool first) {
+	auto & str = io.str();
 	auto at = dynamic_cast<const hw_type::iHwType_array*>(t);
 	if (at) {
 		if (first) {
 			str << " ";
 		}
 
-		print_array_indexes(&at->elm_t, false, str);
+		print_array_indexes(&at->elm_t, false);
 		str << "[0:" << (at->size - 1) << "]";
 	}
 }
@@ -46,30 +58,31 @@ const hw_type::iHwType & Verilog2001::get_non_array_t(
 	return *t;
 }
 
-void Verilog2001::serialize_net_def(const Net & n, std::ostream & str) {
-	indent(str);
+void Verilog2001::serialize_net_def(const Net & n) {
+	auto & str = io.str();
+	indent();
 	auto v_t = verilogTypeOfSig(n);
 	if (v_t == VERILOG_NET_TYPE::VERILOG_REG) {
 		str << "reg ";
 	} else {
 		str << "wire ";
 	}
-	if (serialize_type_usage(get_non_array_t(n.t), str))
+	if (serialize_type_usage(get_non_array_t(n.t)))
 		str << " ";
 
 	str << name_scope.checkedName(n.id.name, &n);
-	print_array_indexes(&n.t, true, str);
+	print_array_indexes(&n.t, true);
 	str << ";";
 }
 
-bool Verilog2001::serialize_type_usage(const hw_type::iHwType & t,
-		std::ostream & str) {
+bool Verilog2001::serialize_type_usage(const hw_type::iHwType & t) {
 	auto int_t = dynamic_cast<const HwInt*>(&t);
 	if (int_t) {
 		if (int_t->bit_length() == 1 and not int_t->has_to_be_vector) {
 			// only single bit, does not require any type specification
 			return false;
 		} else {
+			auto & str = io.str();
 			if (int_t->is_signed)
 				str << "signed ";
 			str << "[" << int_t->bit_length() << "-1:0]";
@@ -84,7 +97,8 @@ bool Verilog2001::serialize_type_usage(const hw_type::iHwType & t,
 }
 
 void Verilog2001::serialize_value(
-		const typename hw_type::HwInt::value_type & val, std::ostream & str) {
+		const typename hw_type::HwInt::value_type & val) {
+	auto & str = io.str();
 	auto & t = val.t;
 	str << t.bit_length();
 	str << "'";
@@ -162,22 +176,22 @@ void Verilog2001::serialize_value(
 	str.flags(str_flags);
 }
 
-void Verilog2001::serialize_net_usage(const Net & n, std::ostream & str) {
+void Verilog2001::serialize_net_usage(const Net & n) {
 	if (n.id.hidden) {
 		if (n.val) {
 			assert(
 					n.drivers.size() == 0
 							&& "constant net should not have any other driver");
-			serialize_value(*n.val, str);
+			serialize_value(*n.val);
 		} else {
 			assert(n.drivers.size() == 1);
 			auto op = dynamic_cast<const FunctionCall*>(n.drivers[0]);
 			assert(n.drivers.size() == 1);
 			assert(op);
-			serialize(*op, str);
+			serialize(*op);
 		}
 	} else {
-		str << name_scope.checkedName(n.id.name, &n);
+		io.str() << name_scope.checkedName(n.id.name, &n);
 	}
 }
 
@@ -188,12 +202,12 @@ Verilog2001::~Verilog2001() {
 	}
 }
 
-void Verilog2001::serialize_block(const vector<Statement*> & stms,
-		std::ostream & str) {
+void Verilog2001::serialize_block(const vector<Statement*> & stms) {
+	auto & str = io.str();
 	if (stms.size() == 1) {
 		str << endl;
 		indent_cnt++;
-		serialize_stm(*stms[0], str);
+		serialize_stm(*stms[0]);
 		str << endl;
 		indent_cnt--;
 	} else {
@@ -201,16 +215,17 @@ void Verilog2001::serialize_block(const vector<Statement*> & stms,
 
 		indent_cnt++;
 		for (auto s : stms) {
-			serialize_stm(*s, str);
+			serialize_stm(*s);
 			str << endl;
 		}
 		indent_cnt--;
 
-		indent(str) << "end";
+		indent() << "end";
 	}
 }
 
-std::ostream & Verilog2001::indent(std::ostream & str) {
+std::ostream & Verilog2001::indent() {
+	auto & str = io.str();
 	for (size_t i = 0; i < indent_cnt; i++) {
 		str << INDENT;
 	}

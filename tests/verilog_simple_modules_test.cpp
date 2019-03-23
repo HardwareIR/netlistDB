@@ -32,9 +32,9 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 	TransformToHdlFriendly t;
 	t.apply(ctx);
 
-	Verilog2001 ser;
 	{
 		stringstream str;
+		Verilog2001 ser(str);
 		stringstream ref;
 		ref << "module wire_module(" << endl;
 		ref << "    input signed [32-1:0] a_in," << endl;
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 		ref << "    assign a_out = a_in;" << endl;
 		ref << endl;
 		ref << "endmodule";
-		ser.serialize(ctx, str);
+		ser.serialize(ctx);
 		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}
 }
@@ -61,9 +61,9 @@ BOOST_AUTO_TEST_CASE( simple_ff_module ) {
 	TransformToHdlFriendly t;
 	t.apply(ctx);
 
-	Verilog2001 ser;
 	{
 		stringstream str;
+		Verilog2001 ser(str);
 		stringstream ref;
 		ref << "module ff_module(" << endl;
 		ref << "    input signed [32-1:0] a_in," << endl;
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE( simple_ff_module ) {
 		ref << endl;
 		ref << "endmodule";
 
-		ser.serialize(ctx, str);
+		ser.serialize(ctx);
 		//cerr << str.str() << endl;
 		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}
@@ -98,9 +98,10 @@ BOOST_AUTO_TEST_CASE( simple_ff_intern_sig_module ) {
 	TransformToHdlFriendly t;
 	t.apply(ctx);
 
-	Verilog2001 ser;
 	{
+
 		stringstream str;
+		Verilog2001 ser(str);
 		stringstream ref;
 		ref << "module ff_intern_sig_module(" << endl;
 		ref << "    input signed [32-1:0] a_in," << endl;
@@ -116,7 +117,7 @@ BOOST_AUTO_TEST_CASE( simple_ff_intern_sig_module ) {
 		ref << endl;
 		ref << "endmodule";
 
-		ser.serialize(ctx, str);
+		ser.serialize(ctx);
 		//cerr << str.str() << endl;
 		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}
@@ -141,9 +142,9 @@ BOOST_AUTO_TEST_CASE( mux_module ) {
 	TransformToHdlFriendly t;
 	t.apply(ctx);
 
-	Verilog2001 ser;
 	{
 		stringstream str;
+		Verilog2001 ser(str);
 		stringstream ref;
 		ref << "module mux_module(" << endl;
 		ref << "    input signed [32-1:0] a_in0," << endl;
@@ -170,7 +171,7 @@ BOOST_AUTO_TEST_CASE( mux_module ) {
 		ref << endl;
 		ref << "endmodule";
 
-		ser.serialize(ctx, str);
+		ser.serialize(ctx);
 		//cerr << str.str() << endl;
 		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}
@@ -199,9 +200,9 @@ BOOST_AUTO_TEST_CASE( simple_bram_sp_module ) {
 	TransformToHdlFriendly t;
 	t.apply(ctx);
 
-	Verilog2001 ser;
 	{
 		stringstream str;
+		Verilog2001 ser(str);
 		stringstream ref;
 		ref << "module simple_bram_sp_module(" << endl;
 		ref << "    input [4-1:0] addr," << endl;
@@ -221,7 +222,7 @@ BOOST_AUTO_TEST_CASE( simple_bram_sp_module ) {
         ref << endl;
 		ref << "endmodule";
 
-		ser.serialize(ctx, str);
+		ser.serialize(ctx);
 		//cerr << str.str() << endl;
 		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}

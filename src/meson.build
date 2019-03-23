@@ -19,6 +19,7 @@ src = [
 	'query/statement_visitor.cpp',
 	
 	'serializer/namescope.cpp',
+	'serializer/serializer_io.cpp',
 	'serializer/serializer.cpp',
 	'serializer/verilog_constants.cpp',
 	'serializer/verilog_ops.cpp',
@@ -71,7 +72,7 @@ if meson.get_compiler('cpp').get_id() == 'msvc'
 	EXTRA_C_ARGS += EXTRA
 endif
 
-_boost_dep = dependency('boost', modules: ['system', 'thread',])
+_boost_dep = dependency('boost', modules: ['system', 'thread', 'filesystem'])
 _netlistDB_inc = include_directories('../include/')
 _netlistDB_lib = library(
 	'netlistDB',

@@ -54,9 +54,9 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 	TransformToHdlFriendly t;
 	t.apply(ctx);
 
-	Verilog2001 ser;
 	{
 		stringstream str;
+		Verilog2001 ser(str);
 		stringstream ref;
 		ref << "module wire_module(" << endl;
 		ref << "    input signed [32-1:0] a_in," << endl;
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
         ref << endl;
 		ref << "endmodule";
 
-		ser.serialize(ctx, str);
+		ser.serialize(ctx);
 		//cerr << str.str();
 		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}

@@ -7,10 +7,14 @@ using namespace netlistDB::hw_type;
 namespace netlistDB {
 namespace serializer {
 
-void Serializer::serialize_value(const iHwTypeValue & val, ostream & str) {
+Serializer::Serializer(iSerializationIO & io, bool delete_io_after) :
+		delete_io_after(delete_io_after), io(io) {
+}
+
+void Serializer::serialize_value(const iHwTypeValue & val) {
 	auto int_v = dynamic_cast<const HwInt::value_type*>(&val);
 	if (int_v) {
-		serialize_value(*int_v, str);
+		serialize_value(*int_v);
 		return;
 	}
 	throw runtime_error(
@@ -18,15 +22,15 @@ void Serializer::serialize_value(const iHwTypeValue & val, ostream & str) {
 					+ std::to_string(__LINE__));
 }
 
-void Serializer::serialize_stm(const Statement & stm, ostream & str) {
+void Serializer::serialize_stm(const Statement & stm) {
 	auto a = dynamic_cast<const Assignment*>(&stm);
 	if (a) {
-		serialize_stm(*a, str);
+		serialize_stm(*a);
 		return;
 	}
 	auto i = dynamic_cast<const IfStatement*>(&stm);
 	if (i) {
-		serialize_stm(*i, str);
+		serialize_stm(*i);
 		return;
 	}
 	throw runtime_error(
@@ -50,8 +54,9 @@ int Serializer::precedence_of_expr(const Net & n) {
 }
 
 void Serializer::serialize_operand(const Net & operand,
-		const FunctionCall & oper, bool expr_requires_brackets, bool cancel_brackets, ostream & str) {
-
+		const FunctionCall & oper, bool expr_requires_brackets,
+		bool cancel_brackets) {
+	auto & str = io.str();
 	bool use_brackets = false;
 	if (not cancel_brackets) {
 		// resolve if the brackets are required
@@ -79,8 +84,8 @@ void Serializer::serialize_operand(const Net & operand,
 					break;
 				default:
 					throw runtime_error(
-							string("Not implemented ") + std::string(__FILE__) + ":"
-									+ std::to_string(__LINE__));
+							string("Not implemented ") + std::string(__FILE__)
+									+ ":" + std::to_string(__LINE__));
 				}
 				if (left) { // "operand" is right
 					// same precedence -> brackets on right if it is expression
@@ -114,11 +119,15 @@ void Serializer::serialize_operand(const Net & operand,
 	if (use_brackets)
 		str << "(";
 
-	serialize_net_usage(operand, str);
+	serialize_net_usage(operand);
 
 	if (use_brackets)
 		str << ")";
 }
 
+Serializer::~Serializer() {
+	if (delete_io_after)
+		delete &io;
+}
 }
 }
