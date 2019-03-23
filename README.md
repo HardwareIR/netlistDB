@@ -40,7 +40,7 @@ This library is a backend and intermediate format for representation of digital 
 
 Install dependencies
 ```
-sudo apt-get install build-essentials meson cmake libboost-all-dev git
+sudo apt-get install build-essentials meson ninja-build libboost-all-dev git
 # [NOTE] if you are using old system like like ubuntu 14 on travis-ci install fresh meson by
 #        pip3 install meson instead to avoid complications with libboost discovery
 ```
