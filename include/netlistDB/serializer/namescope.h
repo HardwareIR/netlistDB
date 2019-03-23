@@ -27,7 +27,8 @@ class NETLISTDB_PUBLIC NameScope;
  * If name is discovered in scope it is converted to name_id
  * where id is sequential number for prefix name\_
  */
-class NETLISTDB_PUBLIC NameScopeItem: public std::map<const std::string, const void*> {
+class NETLISTDB_PUBLIC NameScopeItem: public std::map<const std::string,
+		const void*> {
 	size_t myLvl;
 
 	/* some names are specified just as prefix and serializer
@@ -58,6 +59,7 @@ public:
 
 // Scope of used names in HDL to prevent name collision
 class NETLISTDB_PUBLIC NameScope: public std::vector<NameScopeItem*> {
+	// all_names dictionary which is used when ho other is specified
 	std::map<const void*, std::string> _all_names;
 public:
 	bool ignorecase;
@@ -72,6 +74,14 @@ public:
 	 *	lvl = 1 -> only one scope (global)
 	 **/
 	void set_level(size_t lvl);
+	/*
+	 * scope level++
+	 * */
+	void level_push();
+	/*
+	 * scope level--
+	 * */
+	void level_pop();
 
 	std::string checkedName(const std::string & actualName,
 			const void * actualObj, bool isGlobal = false);

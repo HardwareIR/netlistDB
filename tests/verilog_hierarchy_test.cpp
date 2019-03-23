@@ -58,6 +58,15 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 	{
 		stringstream str;
 		stringstream ref;
+		ref << "module wire_module(" << endl;
+		ref << "    input signed [32-1:0] a_in," << endl;
+		ref << "    output signed [32-1:0] a_out);" << endl;
+        ref << endl;
+		ref << "    assign a_out = a_in;" << endl;
+        ref << endl;
+		ref << "endmodule" << endl;
+		ref << endl;
+		ref << endl;
 		ref << "module wire_container_module(" << endl;
 		ref << "    input signed [32-1:0] a_in," << endl;
 		ref << "    output reg signed [32-1:0] a_out," << endl;
@@ -65,8 +74,8 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 		ref << "    output signed [32-1:0] b_out);" << endl;
         ref << endl;
 		ref << "    wire_module (" << endl;
-		ref << "        .a_out_0(a_out)," << endl;
-		ref << "        .a_in_0(a_in)" << endl;
+		ref << "        .a_in(a_in)," << endl;
+		ref << "        .a_out(a_out)" << endl;
 		ref << "    );" << endl;
         ref << endl;
 		ref << "    assign b_out = b_in;" << endl;
@@ -74,6 +83,7 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 		ref << "endmodule";
 
 		ser.serialize(ctx, str);
+		//cerr << str.str();
 		BOOST_CHECK_EQUAL(str.str(), ref.str());
 	}
 }

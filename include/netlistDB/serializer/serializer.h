@@ -5,6 +5,7 @@
 #include <netlistDB/statement_if.h>
 #include <netlistDB/statement_hwprocess.h>
 #include <netlistDB/hw_type/hw_int.h>
+#include <iostream>
 
 namespace netlistDB {
 namespace serializer {
@@ -30,8 +31,11 @@ public:
 	/*
 	 * Serialize the value of specified type
 	 * */
-	virtual void serialize_value(const hw_type::iHwTypeValue & val, std::ostream & str);
-	virtual void serialize_value(const typename hw_type::HwInt::value_type & val, std::ostream & str) = 0;
+	virtual void serialize_value(const hw_type::iHwTypeValue & val,
+			std::ostream & str);
+	virtual void serialize_value(
+			const typename hw_type::HwInt::value_type & val,
+			std::ostream & str) = 0;
 
 	/*
 	 * Serialize the id of the net in expression
@@ -74,6 +78,8 @@ public:
 	 * Serialize the internal signals definitions, components and processes to target HDL
 	 * */
 	virtual void serialize_module_body(const Netlist & netlist,
+			const std::vector<const HwProcess*> & processes,
+			const std::vector<const ComponentMap*> & components,
 			std::ostream & str) = 0;
 
 	/*
@@ -98,10 +104,25 @@ public:
 	 * @param cancel_brances if true the brackets are never added
 	 * */
 	virtual void serialize_operand(const Net & operand,
-			const FunctionCall & oper, bool expr_requires_brackets, bool cancel_brackets,
-			std::ostream & str);
+			const FunctionCall & oper, bool expr_requires_brackets,
+			bool cancel_brackets, std::ostream & str);
 	int precedence_of_expr(const Net & n);
 	virtual const std::map<const FunctionDef*, int> & get_operator_precedence() = 0;
+
+	template<class T>
+	void sort_named_objects(std::vector<T*> & objs,
+			std::function<const std::string(T * obj)> name_getter) {
+		sort(objs.begin(), objs.end(), [&](T * a, T * b) {
+			auto a_name = name_getter(a);
+			auto b_name = name_getter(b);
+
+			if (a_name == b_name) {
+				return a->index < b->index;
+			} else {
+				return a_name < b_name;
+			}
+		});
+	}
 
 	virtual ~Serializer() {
 	}

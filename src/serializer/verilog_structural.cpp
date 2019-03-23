@@ -60,22 +60,22 @@ void Verilog2001::serialize_module_head(const Netlist & netlist,
 			<< name_scope.checkedName(netlist.name, &netlist, true);
 	// [TODO] parameters if present
 
-	std::vector<Net*> io;
+	name_scope.level_push();
+	std::vector<const Net*> io;
 	for (auto n : netlist.nets) {
 		if (n->direction != Direction::DIR_UNKNOWN) {
 			io.push_back(n);
 		}
 	}
+	sort_named_objects<const Net>(io, [](const Net* n) {
+		return n->id.name;
+	});
 
-	sort(io.begin(), io.end(),
-			[this](const Net * a, const Net * b) {
-				return name_scope.checkedName(a->id.name, a) < name_scope.checkedName(b->id.name, b);
-			});
 	if (io.size() > 0) {
 		indent_cnt++;
 		str << "(" << endl;
-		Net* last = io[io.size() - 1];
-		for (Net * p : io) {
+		const Net* last = io[io.size() - 1];
+		for (const Net * p : io) {
 			serialize_io(*p, str);
 			if (p != last) {
 				str << "," << endl;
@@ -87,27 +87,9 @@ void Verilog2001::serialize_module_head(const Netlist & netlist,
 	str << ";";
 }
 
-void Verilog2001::serialize_module_body(const Netlist & netlist,
-		ostream & str) {
-	//{% for t in extraTypes %}{{t}};
-	//{% endfor %}{% for v in variables %}{{v}};
-	//{% endfor %}{% for c in componentInstances %}{{c}}
-	//{% endfor %}{% for p in processes %}{{p}}
-	//{% endfor %}{{indent}}endmodule
-	indent_cnt++;
-	bool any_net_def = false;
-	for (auto n : netlist.nets) {
-		if (not n->id.hidden and n->direction == Direction::DIR_UNKNOWN) {
-			serialize_net_def(*n, str);
-			str << endl;
-			any_net_def = true;
-		}
-	}
-	if (any_net_def)
-		str << endl;
-
-	vector<const HwProcess*> processes;
-	vector<const ComponentMap*> components;
+void get_proc_and_comp(const Netlist & netlist,
+		vector<const HwProcess*> & processes,
+		vector<const ComponentMap*> & components) {
 	for (auto n : netlist.nodes) {
 		auto stm = dynamic_cast<Statement*>(n);
 		if (stm) {
@@ -124,15 +106,32 @@ void Verilog2001::serialize_module_body(const Netlist & netlist,
 		if (c)
 			components.push_back(c);
 	}
+}
+
+void Verilog2001::serialize_module_body(const Netlist & netlist,
+		const vector<const HwProcess*> & processes,
+		const vector<const ComponentMap*> & components, ostream & str) {
+	//{% for t in extraTypes %}{{t}};
+	//{% endfor %}{% for v in variables %}{{v}};
+	//{% endfor %}{% for c in componentInstances %}{{c}}
+	//{% endfor %}{% for p in processes %}{{p}}
+	//{% endfor %}{{indent}}endmodule
+
+	indent_cnt++;
+	bool any_net_def = false;
+	for (auto n : netlist.nets) {
+		if (not n->id.hidden and n->direction == Direction::DIR_UNKNOWN) {
+			serialize_net_def(*n, str);
+			str << endl;
+			any_net_def = true;
+		}
+	}
+	if (any_net_def)
+		str << endl;
+
 	serialize_component_instances(components, str);
 	if (components.size())
 		str << endl << endl;
-
-	sort(processes.begin(), processes.end(),
-			[this](const HwProcess * a, const HwProcess * b) {
-				// [TODO] proper name allocation for the processes with same name
-				return name_scope.checkedName(a->name, a) < name_scope.checkedName(b->name, b);
-			});
 
 	for (auto p : processes) {
 		serialize_stm(*p, str);
@@ -144,22 +143,37 @@ void Verilog2001::serialize_module_body(const Netlist & netlist,
 }
 
 void Verilog2001::serialize(const Netlist & netlist, ostream & str) {
+	vector<const HwProcess*> processes;
+	vector<const ComponentMap*> components;
+	get_proc_and_comp(netlist, processes, components);
+	sort_named_objects<const ComponentMap>(components,
+			[](const ComponentMap* c) {return c->component->name;});
+	sort_named_objects<const HwProcess>(processes,
+			[](const HwProcess* p) {return p->name;});
+	// serialize all dependencies
+	for (auto comp : components) {
+		if (name_scope.all_names.find(&comp->component)
+				== name_scope.all_names.end()) {
+			// if it does not have name the definition of the component module has to be serialized first
+			// Otherwise it is not required to serialize module definition because it already happened
+			serialize(*comp->component, str);
+			str << endl;
+			str << endl;
+			str << endl;
+		}
+	}
+
 	serialize_module_head(netlist, str);
 	str << endl;
 	str << endl;
-	serialize_module_body(netlist, str);
+	serialize_module_body(netlist, processes, components, str);
+	name_scope.level_pop();
 }
 
 void Verilog2001::serialize_component_instances(
-		std::vector<const ComponentMap*> comps, std::ostream & str) {
-	sort(comps.begin(), comps.end(),
-			[this](const ComponentMap * a, const ComponentMap * b) {
-				// [TODO] proper name allocation for the components with same name
-				return name_scope.checkedName(a->component->name, a) < name_scope.checkedName(b->component->name, b);
-			});
-
+		const std::vector<const ComponentMap*> & comps, std::ostream & str) {
 	for (auto c : comps) {
-		auto c_name = name_scope.checkedName(c->component->name, &c->component,
+		auto c_name = name_scope.checkedName(c->component->name, c->component.get(),
 				true);
 		auto inst_name = name_scope.checkedName(c->component->name, c);
 		std::map<Net*, Net*> param_map;
@@ -187,7 +201,7 @@ void Verilog2001::serialize_component_instance(const std::string & module_name,
 	if (param_map.size()) {
 		str << "#(";
 		indent_cnt++;
-		for (auto p : param_map) {
+		if (param_map.size()) {
 			// auto src = param_map[p];
 			throw std::runtime_error(
 					"not implemented Verilog2001::serialize_component_instance param");
@@ -201,16 +215,21 @@ void Verilog2001::serialize_component_instance(const std::string & module_name,
 		str << "(" << std::endl;
 
 		indent_cnt++;
-		for (auto iter = io_map.begin(); iter != io_map.end(); ) {
-			auto port = iter->first;
-			auto par_sig = iter->second;
-		  indent(str) << "." << name_scope.checkedName(port->id.name, port);
-		  str << "(";
-		  serialize_net_usage(*par_sig, str);
-		  str << ")";
+		vector<Net*> ports;
+		for (auto m : io_map) {
+			ports.push_back(m.first);
+		}
+		sort_named_objects<Net>(ports, [](Net* n) {return n->id.name;});
 
-		  if (++iter != io_map.end())
-		      str << "," << endl;
+		for (Net * port : ports) {
+			auto par_sig = io_map.find(port)->second;
+			indent(str) << "." << name_scope.checkedName(port->id.name, port);
+			str << "(";
+			serialize_net_usage(*par_sig, str);
+			str << ")";
+
+			if (port != ports.back())
+				str << "," << endl;
 		}
 		str << std::endl;
 		indent_cnt--;

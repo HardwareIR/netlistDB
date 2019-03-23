@@ -121,13 +121,22 @@ NameScope * NameScope::fork(size_t lvl) {
 }
 
 void NameScope::set_level(size_t lvl) {
-	while (size() != lvl)
+	while (size() != lvl) {
 		if (size() > lvl) {
-			delete back();
-			pop_back();
+			level_pop();
 		} else {
-			push_back(new NameScopeItem(size()));
+			level_push();
 		}
+	}
+}
+
+void NameScope::level_pop() {
+	delete back();
+	pop_back();
+}
+
+void NameScope::level_push() {
+	push_back(new NameScopeItem(size()));
 }
 
 string NameScope::checkedName(const string & actualName, const void * actualObj,
@@ -150,7 +159,7 @@ string NameScope::checkedName(const string & actualName, const void * actualObj,
 }
 
 NameScope::~NameScope() {
-	while(this->size()) {
+	while (this->size()) {
 		delete back();
 		pop_back();
 	}

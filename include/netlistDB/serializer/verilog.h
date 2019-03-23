@@ -73,15 +73,20 @@ public:
 	virtual void serialize_stm(const HwProcess & stm, std::ostream & str)
 			override;
 
+	/*
+	 * @attention the namescope stays inside of module
+	 * */
 	virtual void serialize_module_head(const Netlist & netlist,
 			std::ostream & str) override;
 	virtual void serialize_module_body(const Netlist & netlist,
+			const std::vector<const HwProcess*> & processes,
+			const std::vector<const ComponentMap*> & components,
 			std::ostream & str) override;
 	virtual void serialize(const Netlist & netlist, std::ostream & str)
 			override;
 
 	virtual void serialize_component_instances(
-			std::vector<const ComponentMap*> comps, std::ostream & str);
+			const std::vector<const ComponentMap*> & comps, std::ostream & str);
 	virtual void serialize_component_instance(const std::string & module_name,
 			const std::string & instance_name,
 			const std::map<Net*, Net*> & param_map,

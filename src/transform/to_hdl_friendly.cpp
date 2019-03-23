@@ -17,6 +17,11 @@ bool TransformToHdlFriendly::apply(Netlist & ctx) {
 		if (s) {
 			stms.push_back(s);
 			ctx.unregister_node(*s);
+		} else {
+			auto c = dynamic_cast<ComponentMap*>(n);
+			if (c) {
+				modified |= apply(*c->component);
+			}
 		}
 	}
 	if (stms.size() == 0)
