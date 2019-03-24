@@ -24,6 +24,7 @@ void Verilog2001::serialize_direction(Direction d) {
 }
 
 void Verilog2001::serialize_io(const Net & io_net) {
+	serialize_comment(io_net.__doc__);
 	auto & str = io.str();
 	indent();
 	serialize_direction(io_net.direction);
@@ -56,7 +57,7 @@ void Verilog2001::serialize_module_head(const Netlist & netlist) {
 	//{{indent}}    ){% endif %}{% if ports|length >0 %}({{
 	//                     ports|join(',\n' + indent + '        ')}}
 	//{{indent}}    );{% endif %}
-
+	serialize_comment(netlist.__doc__);
 	indent() << "module "
 			<< name_scope.checkedName(netlist.name, &netlist, true);
 	// [TODO] parameters if present

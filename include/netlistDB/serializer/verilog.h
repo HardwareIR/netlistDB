@@ -64,6 +64,8 @@ public:
 	using Serializer::serialize_stm;
 	using Serializer::serialize_value;
 
+	virtual void serialize_comment(const std::string & comment) override;
+
 	virtual bool serialize_type_usage(const hw_type::iHwType & t);
 	virtual void serialize_value(
 			const typename hw_type::HwInt::value_type & val) override;

@@ -23,6 +23,14 @@ public:
 	bool delete_io_after;
 	iSerializationIO & io;
 	Serializer(iSerializationIO & io, bool delete_io_after);
+
+	/*
+	 * Serialize the comment string
+	 *
+	 * @note may contain newlines etc.
+	 * */
+	virtual void serialize_comment(const std::string & comment) = 0;
+
 	/*
 	 * Serialize the type id
 	 *

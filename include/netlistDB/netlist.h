@@ -60,16 +60,17 @@ public:
  * @ivar parent parent instance of HdlStatement or nullptr
  * @ivar _inputs OrderedSet of input signals for this statement
  * @ivar _outputs OrderedSet of output signals for this statement
-
- * @ivar rank sum of numbers of used branches in statement, used as prefilter
+ *
+ * @ivar rank sum of numbers of used branches in statement, used as pre-filter
  *     for statement comparing
+ * @ivar sens the container for informations about sensitivity to nets
+ * @ivar __doc__ documentation string which will be added as a comment to target HDL
  *
  * @attention the sensitivity has to be discovered explicitly
  */
 class NETLISTDB_PUBLIC Statement: public OperationNode {
 public:
 	Statement * parent;
-
 	// IO of this statement
 	utils::OrderedSet<Net*> _inputs;
 	utils::OrderedSet<Net*> _outputs;
@@ -77,6 +78,9 @@ public:
 	SensitivityInfo sens;
 
 	size_t rank;
+
+	// __doc__ documentation string which will be added as a comment to target HDL
+	std::string __doc__;
 
 	Statement() :
 			parent(nullptr), rank(0) {
@@ -95,7 +99,7 @@ public:
 	/*
 	 * walk all direct child statements with specified function fn
 	 *
-	 * @param fn callback which is called on each node, if the function returns true the iteration is stoped
+	 * @param fn callback which is called on each node, if the function returns true the iteration is stopped
 	 * 		and the visit_child_stm returns
 	 * */
 	virtual void visit_child_stm(const std::function<bool(Statement &)> & fn) = 0;
@@ -165,11 +169,11 @@ public:
  * There are multiple types of node in this directed graph
  * The signal, statement and FunctionCall (which represents also the operator usage)
  *
- * Each node has own list of neighbors. This is the case because the graph
+ * Each node has own list of neighbours. This is the case because the graph
  * is expected to change frequently and be larger than 10k nodes this representation
  * by linked list or connection matrix would not be efficient.
  *
- * Also for some nodes the order of neighbors does matter for some does not.
+ * Also for some nodes the order of neighbours does matter for some does not.
  * For example order of Signal endpoints does not matter. The order of Signals
  * in FunctionCall does.
  *
@@ -182,6 +186,8 @@ public:
 	std::vector<Net*> nets;
 	// all nets, statements, operators, etc.
 	std::vector<iNode*> nodes;
+	// __doc__ documentation string which will be added as a comment to target HDL
+	std::string __doc__;
 
 	Netlist(const Netlist & other) = delete;
 	Netlist(const std::string & name);
@@ -221,7 +227,7 @@ public:
 	~Netlist();
 };
 
-/** The net in Netlist instance also the hyperedge which connects
+/** The net in Netlist instance also the hyper-edge which connects
  *  the statements, expressions, etc.
  *
  *  @note The overloaded operators are building the expression in the netlist
@@ -255,6 +261,9 @@ public:
 	std::unordered_map<UsageCacheKey, Net*> usage_cache;
 	// index used for last priority ordering
 	// represent the sequential number of the signal generated in parent context
+
+	// documentation string which will be added as a comment to target HDL
+	std::string __doc__;
 
 	Net(const Net & other) = delete;
 	// use methods from Netlist
@@ -374,9 +383,4 @@ private:
 	Net & wrap_val_to_const_net(unsigned val);
 };
 
-
-
-
-
 }
-

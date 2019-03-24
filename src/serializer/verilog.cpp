@@ -31,6 +31,19 @@ Verilog2001::Verilog2001(const std::string & root_dir,
 		Verilog2001(*new SerializeToFiles(root_dir), reserved_names, true) {
 }
 
+void Verilog2001::serialize_comment(const std::string & comment) {
+	if (comment.size()) {
+		auto & str = io.str();
+		indent() << "// ";
+		for (auto ch: comment) {
+			str << ch;
+			if (ch == '\n')
+				indent() << "// ";
+		}
+		str << endl;
+	}
+}
+
 void Verilog2001::print_array_indexes(const hw_type::iHwType * t, bool first) {
 	auto & str = io.str();
 	auto at = dynamic_cast<const hw_type::iHwType_array*>(t);
@@ -59,6 +72,7 @@ const hw_type::iHwType & Verilog2001::get_non_array_t(
 }
 
 void Verilog2001::serialize_net_def(const Net & n) {
+	serialize_comment(n.__doc__);
 	auto & str = io.str();
 	indent();
 	auto v_t = verilogTypeOfSig(n);
