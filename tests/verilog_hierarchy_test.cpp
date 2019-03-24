@@ -15,6 +15,8 @@
 #include <netlistDB/serializer/verilog.h>
 #include <netlistDB/transform/to_hdl_friendly.h>
 
+#include "components/wire.h"
+
 using namespace std;
 using namespace netlistDB;
 using namespace netlistDB::hw_type;
@@ -22,19 +24,6 @@ using namespace netlistDB::serializer;
 using namespace netlistDB::transform;
 
 BOOST_AUTO_TEST_SUITE (netlistDB_verilog_hierarchy_testsuite)
-
-class Wire: public Netlist {
-public:
-	Net & a_in;
-	Net & a_out;
-	Wire(const Wire & other) = delete;
-	Wire(iHwType & T) :
-			Netlist("wire_module"), a_in(sig_in("a_in", T)), a_out(
-					sig_out("a_out", T)) {
-		a_out(a_in);
-	}
-
-};
 
 BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 	Wire wire(hw_int32);
@@ -61,9 +50,9 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 		ref << "module wire_module(" << endl;
 		ref << "    input signed [32-1:0] a_in," << endl;
 		ref << "    output signed [32-1:0] a_out);" << endl;
-        ref << endl;
+		ref << endl;
 		ref << "    assign a_out = a_in;" << endl;
-        ref << endl;
+		ref << endl;
 		ref << "endmodule" << endl;
 		ref << endl;
 		ref << endl;
@@ -72,14 +61,14 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 		ref << "    output reg signed [32-1:0] a_out," << endl;
 		ref << "    input signed [32-1:0] b_in," << endl;
 		ref << "    output signed [32-1:0] b_out);" << endl;
-        ref << endl;
+		ref << endl;
 		ref << "    wire_module (" << endl;
 		ref << "        .a_in(a_in)," << endl;
 		ref << "        .a_out(a_out)" << endl;
 		ref << "    );" << endl;
-        ref << endl;
+		ref << endl;
 		ref << "    assign b_out = b_in;" << endl;
-        ref << endl;
+		ref << endl;
 		ref << "endmodule";
 
 		ser.serialize(ctx);

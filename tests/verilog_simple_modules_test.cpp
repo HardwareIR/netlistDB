@@ -15,6 +15,12 @@
 #include <netlistDB/serializer/verilog.h>
 #include <netlistDB/transform/to_hdl_friendly.h>
 
+#include "components/wire.h"
+#include "components/ff.h"
+#include "components/mux.h"
+#include "components/bram.h"
+
+
 using namespace std;
 using namespace netlistDB;
 using namespace netlistDB::hw_type;
@@ -24,10 +30,7 @@ using namespace netlistDB::transform;
 BOOST_AUTO_TEST_SUITE( netlistDB_verilog_simple_modules_testsuite )
 
 BOOST_AUTO_TEST_CASE( simple_wire_module ) {
-	Netlist ctx("wire_module");
-	auto &a_in = ctx.sig_in("a_in", hw_int32);
-	auto &a_out = ctx.sig_out("a_out", hw_int32);
-	a_out(a_in);
+	Wire ctx(hw_int32);
 
 	TransformToHdlFriendly t;
 	t.apply(ctx);
@@ -49,14 +52,7 @@ BOOST_AUTO_TEST_CASE( simple_wire_module ) {
 }
 
 BOOST_AUTO_TEST_CASE( simple_ff_module ) {
-	Netlist ctx("ff_module");
-
-	auto &clk = ctx.sig_in("clk", hw_bit);
-	auto &a_in = ctx.sig_in("a_in", hw_int32);
-	auto &a_out = ctx.sig_out("a_out", hw_int32);
-	If(clk.rising()) (
-		&a_out(a_in)
-	);
+	FF ctx(hw_int32);
 
 	TransformToHdlFriendly t;
 	t.apply(ctx);
@@ -83,21 +79,9 @@ BOOST_AUTO_TEST_CASE( simple_ff_module ) {
 }
 
 BOOST_AUTO_TEST_CASE( simple_ff_intern_sig_module ) {
-	Netlist ctx("ff_intern_sig_module");
-
-	auto &clk = ctx.sig_in("clk", hw_bit);
-	auto &a_in = ctx.sig_in("a_in", hw_int32);
-	auto &a_out = ctx.sig_out("a_out", hw_int32);
-	auto &reg = ctx.sig("reg", hw_int32);
-
-	If(clk.rising()) (
-		&reg(a_in)
-	);
-	a_out(reg);
-
+	FF_intern_sig ctx(hw_int32);
 	TransformToHdlFriendly t;
 	t.apply(ctx);
-
 	{
 
 		stringstream str;
@@ -124,20 +108,7 @@ BOOST_AUTO_TEST_CASE( simple_ff_intern_sig_module ) {
 }
 
 BOOST_AUTO_TEST_CASE( mux_module ) {
-	Netlist ctx("mux_module");
-
-	auto &sel = ctx.sig_in("sel", hw_uint8);
-	auto &a_in0 = ctx.sig_in("a_in0", hw_int32);
-	auto &a_in1 = ctx.sig_in("a_in1", hw_int32);
-	auto &a_in2 = ctx.sig_in("a_in2", hw_int32);
-	auto &a_in3 = ctx.sig_in("a_in3", hw_int32);
-	auto &a_out = ctx.sig_out("a_out", hw_int32);
-
-	If(sel == 0) (&a_out(a_in0))
-	.Elif(sel == 1, &a_out(a_in1))
-	.Elif(sel == 2, &a_out(a_in2))
-	.Elif(sel == 3, &a_out(a_in3))
-	.Else(&a_out(0));
+	Mux4x32 ctx;
 
 	TransformToHdlFriendly t;
 	t.apply(ctx);
@@ -146,7 +117,7 @@ BOOST_AUTO_TEST_CASE( mux_module ) {
 		stringstream str;
 		Verilog2001 ser(str);
 		stringstream ref;
-		ref << "module mux_module(" << endl;
+		ref << "module mux4x32_module(" << endl;
 		ref << "    input signed [32-1:0] a_in0," << endl;
 		ref << "    input signed [32-1:0] a_in1," << endl;
 		ref << "    input signed [32-1:0] a_in2," << endl;
@@ -179,23 +150,7 @@ BOOST_AUTO_TEST_CASE( mux_module ) {
 
 
 BOOST_AUTO_TEST_CASE( simple_bram_sp_module ) {
-	Netlist ctx("simple_bram_sp_module");
-
-	HwInt hw_int4(4);
-	auto hw_int32x16 = hw_int32[16];
-	auto &clk = ctx.sig_in("clk", hw_bit);
-	auto &addr = ctx.sig_in("addr", hw_int4);
-	auto &en = ctx.sig_in("en", hw_bit);
-	auto &d_in = ctx.sig_in("d_in", hw_int32);
-	auto &d_out = ctx.sig_out("d_out", hw_int32);
-	auto &mem = ctx.sig("mem", hw_int32x16);
-
-	If(clk.rising())({
-		&d_out(mem[addr]),
-		&If(en) ({
-			&mem[addr](d_in),
-		})
-	});
+	Bram_sp ctx;
 
 	TransformToHdlFriendly t;
 	t.apply(ctx);
@@ -204,7 +159,7 @@ BOOST_AUTO_TEST_CASE( simple_bram_sp_module ) {
 		stringstream str;
 		Verilog2001 ser(str);
 		stringstream ref;
-		ref << "module simple_bram_sp_module(" << endl;
+		ref << "module bram_sp_module(" << endl;
 		ref << "    input [4-1:0] addr," << endl;
 		ref << "    input clk," << endl;
 		ref << "    input signed [32-1:0] d_in," << endl;
