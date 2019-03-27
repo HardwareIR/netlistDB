@@ -22,7 +22,7 @@ This library is a backend and intermediate format for representation of digital 
 |:------------------------|-----------|-----------------------|-----------------------------------------------|
 | net(Signal)             | wire      | signal                |  Net object - construt by Netlist.sig()       |
 | component               | module    | entity + architecture |  Netlist object                               |
-| operatos                | +/-, ...  | +/-, ...              |  FunctionCall object - use overrided Net ops. |
+| operators               | +/-, ...  | +/-, ...              |  FunctionCall object - use overrided Net ops. |
 | function calls          | fn()      | fn()                  |  FunctionCall object                          |
 | if statement            | if        | if                    |  IfStatement object - use If function         |
 | blocking assignment     | =         | :=                    |                                               |
