@@ -13,7 +13,7 @@ It is designed to allow efficient parallel processing of complex circut transfor
 
 ## The purpose of NetlistDB
 
-This library is a backend and intermediate format for representation of digital circuit. The direct use may result in more ugly code than verilog itself. Think of this as blazing fast code generator and the backend for the circuit optimalizers and generators. 
+This library is a backend and intermediate format for representation of digital circuit. The direct use may result in more ugly code than verilog itself. Think of this as blazing fast code generator and the backend for the circuit optimalizers and generators. And also as a glue which connects various libraries related to HW development.
 
 # Circuit representation in NetlistDB
 
