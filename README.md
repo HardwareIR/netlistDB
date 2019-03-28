@@ -82,8 +82,8 @@ res(res_tmp); // equivalent of res <= res_tmp in verilog/vhdl
 // convert the ctx to verilog string
 TransformToHdlFriendly t;
 t.apply(ctx);
-Verilog2001 ser;
-ser.serialize(ctx, std::cout);
+Verilog2001 ser(std::cout);
+ser.serialize(ctx);
 ```
 
 To perform analysis of the Netlist there is netlistDB::query namespace.
