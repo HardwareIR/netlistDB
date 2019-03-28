@@ -100,6 +100,10 @@ r.direction = Direction::DIR_OUT;
 std::vector<QueryMatch::match_t> qres = query_add.search(ctx);
 ```
 
+# Examples
+
+Currently the examples are parts of the tests. It is better in this phase of the developement as the examples are always verified to be working and actual.
+
 # Similar libraries
 
 * [chisel3.FIRRTL](https://github.com/freechipsproject/firrtl) Hardware circuit description language for Chisel3
