@@ -6,7 +6,7 @@
 [![Doc](https://readthedocs.org/projects/netlistdb/badge/?version=latest)](http://netlistdb.readthedocs.io/en/latest/?badge=latest) 
 [ROADMAP](https://drive.google.com/file/d/1zyegLIf7VaBRyb-ED5vgOMmHzW4SRZLp/view?usp=sharing)
 
-(State: pre alfa)
+(State: alfa)
 
 NetlistDB is an experimental netlist database for hardware developement tools (hardware synthesis tools, simulators, code generators, ...).
 It is designed to allow efficient parallel processing of complex circut transformation tasks while not sacrificing single thread performance.
