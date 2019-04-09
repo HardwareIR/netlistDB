@@ -109,3 +109,4 @@ Currently the examples are parts of the tests. It is better in this phase of the
 * [chisel3.FIRRTL](https://github.com/freechipsproject/firrtl) Hardware circuit description language for Chisel3
 * [Yosys.RTLIL](https://github.com/YosysHQ/yosys) Verilog AST like IR in Yosys
 * [thorin](https://github.com/AnyDSL/thorin) The Higher-Order Intermediate Representation for LLVM
+* [lgraph.core](https://github.com/masc-ucsc/lgraph/tree/master/core) Graph centric library for circuit developement
