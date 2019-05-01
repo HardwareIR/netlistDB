@@ -84,35 +84,8 @@ void Verilog2001::serialize(const FunctionCall & fncall) {
 		return;
 	}
 
-	//if o == AllOps.CALL:
-	//    return "%s(%s)" % (cls.FunctionContainer(ops[0]),
-	//                       ", ".join(map(lambda op: cls._operand(op, op, ctx), ops[1:])))
-	//elif o == AllOps.TERNARY:
-	//    zero, one = BIT.fromPy(0), BIT.fromPy(1)
-	//    if ops[1] == one and ops[2] == zero:
-	//        # ignore redundant x ? 1 : 0
-	//        return cls.condAsHdl([ops[0]], True, ctx)
-	//    else:
-	//        return "%s ? %s : %s" % (cls.condAsHdl([ops[0]], True, ctx),
-	//                                 cls._operand(ops[1], op, ctx),
-	//                                 cls._operand(ops[2], op, ctx))
 	if (o == &OpRising or o == &OpFalling) {
 		throw std::runtime_error("UnsupportedEventOpErr");
-		//} else if (o == OpBitsAsUnsigned) {
-		//    op0, = ops
-		//    op_str = cls._operand(op0, op, ctx)
-		//    if bool(op0._dtype.signed):
-		//        return "$unsigned(%s)" % op_str
-		//    else:
-		//        return op_str
-		//} else if (o == &OpIntToBits) {
-		//    op0, = ops
-		//    width = op.result._dtype.bit_length()
-		//    op_str = cls._operand(op0, op, ctx)
-		//    if op_str.startswith("(") and not isinstance(op, Value):
-		//        return "%d'%s" % (width, op_str)
-		//    else:
-		//        return "%d'(%s)" % (width, op_str)
 	} else {
 		throw std::runtime_error(
 				"Do not know how to convert expression with unknown operator to Verilog");
