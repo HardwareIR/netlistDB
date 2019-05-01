@@ -6,14 +6,14 @@
 [![Doc](https://readthedocs.org/projects/netlistdb/badge/?version=latest)](http://netlistdb.readthedocs.io/en/latest/?badge=latest) 
 [ROADMAP](https://drive.google.com/file/d/1zyegLIf7VaBRyb-ED5vgOMmHzW4SRZLp/view?usp=sharing)
 
-(State: pre alfa)
+(State: alfa)
 
 NetlistDB is an experimental netlist database for hardware developement tools (hardware synthesis tools, simulators, code generators, ...).
 It is designed to allow efficient parallel processing of complex circut transformation tasks while not sacrificing single thread performance.
 
 ## The purpose of NetlistDB
 
-This library is a backend and intermediate format for representation of digital circuit. The direct use may result in more ugly code than verilog itself. Think of this as blazing fast code generator and the backend for the circuit optimalizers and generators. 
+This library is a backend and intermediate format for representation of digital circuit. The direct use may result in more ugly code than verilog itself. Think of this as blazing fast code generator and the backend for the circuit optimalizers and generators. And also as a glue which connects various libraries related to HW development.
 
 # Circuit representation in NetlistDB
 
@@ -22,7 +22,7 @@ This library is a backend and intermediate format for representation of digital 
 |:------------------------|-----------|-----------------------|-----------------------------------------------|
 | net(Signal)             | wire      | signal                |  Net object - construt by Netlist.sig()       |
 | component               | module    | entity + architecture |  Netlist object                               |
-| operatos                | +/-, ...  | +/-, ...              |  FunctionCall object - use overrided Net ops. |
+| operators               | +/-, ...  | +/-, ...              |  FunctionCall object - use overrided Net ops. |
 | function calls          | fn()      | fn()                  |  FunctionCall object                          |
 | if statement            | if        | if                    |  IfStatement object - use If function         |
 | blocking assignment     | =         | :=                    |                                               |
@@ -82,8 +82,8 @@ res(res_tmp); // equivalent of res <= res_tmp in verilog/vhdl
 // convert the ctx to verilog string
 TransformToHdlFriendly t;
 t.apply(ctx);
-Verilog2001 ser;
-ser.serialize(ctx, std::cout);
+Verilog2001 ser(std::cout);
+ser.serialize(ctx);
 ```
 
 To perform analysis of the Netlist there is netlistDB::query namespace.
@@ -100,8 +100,13 @@ r.direction = Direction::DIR_OUT;
 std::vector<QueryMatch::match_t> qres = query_add.search(ctx);
 ```
 
+# Examples
+
+Currently the examples are parts of the tests. It is better in this phase of the developement as the examples are always verified to be working and actual.
+
 # Similar libraries
 
 * [chisel3.FIRRTL](https://github.com/freechipsproject/firrtl) Hardware circuit description language for Chisel3
 * [Yosys.RTLIL](https://github.com/YosysHQ/yosys) Verilog AST like IR in Yosys
 * [thorin](https://github.com/AnyDSL/thorin) The Higher-Order Intermediate Representation for LLVM
+* [lgraph.core](https://github.com/masc-ucsc/lgraph/tree/master/core) Graph centric library for circuit developement
