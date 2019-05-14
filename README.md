@@ -110,3 +110,5 @@ Currently the examples are parts of the tests. It is better in this phase of the
 * [Yosys.RTLIL](https://github.com/YosysHQ/yosys) Verilog AST like IR in Yosys
 * [thorin](https://github.com/AnyDSL/thorin) The Higher-Order Intermediate Representation for LLVM
 * [lgraph.core](https://github.com/masc-ucsc/lgraph/tree/master/core) Graph centric library for circuit developement
+* [mockturtle](https://github.com/lsils/mockturtle) - logic network library
+* [percy](https://github.com/whaaswijk/percy) - Collection of different synthesizers and exact synthesis methods for use in applications such as circuit resynthesis and design exploration.
