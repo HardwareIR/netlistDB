@@ -112,3 +112,4 @@ Currently the examples are parts of the tests. It is better in this phase of the
 * [lgraph.core](https://github.com/masc-ucsc/lgraph/tree/master/core) Graph centric library for circuit developement
 * [mockturtle](https://github.com/lsils/mockturtle) - logic network library
 * [percy](https://github.com/whaaswijk/percy) - Collection of different synthesizers and exact synthesis methods for use in applications such as circuit resynthesis and design exploration.
+* [CoSA](https://github.com/cristian-mattarei/CoSA) - CoreIR Symbolic Analyzer
