@@ -113,3 +113,4 @@ Currently the examples are parts of the tests. It is better in this phase of the
 * [mockturtle](https://github.com/lsils/mockturtle) - logic network library
 * [percy](https://github.com/whaaswijk/percy) - Collection of different synthesizers and exact synthesis methods for use in applications such as circuit resynthesis and design exploration.
 * [CoSA](https://github.com/cristian-mattarei/CoSA) - CoreIR Symbolic Analyzer
+* [mockturtle](https://github.com/lsils/mockturtle) - C++, logic network library
