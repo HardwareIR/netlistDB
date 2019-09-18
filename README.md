@@ -115,3 +115,4 @@ Currently the examples are parts of the tests. It is better in this phase of the
 * [CoSA](https://github.com/cristian-mattarei/CoSA) - CoreIR Symbolic Analyzer
 * [mockturtle](https://github.com/lsils/mockturtle) - C++, a logic network library
 * [cirkit](https://github.com/msoeken/cirkit) - C++, a logic synthesis and optimization framework
+* [llhd](https://github.com/fabianschuiki/llhd) - Rust, Low Level Hardware Description 
