@@ -115,4 +115,6 @@ Currently the examples are parts of the tests. It is better in this phase of the
 * [CoSA](https://github.com/cristian-mattarei/CoSA) - CoreIR Symbolic Analyzer
 * [mockturtle](https://github.com/lsils/mockturtle) - C++, a logic network library
 * [cirkit](https://github.com/msoeken/cirkit) - C++, a logic synthesis and optimization framework
-* [llhd](https://github.com/fabianschuiki/llhd) - Rust, Low Level Hardware Description 
+* [llhd](https://github.com/fabianschuiki/llhd) - Rust, Low Level Hardware Description
+* [hwt.hdl](https://github.com/Nic30/hwt) - Python, Lib for hardware generators with retrospectivity, type checking and HLS
+* [nmigen.hdl](https://github.com/m-labs/nmigen/tree/master/nmigen/hdl) - Python, Toolbox for building complex digital hardware
