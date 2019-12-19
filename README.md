@@ -118,3 +118,4 @@ Currently the examples are parts of the tests. It is better in this phase of the
 * [llhd](https://github.com/fabianschuiki/llhd) - Rust, Low Level Hardware Description
 * [hwt.hdl](https://github.com/Nic30/hwt) - Python, Lib for hardware generators with retrospectivity, type checking and HLS
 * [nmigen.hdl](https://github.com/m-labs/nmigen/tree/master/nmigen/hdl) - Python, Toolbox for building complex digital hardware
+* [Torc](http://torc-isi.sourceforge.net/) Tools for Open Reconfigurable Computing
