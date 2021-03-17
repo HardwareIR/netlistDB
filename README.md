@@ -119,6 +119,7 @@ Currently the examples are parts of the tests. It is better in this phase of the
 * [CoSA/coreir](https://github.com/cristian-mattarei/CoSA) - CoreIR Symbolic Analyzer
 * [mockturtle](https://github.com/lsils/mockturtle) - C++, a logic network library
 * [llhd](https://github.com/fabianschuiki/llhd) - Rust, Low Level Hardware Description
+* [hdlConvertorAst](https://github.com/Nic30/hdlConvertorAst) - Python, universal AST for VHDL/Verilog
 * [hwt.hdl](https://github.com/Nic30/hwt) - Python, Lib for hardware generators with retrospectivity, type checking and HLS
 * [nmigen.hdl](https://github.com/m-labs/nmigen/tree/master/nmigen/hdl) - Python, Toolbox for building complex digital hardware
 * [Torc](http://torc-isi.sourceforge.net/) - C++, Tools for Open Reconfigurable Computing
