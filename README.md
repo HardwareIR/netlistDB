@@ -123,7 +123,7 @@ Currently the examples are parts of the tests. It is better in this phase of the
 * [hwt.hdl](https://github.com/Nic30/hwt) - Python, Lib for hardware generators with retrospectivity, type checking and HLS
 * [nmigen.hdl](https://github.com/m-labs/nmigen/tree/master/nmigen/hdl) - Python, Toolbox for building complex digital hardware
 * [Torc](http://torc-isi.sourceforge.net/) - C++, Tools for Open Reconfigurable Computing
-* [UHDM] - C++, Universal Hardware Data Model
+* [UHDM](https://github.com/alainmarcel/UHDM) - C++, Universal Hardware Data Model
 * [spydrnet](https://github.com/byuccl/spydrnet) - Python, framework for analyzing and transforming netlists
 
 
