@@ -106,17 +106,24 @@ Currently the examples are parts of the tests. It is better in this phase of the
 
 # Similar libraries
 
+* [AHIR](https://github.com/madhavPdesai/ahir) - C++, c -> VHDL
+* [calyx](https://github.com/cucapra/calyx) - rust/futil, Intermediate Language (IL) for Hardware Accelerator Generators 
+* [circt](https://github.com/llvm/circt) - C++/LLVM, Circuit IR Compilers and Tools
+* [cirkit](https://github.com/msoeken/cirkit) - C++, a logic synthesis and optimization framework
 * [chisel3.FIRRTL](https://github.com/freechipsproject/firrtl) Hardware circuit description language for Chisel3
 * [Yosys.RTLIL](https://github.com/YosysHQ/yosys) Verilog AST like IR in Yosys
 * [thorin](https://github.com/AnyDSL/thorin) The Higher-Order Intermediate Representation for LLVM
 * [lgraph.core](https://github.com/masc-ucsc/lgraph/tree/master/core) Graph centric library for circuit developement
 * [mockturtle](https://github.com/lsils/mockturtle) - logic network library
 * [percy](https://github.com/whaaswijk/percy) - Collection of different synthesizers and exact synthesis methods for use in applications such as circuit resynthesis and design exploration.
-* [CoSA](https://github.com/cristian-mattarei/CoSA) - CoreIR Symbolic Analyzer
+* [CoSA/coreir](https://github.com/cristian-mattarei/CoSA) - CoreIR Symbolic Analyzer
 * [mockturtle](https://github.com/lsils/mockturtle) - C++, a logic network library
-* [cirkit](https://github.com/msoeken/cirkit) - C++, a logic synthesis and optimization framework
 * [llhd](https://github.com/fabianschuiki/llhd) - Rust, Low Level Hardware Description
 * [hwt.hdl](https://github.com/Nic30/hwt) - Python, Lib for hardware generators with retrospectivity, type checking and HLS
 * [nmigen.hdl](https://github.com/m-labs/nmigen/tree/master/nmigen/hdl) - Python, Toolbox for building complex digital hardware
 * [Torc](http://torc-isi.sourceforge.net/) - C++, Tools for Open Reconfigurable Computing
+* [UHDM] - C++, Universal Hardware Data Model
 * [spydrnet](https://github.com/byuccl/spydrnet) - Python, framework for analyzing and transforming netlists
+
+
+
